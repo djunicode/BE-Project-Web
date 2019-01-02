@@ -13,10 +13,12 @@ install:
  - pip3 install -r requirements.txt
 
 before_script:
+ - cd backend/
  - python3 manage.py makemigrations
  - python3 manage.py migrate
 
 script:
+ - cd backend/
  - black --check BEProjectsWeb/
  - black --check BEProjectsApp/
  - python3 manage.py test
