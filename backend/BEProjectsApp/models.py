@@ -7,3 +7,6 @@ class Teacher(models.Model):
 	password=models.CharField(max_length=256)
 	subject=models.CharField(max_length=25)
 # Create your models here.
+
+	def __str__(self):
+		return self.teacher_name
