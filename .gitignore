@@ -3,7 +3,6 @@
 *.py[cod]
 *$py.class
 **/migrations
-
 # C extensions
 *.so
 # Distribution / packaging
