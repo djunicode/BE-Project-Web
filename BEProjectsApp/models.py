@@ -3,23 +3,41 @@ from django.utils import timezone
 
 
 DOMAIN_CHOICES = [
-    "none",
-    "Data Mining & Analytics",
-    "Machine Learning",
-    "Deep Learning",
-    "Image Processing/Computer Vision",
-    "Natural Language Processing/Artificial Intelligence",
-    "Networking/Security",
-    "Internet of Things(IOT)",
-    "Mobile Computing",
-    "Big Data",
-    "Cloud Computing",
-    "Computer Vision & Artificial Intelligence",
-    "Blockchain",
+    (1, ("none")),
+    (2, ("Data Mining & Analytics")),
+    (3, ("Machine Learning")),
+    (4, ("Deep Learning")),
+    (5, ("Image Processing/Computer Vision")),
+    (6, ("Natural Language Processing/Artificial Intelligence")),
+    (7, ("Networking/Security")),
+    (8, ("Internet of Things(IOT)")),
+    (9, ("Mobile Computing")),
+    (10, ("Big Data")),
+    (11, ("Cloud Computing")),
+    (12, ("Computer Vision & Artificial Intelligence")),
+    (13, ("Blockchain")),
 ]
 
+
+class Teacher(models.Model):
+
+    teacher_id = models.AutoField(primary_key=True)
+
+    teacher_name = models.CharField(max_length=150)
+
+    username = models.CharField(max_length=150)
+
+    password = models.CharField(max_length=256)
+
+    subject = models.CharField(max_length=150)
+
+    def __str__(self):
+
+        return self.teacher_name
+
+
 # In house Project model
-class IN_Project:
+class IN_Project(models.Model):
 
     # Project title
     title = models.CharField(max_length=100)
