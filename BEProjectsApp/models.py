@@ -3,19 +3,18 @@ from django.utils import timezone
 
 
 DOMAIN_CHOICES = [
-    (1, ("none")),
-    (2, ("Data Mining & Analytics")),
-    (3, ("Machine Learning")),
-    (4, ("Deep Learning")),
-    (5, ("Image Processing/Computer Vision")),
-    (6, ("Natural Language Processing/Artificial Intelligence")),
-    (7, ("Networking/Security")),
-    (8, ("Internet of Things(IOT)")),
-    (9, ("Mobile Computing")),
-    (10, ("Big Data")),
-    (11, ("Cloud Computing")),
-    (12, ("Computer Vision & Artificial Intelligence")),
-    (13, ("Blockchain")),
+    (1, ("Data Mining & Analytics")),
+    (2, ("Machine Learning")),
+    (3, ("Deep Learning")),
+    (4, ("Image Processing/Computer Vision")),
+    (5, ("Natural Language Processing/Artificial Intelligence")),
+    (6, ("Networking/Security")),
+    (7, ("Internet of Things(IOT)")),
+    (8, ("Mobile Computing")),
+    (9, ("Big Data")),
+    (10, ("Cloud Computing")),
+    (11, ("Computer Vision & Artificial Intelligence")),
+    (12, ("Blockchain")),
 ]
 
 
@@ -37,7 +36,7 @@ class Teacher(models.Model):
 
 
 # In house Project model
-class IN_Project(models.Model):
+class Inhouse_Project(models.Model):
 
     # Project title
     title = models.CharField(max_length=100)
@@ -52,6 +51,8 @@ class IN_Project(models.Model):
     year_published = models.DateTimeField(blank=True, null=True)
     # PDF to be uploaded
     document = models.FileField()
+    # To check whether project is approved or not
+    approved = models.BooleanField(default=False)
     # contributers stored as a text field
     contributers = models.TextField()
     # domain list
