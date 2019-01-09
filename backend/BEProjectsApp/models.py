@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-DOMAIN_OHP = ['none',
+DOMAIN_OHP = [
     'Data Mining & Analytics',
     'Machine Learning',
     'Image Processing/Computer Vision',
@@ -13,16 +13,13 @@ DOMAIN_OHP = ['none',
     'Cloud Computing',
     'Computer Vision & Artificial Intelligence'
     ]
-
+//convert into tuple
 DOMAIN_CHOICES_OHP = sorted((item,item) for item in DOMAIN_OHP)
+//add none field
+DOMAIN_CHOICES_OHP.append(('none','none'))
 
 # Create your models here.
 
-
-#Teacher model
-class Teacher(models.Model):
-    #teacher class attributes here
-    name='teacher'
 
 #OUT HOUSE PROJECT MODEL
 class OH_Project(models.Model):
