@@ -16,7 +16,7 @@ DOMAIN_OHP = [
 //convert into tuple
 DOMAIN_CHOICES_OHP = sorted((item,item) for item in DOMAIN_OHP)
 //add none field
-DOMAIN_CHOICES_OHP.append(('none','none'))
+DOMAIN_CHOICES_OHP.append(('other','other'))
 
 # Create your models here.
 
