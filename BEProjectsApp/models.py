@@ -112,7 +112,7 @@ class OH_Project(models.Model):
     description = models.TextField()
     # year published and created will be stored
     year_created = models.DateTimeField(default=timezone.now)
-    year_published = models.DateTimeField(blank=True, null=True)
+    approved = models.BooleanField(default = False)
     # to store the files uploaded
     document = models.FileField()
     # domain list
@@ -139,8 +139,8 @@ class OH_Project(models.Model):
 
     """
 
-    def publish(self):
-        self.published_date = timezone.now()
+    def approve(self):
+        self.approved = True
         self.save()
 
     def __str__(self):
