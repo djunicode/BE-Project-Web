@@ -100,7 +100,7 @@ class Inhouse_Project(models.Model):
         return self.title
 
 
-class OH_Project(models.Model):
+class Outhouse_Project(models.Model):
 
     # Store the Project Title
     name = models.CharField(max_length=100, blank=False, default="Untitled Project")
