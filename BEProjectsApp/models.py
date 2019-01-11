@@ -1,25 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-DOMAIN_OHP = [
-    "Data Mining & Analytics",
-    "Machine Learning",
-    "Image Processing/Computer Vision",
-    "Natural Language Processing/Artificial Intelligence",
-    "Networking/Security",
-    "Internet of Things(IOT)",
-    "Mobile Computing",
-    "Big Data",
-    "Cloud Computing",
-    "Computer Vision & Artificial Intelligence",
-]
-
-# convert into tuple
-DOMAIN_CHOICES_OHP = sorted((item, item) for item in DOMAIN_OHP)
-
-# append other option
-DOMAIN_CHOICES_OHP.append(("other", "other"))
-
 DOMAIN_CHOICES = [
     (1, ("Data Mining & Analytics")),
     (2, ("Machine Learning")),
@@ -117,7 +98,7 @@ class Outhouse_Project(models.Model):
     document = models.FileField()
     # domain list
     domain = models.CharField(
-        choices=DOMAIN_CHOICES_OHP, default="none", blank=False, max_length=100
+        choices=DOMAIN_CHOICES, default="none", blank=False, max_length=100
     )
     # out house details
     company = models.CharField(max_length=100, blank=False, default="none")
