@@ -4,6 +4,7 @@
 *$py.class
 # C extensions
 *.so
+**/migrations
 
 # Distribution / packaging
 .Python
