@@ -1,7 +1,5 @@
 After forking the repo, type in the following commands in the cmd (dependencies)
-Every dependency shall be installed
-## npm install
-
+## npm install, npm i --save bootstrap react-router-dom reactstrap
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

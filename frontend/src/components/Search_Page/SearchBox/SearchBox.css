@@ -1,0 +1,28 @@
+.search-content{
+    background-color: white;
+    padding-left:20.25px;
+    padding-top:23px;
+    padding-bottom:19px;
+    padding-right: 333.75px;
+    border-radius: 2px;
+    border-width: 2px;
+    border-color: ;
+}
+.search-button{
+    padding: 26.61px;
+    background-color: #5C96EB;
+    margin-left: 1rem;
+    border-radius: 6px 6px 6px 6px;
+}
+.searchbox-placement{
+    margin-top: 60px;
+    margin-left: 345px;
+    margin-right: 341px;
+}
+.searchbox{
+    height: 5rem;
+}
+.search-logo{
+    color: white;
+
+}
