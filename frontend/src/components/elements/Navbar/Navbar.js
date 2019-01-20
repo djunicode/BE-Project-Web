@@ -1,60 +1,41 @@
-import React, { Component } from 'react';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink } from 'reactstrap';
-
+import React, { Component } from "react";
+import "./Navbar.css";
 
 class NavBar extends Component {
-
-  state = {
-    isOpen: false
-  }
-
-  toggle=()=> {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
   render() {
     return (
-      <>
-      <style>
-        {
-          `.bg-dark {
-              background-color: black !important;
-            }
-            .navbar {
-              font-size: 2rem;
-              font-weight: 500;
-              margin: 0;
-              padding: 0.6rem 0.9rem;
-              }
-            
-            `
-        }
-      </style>
       <div>
-        <Navbar color="dark" dark expand="md">
-          <NavbarBrand href="/" className="navbar-brand">DJ ARCHIVE</NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink href="/search">Search</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/upload">Upload</NavLink>
-              </NavItem>
-            </Nav>
-          </Collapse>
-        </Navbar>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" className="navbar-brand" style={{ marginTop: 25 }}>
+                DJ ARCHIVE
+              </a>
+            </li>
+            <li>
+              <a href="/browse" className="browse">
+                Browse
+              </a>
+            </li>
+            <li>
+              <a href="/upload" className="upload">
+                Upload
+              </a>
+            </li>
+            <li>
+              <a href="/contact-us" className="contact">
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="/login" className="flogin">
+                <i className="fas fa-lock" height="15px" />
+                Faculty Login
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-      </>
     );
   }
 }
