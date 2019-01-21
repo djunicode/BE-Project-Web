@@ -2,9 +2,9 @@
 **/__pycache__
 *.py[cod]
 *$py.class
-
 # C extensions
 *.so
+**/migrations
 
 # Distribution / packaging
 .Python
@@ -102,6 +102,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
-
-**/migrations
