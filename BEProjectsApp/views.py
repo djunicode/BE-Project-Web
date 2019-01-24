@@ -1,6 +1,7 @@
 from .models import Inhouse_Project, Teacher, Outhouse_Project
 from .serializers import InhouseProjectSerializer, TeacherSerializer, OuthouseProjectSerializer
 from rest_framework import viewsets
+from rest_framework import filters
 from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
 
 class InhouseProjectViewSet(viewsets.ModelViewSet):
@@ -16,7 +17,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
     serializer_class = TeacherSerializer
     
 class AllProjectsView(FlatMultipleModelAPIViewSet):
-    sorting_fields = ['title']
+    sorting_fields = ['type','title']
     querylist = [
         {
             'queryset' : Inhouse_Project.objects.all(),
@@ -28,4 +29,8 @@ class AllProjectsView(FlatMultipleModelAPIViewSet):
             'serializer_class' : OuthouseProjectSerializer,
             'label' : 'OuthouseProject',
         },
+        
     ]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('title',)
+    
