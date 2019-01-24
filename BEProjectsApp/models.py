@@ -47,7 +47,6 @@ class Inhouse_Project(models.Model):
     description = models.TextField()
     # year published and created will be stored
     year_created = models.DateTimeField(default=timezone.now)
-    year_published = models.DateTimeField(blank=True, null=True)
     # PDF to be uploaded
     document = models.FileField()
     # To check whether project is approved or not
@@ -59,19 +58,7 @@ class Inhouse_Project(models.Model):
         choices=DOMAIN_CHOICES, default="none", blank=False, max_length=100
     )
 
-    """
 
-    The purpose of the pubish function is to create the functionality of drafts where
-
-    the teachers get to approve a project and then it will be published till then
-
-    only created date is stored.
-
-    The display of search results will only be done with the published date so if that
-
-    is empty it should not be shown in the search results.
-
-    """
 
     def publish(self):
         self.year_published = timezone.now()

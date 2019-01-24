@@ -3,13 +3,16 @@ from rest_framework import serializers
 
 class InhouseProjectSerializer(serializers.HyperlinkedModelSerializer):
     teacher = serializers.ReadOnlyField(source = 'teacher_id.teacher_name')
+    domain = serializers.CharField(source = 'get_domain_display')
     
     class Meta:
         model = Inhouse_Project
-        fields = ('title','teacher','description','year_created','year_published','document','approved','contributers','domain')
+        fields = ('title','teacher','description','year_created','document','approved','contributers','domain')
 
 class OuthouseProjectSerializer(serializers.HyperlinkedModelSerializer):
     teacher = serializers.ReadOnlyField(source = 'teacher_id.teacher_name')
+    domain = serializers.CharField(source = 'get_domain_display')
+
     
     class Meta:
         model = Outhouse_Project
