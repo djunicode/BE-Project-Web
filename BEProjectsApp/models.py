@@ -2,18 +2,18 @@ from django.db import models
 from django.utils import timezone
 
 DOMAIN_CHOICES = [
-    (1, ("Data Mining & Analytics")),
-    (2, ("Machine Learning")),
-    (3, ("Deep Learning")),
-    (4, ("Image Processing/Computer Vision")),
-    (5, ("Natural Language Processing/Artificial Intelligence")),
-    (6, ("Networking/Security")),
-    (7, ("Internet of Things(IOT)")),
-    (8, ("Mobile Computing")),
-    (9, ("Big Data")),
-    (10, ("Cloud Computing")),
-    (11, ("Computer Vision & Artificial Intelligence")),
-    (12, ("Blockchain")),
+    ('1', ("Data Mining & Analytics")),
+    ('2', ("Machine Learning")),
+    ('3', ("Deep Learning")),
+    ('4', ("Image Processing/Computer Vision")),
+    ('5', ("Natural Language Processing/Artificial Intelligence")),
+    ('6', ("Networking/Security")),
+    ('7', ("Internet of Things(IOT)")),
+    ('8', ("Mobile Computing")),
+    ('9', ("Big Data")),
+    ('10', ("Cloud Computing")),
+    ('11', ("Computer Vision & Artificial Intelligence")),
+    ('12', ("Blockchain")),
 ]
 
 
@@ -41,7 +41,7 @@ class Inhouse_Project(models.Model):
     title = models.CharField(max_length=100)
     # Id of the teacher mentoring the project
     teacher_id = models.ForeignKey(
-        Teacher, related_name="teachers", on_delete=models.CASCADE
+        Teacher, related_name="inhouse_projects", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()
@@ -84,7 +84,7 @@ class Inhouse_Project(models.Model):
 class Outhouse_Project(models.Model):
 
     # Store the Project Title
-    name = models.CharField(max_length=100, blank=False, default="Untitled Project")
+    title = models.CharField(max_length=100, blank=False, default="Untitled Project")
     # Store the ID of the Teacher model who is mentoring the project
     teacher_id = models.ForeignKey(
         Teacher, related_name="teacher", on_delete=models.CASCADE
