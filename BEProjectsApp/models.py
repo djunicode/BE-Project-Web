@@ -74,7 +74,7 @@ class Outhouse_Project(models.Model):
     title = models.CharField(max_length=100, blank=False, default="Untitled Project")
     # Store the ID of the Teacher model who is mentoring the project
     teacher_id = models.ForeignKey(
-        Teacher, related_name="teacher", on_delete=models.CASCADE
+        Teacher, related_name="outhouse_projects", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()
