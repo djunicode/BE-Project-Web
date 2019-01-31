@@ -25,3 +25,4 @@ class OuthouseProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Outhouse_Project
         fields = ('title','teacher_id','teacher_name','description','year_created','document','approved','contributers','domain','domain_name','company','supervisor')
+

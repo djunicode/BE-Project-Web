@@ -112,4 +112,4 @@ class Outhouse_Project(models.Model):
         self.save()
 
     def __str__(self):
-        return self.name
+        return self.title
