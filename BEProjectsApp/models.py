@@ -2,18 +2,18 @@ from django.db import models
 from django.utils import timezone
 
 DOMAIN_CHOICES = [
-    ('1', ("Data Mining & Analytics")),
-    ('2', ("Machine Learning")),
-    ('3', ("Deep Learning")),
-    ('4', ("Image Processing/Computer Vision")),
-    ('5', ("Natural Language Processing/Artificial Intelligence")),
-    ('6', ("Networking/Security")),
-    ('7', ("Internet of Things(IOT)")),
-    ('8', ("Mobile Computing")),
-    ('9', ("Big Data")),
-    ('10', ("Cloud Computing")),
-    ('11', ("Computer Vision & Artificial Intelligence")),
-    ('12', ("Blockchain")),
+    ("1", ("Data Mining & Analytics")),
+    ("2", ("Machine Learning")),
+    ("3", ("Deep Learning")),
+    ("4", ("Image Processing/Computer Vision")),
+    ("5", ("Natural Language Processing/Artificial Intelligence")),
+    ("6", ("Networking/Security")),
+    ("7", ("Internet of Things(IOT)")),
+    ("8", ("Mobile Computing")),
+    ("9", ("Big Data")),
+    ("10", ("Cloud Computing")),
+    ("11", ("Computer Vision & Artificial Intelligence")),
+    ("12", ("Blockchain")),
 ]
 
 
@@ -57,8 +57,6 @@ class Inhouse_Project(models.Model):
     domain = models.CharField(
         choices=DOMAIN_CHOICES, default="none", blank=False, max_length=100
     )
-
-
 
     def publish(self):
         self.year_published = timezone.now()
