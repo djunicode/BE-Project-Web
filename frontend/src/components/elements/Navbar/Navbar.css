@@ -1,0 +1,41 @@
+
+
+.navbar-brand{
+  font-size: 32px;
+  font-family: Abril Fatface;
+  font-weight: bolder;
+  text-align: center;
+  color: #1E5CB9;
+  width: 188px;
+  height: 32px;
+}
+
+.nav-link{
+
+  color: #092D62;
+  font-size: 18px;
+  font-family: Open Sans;
+  font-weight:bold;
+  text-align: center;
+  width: 188px;
+  height: 43px;
+  padding-top: 25px;
+}
+
+.navbar-text{
+  color: #092D62;
+  font-size: 18px;
+  font-family: open sans;
+  font:bold;
+  text-align: center;
+  width: 364px;
+  height: 43px;
+}
+
+.faculty{
+   width: 188px;
+  height: 43px;
+  padding-top: 30px;
+  margin-right: 90px;
+  text-align: right;
+}
