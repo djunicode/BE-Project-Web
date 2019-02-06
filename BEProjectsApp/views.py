@@ -9,7 +9,7 @@ from rest_framework import filters
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
+import re
 
 
 class InhouseProjectViewSet(viewsets.ModelViewSet):
@@ -27,35 +27,19 @@ class TeacherViewSet(viewsets.ModelViewSet):
     serializer_class = TeacherSerializer
 
 
-# class AllProjectsView(FlatMultipleModelAPIViewSet):
-#     sorting_fields = ['type','title']
-#     querylist = [
-#         {
-#             'queryset' : Inhouse_Project.objects.all(),
-#             'serializer_class' : InhouseProjectSerializer,
-#             'label' : 'InhouseProject',
-#         },
-#         {
-#             'queryset' : Outhouse_Project.objects.all(),
-#             'serializer_class' : OuthouseProjectSerializer,
-#             'label' : 'OuthouseProject',
-#         },
-
-#     ]
-#     filter_backends = (filters.SearchFilter,)
-#     search_fields = ('$title',)
-
-
 class SearchProjectView(APIView):
     def get(self, request):
         count = []
+        contributors = []
+        search = request.query_params["name"]
+        regex = r"^" + search.lower() + r""
+
         # Get the required projects  based on search
-        inhouse = Inhouse_Project.objects.filter(
-            title__startswith=request.query_params["name"]
-        )
-        outhouse = Outhouse_Project.objects.filter(
-            title__startswith=request.query_params["name"]
-        )
+        inhouse = Inhouse_Project.objects.filter(title__startswith=search)
+        outhouse = Outhouse_Project.objects.filter(title__startswith=search)
+
+        contributers1 = Inhouse_Project.objects.filter(contributers__contains=search)
+        contributers2 = Outhouse_Project.objects.filter(contributers__contains=search)
 
         context = {"request": request}
 
@@ -68,6 +52,18 @@ class SearchProjectView(APIView):
         outhouse_serializer = OuthouseProjectSerializer(
             outhouse, many=True, context=context
         )
+
+        contributers1 = (
+            InhouseProjectSerializer(contributers1, many=True, context=context)
+        ).data
+        contributers2 = (
+            OuthouseProjectSerializer(contributers2, many=True, context=context)
+        ).data
+
+        # Get the list of contributors using the function
+        contributers1 = self.findContributers(contributers1, regex)
+        contributers2 = self.findContributers(contributers2, regex)
+        contributors.append(contributers1 + contributers2)
 
         inhouse_projects = inhouse_serializer.data
         outhouse_projects = outhouse_serializer.data
@@ -84,5 +80,15 @@ class SearchProjectView(APIView):
         outhouse_projects = sorted(outhouse_projects, key=lambda k: k["title"])
 
         # combine inhouse, outhouse and count
-        projects = inhouse_projects + outhouse_projects + count
+        projects = inhouse_projects + outhouse_projects + count + contributors
         return Response(projects)
+
+    def findContributers(self, contributors, regex):
+        names = []
+
+        for obj in contributors:
+            list1 = (obj["contributers"].replace(" ", "")).split(",")
+            for contributor in list1:
+                if re.search(regex, contributor.lower()):
+                    names.append(contributor)
+        return names

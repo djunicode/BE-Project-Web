@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
 
 [packages]
 appdirs = "==1.4.3"
@@ -13,6 +14,7 @@ click = "==7.0"
 pytz = "==2018.7"
 toml = "==0.10.0"
 Django = "==2.1.4"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.7"
