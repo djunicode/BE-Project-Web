@@ -10,7 +10,8 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import re
-
+# import rest_framework
+# print(rest_framework.VERSION)
 
 class InhouseProjectViewSet(viewsets.ModelViewSet):
     queryset = Inhouse_Project.objects.all()
