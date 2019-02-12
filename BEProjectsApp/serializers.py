@@ -21,7 +21,7 @@ class ContributerObjectRelatedField(serializers.RelatedField):
       
 
 class InhouseProjectSerializer(serializers.ModelSerializer):
-    teacher_name = serializers.CharField(source = 'teacher_id.teacher_name')
+    teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())
     domain_name = serializers.CharField(source = 'get_domain_display')
     contributers = ContributerObjectRelatedField()
     class Meta:
@@ -51,7 +51,6 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
             "first_name",
             "last_name",
             "email",
-            "phone_number",
             "subject",
             "username",
             "password",
@@ -60,10 +59,15 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
 
     
     def create(self, validated_data):
-        users_data = validated_data.pop('user')
-        teacher = Teacher.objects.create(**validated_data)
-        for user_data in users_data:
-            User.objects.create(teacher=teacher, **user_data)
-        return teacher
+        teacher = Teacher(
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            email=validated_data["email"],
+            subject=validated_data["subject"],
+            username=validated_data["username"],
+        )
+        teacher.set_password(validated_data["password"])
+        teacher.save()
+        return user
 
 
