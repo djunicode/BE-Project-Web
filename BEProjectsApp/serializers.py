@@ -1,5 +1,6 @@
-from BEProjectsApp.models import Teacher, Inhouse_Project,Outhouse_Project,Contributers
+from BEProjectsApp.models import TeacherProfile, Inhouse_Project,Outhouse_Project,Contributers
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
 class ContributerObjectRelatedField(serializers.RelatedField):
     """
@@ -20,13 +21,18 @@ class ContributerObjectRelatedField(serializers.RelatedField):
         return serializer.data
       
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name','last_name','username','password','email')
+
 class InhouseProjectSerializer(serializers.ModelSerializer):
-    teacher = serializers.PrimaryKeyRelatedField(queryset=Teacher.objects.all())
+    teacher = serializers.PrimaryKeyRelatedField(queryset=TeacherProfile.objects.all())
     domain_name = serializers.CharField(source = 'get_domain_display')
     contributers = ContributerObjectRelatedField()
     class Meta:
         model = Inhouse_Project
-        fields = ('title','teacher_id','teacher_name','description','year_created','document','approved','contributers','domain','domain_name')
+        fields = ('title','teacher','description','year_created','document','approved','contributers','domain','domain_name')
 
 
 class OuthouseProjectSerializer(serializers.ModelSerializer):
@@ -45,21 +51,21 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
     outhouse_projects = serializers.HyperlinkedRelatedField(
         many=True, view_name="BEProjectsApp:outhouse_project-detail", read_only=True
     )
+    user = UserSerializer(read_only=True)
     class Meta:
-        model = Teacher
+        model = TeacherProfile
         fields = ( 
-            "first_name",
-            "last_name",
-            "email",
             "subject",
-            "username",
-            "password",
-        )
-        extra_kwargs = {"password": {"write_only": True}}
+            "inhouse_projects",
+            "outhouse_projects",
+            "user"
 
-    
+        )
+#        extra_kwargs = {"password": {"write_only": True}}
+'''
+   
     def create(self, validated_data):
-        teacher = Teacher(
+        teacher = TeacherProfile(
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
             email=validated_data["email"],
@@ -68,6 +74,6 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
         )
         teacher.set_password(validated_data["password"])
         teacher.save()
-        return user
-
+        return teacher
+'''
 

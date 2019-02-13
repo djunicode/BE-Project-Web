@@ -1,4 +1,4 @@
-from BEProjectsApp.models import Inhouse_Project, Teacher, Outhouse_Project
+from BEProjectsApp.models import Inhouse_Project, TeacherProfile, Outhouse_Project
 from BEProjectsApp.serializers import InhouseProjectSerializer, TeacherSerializer, OuthouseProjectSerializer
 from rest_framework import viewsets
 from rest_framework import filters
@@ -15,7 +15,7 @@ class OuthouseProjectViewSet(viewsets.ModelViewSet):
     serializer_class = OuthouseProjectSerializer    
 
 class TeacherViewSet(viewsets.ModelViewSet):
-    queryset = Teacher.objects.all()
+    queryset = TeacherProfile.objects.all()
     serializer_class = TeacherSerializer
     
 # class AllProjectsView(FlatMultipleModelAPIViewSet):

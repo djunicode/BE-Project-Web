@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
@@ -31,8 +31,10 @@ class Contributers(models.Model):
         return self.name
 
 
-class Teacher(AbstractUser):
+class TeacherProfile(models.Model):
     
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+
     #additional attributes
     subject = models.CharField(max_length=150)
 
@@ -45,7 +47,7 @@ class Inhouse_Project(models.Model):
     title = models.CharField(max_length=100)
     # Id of the teacher mentoring the project
     teacher = models.ForeignKey(
-        Teacher, related_name="inhouse_projects", on_delete=models.CASCADE
+        TeacherProfile, related_name="inhouse_projects", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()
@@ -79,7 +81,7 @@ class Outhouse_Project(models.Model):
     title = models.CharField(max_length=100, blank=False, default="Untitled Project")
     # Store the ID of the Teacher model who is mentoring the project
     teacher = models.ForeignKey(
-        Teacher, related_name="outhouse_projects", on_delete=models.CASCADE
+        TeacherProfile, related_name="outhouse_projects", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()
