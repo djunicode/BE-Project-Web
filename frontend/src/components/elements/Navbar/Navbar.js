@@ -37,7 +37,7 @@ class NavBar extends Component {
             </div>
             <div className="col-2 ">
             
-            <span className="navbar-text" >
+            <span className="navbar-text faculty" >
             <i className="fa fa-lock" aria-hidden="true" style={{  left: 1107}}> - </i>
               Faculty login
             </span>

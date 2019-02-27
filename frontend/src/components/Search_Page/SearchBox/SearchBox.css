@@ -10,7 +10,7 @@
     border-color: #578BD8;
     border-radius: 6px 6px 6px 6px;
     position: relative;
-    top:60px;
+    top:40px;
 }
     
 
@@ -19,7 +19,7 @@
     margin-left: 16px;
     border-radius: 6px 6px 6px 6px;
     position: relative;
-    top:30px;
+    top:38px;
 }
 .searchbox-placement{
     margin-top: 60px;
@@ -28,7 +28,7 @@
 }
 .searchbox{
     width:684px;
-    height: 65px;
+    height: 70px;
 }
 .search-logo{
     color: white;
@@ -38,6 +38,11 @@
 }
 
 .fa fa-search search-logo{
-    size: 4px;
-   
+    font-size: 4px;
+    top:16.5;
+    bottom:21.89;
+    border-left: 19.25;
+    border-right: 24.14;
+    padding-top: 10px;
+
 }

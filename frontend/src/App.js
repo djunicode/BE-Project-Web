@@ -6,6 +6,7 @@ import Upload from './components/Upload';
 import Navbar from './components/elements/Navbar/Navbar';
 import Contact from './components/Contact-Us';
 import Notfound from './components/Notfound'
+import ArtBoard from './components/ArtBoard/Artboard1';
 
 class App extends Component {
   render() {
@@ -18,7 +19,8 @@ class App extends Component {
           <Route path="/" component={Home} exact />
           <Route path="/search" component={Search} exact />
           <Route path="/upload" component={Upload} exact />
-          <Route path="/contact" component={Contact} exact />
+          <Route path="/contact" component={Contact} exact /> 
+          <Route path="/artboard" component={ArtBoard} exact />
           <Route component={Notfound}/>
         </Switch>
       </div>

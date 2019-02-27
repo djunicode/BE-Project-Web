@@ -17,8 +17,9 @@
   font-family: Open Sans;
   font-weight:bold;
   text-align: center;
-  width: 150px;
+  width: 188px;
   height: 43px;
+  padding-top: 25px;
 }
 
 .navbar-text{
@@ -29,5 +30,12 @@
   text-align: center;
   width: 364px;
   height: 43px;
+}
 
+.faculty{
+   width: 188px;
+  height: 43px;
+  padding-top: 30px;
+  margin-right: 90px;
+  text-align: right;
 }
