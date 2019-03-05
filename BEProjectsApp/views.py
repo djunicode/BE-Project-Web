@@ -1,23 +1,38 @@
-from BEProjectsApp.models import Inhouse_Project, TeacherProfile, Outhouse_Project
-from BEProjectsApp.serializers import InhouseProjectSerializer, TeacherSerializer, OuthouseProjectSerializer
+from BEProjectsApp.models import Project, TeacherProfile, Contributer
+from BEProjectsApp.serializers import (
+    ProjectSerializer,
+    TeacherSerializer,
+    ContributerSerializer,
+    UserSerializer,
+)
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import serializers
-#from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
+from django.contrib.auth.models import User
 
-class InhouseProjectViewSet(viewsets.ModelViewSet):
-    queryset = Inhouse_Project.objects.all()
-    serializer_class = InhouseProjectSerializer
-    
+# from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
 
-class OuthouseProjectViewSet(viewsets.ModelViewSet):
-    queryset = Outhouse_Project.objects.all()
-    serializer_class = OuthouseProjectSerializer    
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
 
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = TeacherProfile.objects.all()
     serializer_class = TeacherSerializer
-    
+
+
+class ContributerViewSet(viewsets.ModelViewSet):
+    queryset = Contributer.objects.all()
+    serializer_class = ContributerSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 # class AllProjectsView(FlatMultipleModelAPIViewSet):
 #     sorting_fields = ['type','title']
 #     querylist = [
@@ -31,11 +46,11 @@ class TeacherViewSet(viewsets.ModelViewSet):
 #             'serializer_class' : OuthouseProjectSerializer,
 #             'label' : 'OuthouseProject',
 #         },
-        
+
 #     ]
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ('^title',)
-    
+
 # class SearchProjectView(FlatMultipleModelAPIViewSet):
 #     def get_querylist(self):
 #         c = 0
@@ -52,9 +67,9 @@ class TeacherViewSet(viewsets.ModelViewSet):
 #                 'serializer_class' : OuthouseProjectSerializer,
 #                 'label' : 'OuthouseProject',
 #             },
-            
+
 #         ]
-        
+
 #         for _ in querylist:
 
 #             c = c +1
