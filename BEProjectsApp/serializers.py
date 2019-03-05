@@ -3,11 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 
-class ContributerSerializer(serializers.HyperlinkedModelSerializer):
-    project = serializers.HyperlinkedRelatedField(
-        many=False, view_name="BEProjectsApp:project-detail", read_only=True
-    )
-
+class ContributerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributer
         fields = "__all__"
@@ -23,9 +19,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     teacher = serializers.HyperlinkedRelatedField(
         many=False, view_name="BEProjectsApp:teacherprofile-detail", read_only=True
     )
-    contributers = ContributerSerializer(
-        read_only=True, many=True
-    )  # serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="BEProjectsApp:contributer-detail")
+    contributers = ContributerSerializer(many=True, read_only=True)
 
     class Meta:
         model = Project
