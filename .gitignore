@@ -109,3 +109,5 @@ venv.bak/
 #PIPfile
 Pipfile
 Pipfile.lock
+
+media/
