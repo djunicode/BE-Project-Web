@@ -68,5 +68,5 @@ class Contributer(models.Model):
     last_name = models.CharField(max_length=100, blank=False)
     email = models.CharField(max_length=100, blank=False)
     project = models.ForeignKey(
-        Project, related_name="project", on_delete=models.CASCADE
+        Project, related_name="contributer", on_delete=models.CASCADE
     )
