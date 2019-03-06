@@ -110,4 +110,4 @@ venv.bak/
 Pipfile
 Pipfile.lock
 
-media/
+media/*
