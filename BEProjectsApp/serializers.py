@@ -29,10 +29,13 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             "title",
             "teacher",
             "description",
-            "year_created",
+            "approved",
             "document",
             "contributer",
             "domain",
+            "is_inhouse",
+            "company",
+            "supervisor",
         )
 
 
