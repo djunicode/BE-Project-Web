@@ -28,9 +28,9 @@ class ContributerViewSet(viewsets.ModelViewSet):
     serializer_class = ContributerSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserViewSet(viewsets.ModelViewSet):
+#    queryset = User.objects.all()
+#    serializer_class = UserSerializer
 
 
 # class AllProjectsView(FlatMultipleModelAPIViewSet):

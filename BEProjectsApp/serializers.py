@@ -19,10 +19,10 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     teacher = serializers.HyperlinkedRelatedField(
         many=False, view_name="BEProjectsApp:teacherprofile-detail", read_only=True
     )
-    contributers = serializers.HyperlinkedIdentityField(
-        view_name="BEProjectsApp:contributer-detail"
+    contributer = serializers.HyperlinkedRelatedField(
+        many=True, view_name="BEProjectsApp:contributer-detail", read_only=True
     )
-
+    # contributers = ContributerSerializer(many=True, read_only=True)
     class Meta:
         model = Project
         fields = (
@@ -31,7 +31,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             "description",
             "year_created",
             "document",
-            "contributers",
+            "contributer",
             "domain",
         )
 
