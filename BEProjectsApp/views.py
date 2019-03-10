@@ -1,8 +1,8 @@
-from BEProjectsApp.models import Project, TeacherProfile, Contributer
+from BEProjectsApp.models import Project, TeacherProfile, Contributor
 from BEProjectsApp.serializers import (
     ProjectSerializer,
     TeacherSerializer,
-    ContributerSerializer,
+    ContributorSerializer,
     UserSerializer,
 )
 from rest_framework import viewsets
@@ -23,9 +23,9 @@ class TeacherViewSet(viewsets.ModelViewSet):
     serializer_class = TeacherSerializer
 
 
-class ContributerViewSet(viewsets.ModelViewSet):
-    queryset = Contributer.objects.all()
-    serializer_class = ContributerSerializer
+class ContributorViewSet(viewsets.ModelViewSet):
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
 
 
 # class UserViewSet(viewsets.ModelViewSet):

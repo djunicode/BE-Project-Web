@@ -1,12 +1,16 @@
-from BEProjectsApp.models import TeacherProfile, Project, Contributer
+from BEProjectsApp.models import TeacherProfile, Project, Contributor
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
 
-class ContributerSerializer(serializers.ModelSerializer):
+class ContributorSerializer(serializers.ModelSerializer):
+    project = serializers.HyperlinkedRelatedField(
+        many=False, view_name="BEProjectsApp:project-detail", read_only=True
+    )
+
     class Meta:
-        model = Contributer
-        fields = "__all__"
+        model = Contributor
+        fields = ("name", "last_name", "email", "project")
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -19,8 +23,8 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     teacher = serializers.HyperlinkedRelatedField(
         many=False, view_name="BEProjectsApp:teacherprofile-detail", read_only=True
     )
-    contributer = serializers.HyperlinkedRelatedField(
-        many=True, view_name="BEProjectsApp:contributer-detail", read_only=True
+    contributor = serializers.HyperlinkedRelatedField(
+        many=True, view_name="BEProjectsApp:contributor-detail", read_only=True
     )
     # contributers = ContributerSerializer(many=True, read_only=True)
     class Meta:
@@ -31,7 +35,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             "description",
             "approved",
             "document",
-            "contributer",
+            "contributor",
             "domain",
             "is_inhouse",
             "company",
