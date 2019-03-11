@@ -95,3 +95,4 @@ class SearchProjectView(APIView):
                 if re.search(regex, contributor.lower()):
                     names.append(contributor)
         return names
+ 
