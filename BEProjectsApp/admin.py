@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Teacher, Inhouse_Project, Outhouse_Project
+from .models import TeacherProfile, Project, Contributor
 
 # Register your models here.
-admin.site.register(Teacher)
-admin.site.register(Inhouse_Project)
-admin.site.register(Outhouse_Project)
+admin.site.register(TeacherProfile)
+admin.site.register(Project)
+admin.site.register(Contributor)
