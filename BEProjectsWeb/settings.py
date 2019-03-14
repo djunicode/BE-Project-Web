@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "BEProjectsApp",
     "rest_framework",
+    "drf_multiple_model",
 ]
 
 MIDDLEWARE = [
