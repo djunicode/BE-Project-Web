@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 DOMAIN_CHOICES = [
-    ("1", ("Data Mining & Analytics")),
+    ("Data Mining & Analytics", ("Data Mining & Analytics")),
     ("2", ("Machine Learning")),
     ("3", ("Deep Learning")),
     ("4", ("Image Processing/Computer Vision")),
@@ -36,7 +36,7 @@ class Project(models.Model):
     title = models.CharField(max_length=100)
     # Id of the teacher mentoring the project
     teacher = models.ForeignKey(
-        TeacherProfile, related_name="projects", on_delete=models.CASCADE
+        TeacherProfile, related_name="project", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()

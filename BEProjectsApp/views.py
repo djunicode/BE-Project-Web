@@ -15,6 +15,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+from .permissions import IsUserOrReadOnly
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -27,13 +29,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         "approved",
         "year_created",
         "title",
+        "teacher",
     )
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = TeacherProfile.objects.all()
     serializer_class = TeacherSerializer
-    filterset_fields = ("subject", "first_name", "last_name")
+    filterset_fields = ("subject",)
+    permission_classes = (IsUserOrReadOnly, IsAuthenticatedOrReadOnly)
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
