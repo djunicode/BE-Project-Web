@@ -83,5 +83,3 @@ class SearchProjectView(APIView):
             SearchResult.append({label: Result[indx]})
 
         return Response(SearchResult)
-
-

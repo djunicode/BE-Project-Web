@@ -4,17 +4,24 @@ from django.contrib.auth.models import User
 
 DOMAIN_CHOICES = [
     ("Data Mining & Analytics", ("Data Mining & Analytics")),
-    ("2", ("Machine Learning")),
-    ("3", ("Deep Learning")),
-    ("4", ("Image Processing/Computer Vision")),
-    ("5", ("Natural Language Processing/Artificial Intelligence")),
-    ("6", ("Networking/Security")),
-    ("7", ("Internet of Things(IOT)")),
-    ("8", ("Mobile Computing")),
-    ("9", ("Big Data")),
-    ("10", ("Cloud Computing")),
-    ("11", ("Computer Vision & Artificial Intelligence")),
-    ("12", ("Blockchain")),
+    ("Machine Learning", ("Machine Learning")),
+    ("Deep Learning", ("Deep Learning")),
+    ("Image Processing/Computer Vision", ("Image Processing/Computer Vision")),
+    (
+        "Natural Language Processing/Artificial Intelligence",
+        ("Natural Language Processing/Artificial Intelligence"),
+    ),
+    ("Networking/Security", ("Networking/Security")),
+    ("Internet of Things(IOT)", ("Internet of Things(IOT)")),
+    ("Mobile Computing", ("Mobile Computing")),
+    ("Big Data", ("Big Data")),
+    ("Cloud Computing", ("Cloud Computing")),
+    (
+        "Computer Vision & Artificial Intelligence",
+        ("Computer Vision & Artificial Intelligence"),
+    ),
+    ("Blockchain", ("Blockchain")),
+    ("Operating Systems", ("Operating Systems")),
 ]
 
 
