@@ -3,18 +3,25 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 DOMAIN_CHOICES = [
-    ("1", ("Data Mining & Analytics")),
-    ("2", ("Machine Learning")),
-    ("3", ("Deep Learning")),
-    ("4", ("Image Processing/Computer Vision")),
-    ("5", ("Natural Language Processing/Artificial Intelligence")),
-    ("6", ("Networking/Security")),
-    ("7", ("Internet of Things(IOT)")),
-    ("8", ("Mobile Computing")),
-    ("9", ("Big Data")),
-    ("10", ("Cloud Computing")),
-    ("11", ("Computer Vision & Artificial Intelligence")),
-    ("12", ("Blockchain")),
+    ("Data Mining & Analytics", ("Data Mining & Analytics")),
+    ("Machine Learning", ("Machine Learning")),
+    ("Deep Learning", ("Deep Learning")),
+    ("Image Processing/Computer Vision", ("Image Processing/Computer Vision")),
+    (
+        "Natural Language Processing/Artificial Intelligence",
+        ("Natural Language Processing/Artificial Intelligence"),
+    ),
+    ("Networking/Security", ("Networking/Security")),
+    ("Internet of Things(IOT)", ("Internet of Things(IOT)")),
+    ("Mobile Computing", ("Mobile Computing")),
+    ("Big Data", ("Big Data")),
+    ("Cloud Computing", ("Cloud Computing")),
+    (
+        "Computer Vision & Artificial Intelligence",
+        ("Computer Vision & Artificial Intelligence"),
+    ),
+    ("Blockchain", ("Blockchain")),
+    ("Operating Systems", ("Operating Systems")),
 ]
 
 
@@ -26,6 +33,9 @@ class TeacherProfile(models.Model):
     # additional attributes
     subject = models.CharField(max_length=150)
 
+    def __str__(self):
+        return self.user.username
+
 
 # In house Project model
 class Project(models.Model):
@@ -33,7 +43,7 @@ class Project(models.Model):
     title = models.CharField(max_length=100)
     # Id of the teacher mentoring the project
     teacher = models.ForeignKey(
-        TeacherProfile, related_name="projects", on_delete=models.CASCADE
+        TeacherProfile, related_name="project", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()
@@ -70,3 +80,6 @@ class Contributor(models.Model):
     project = models.ForeignKey(
         Project, related_name="contributor", on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.name + " " + self.last_name
