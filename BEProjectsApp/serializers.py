@@ -15,7 +15,14 @@ class ContributorSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "username", "email", "password")
+        fields = (
+            "first_name",
+            "last_name", 
+            "username", 
+            "email", 
+            "password"
+        )
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -64,3 +71,8 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
         teacher = TeacherProfile(user=user, subject=validated_data["subject"])
         teacher.save()
         return teacher
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=10)
+    password = serializers.CharField(style={"input_type": "password"})

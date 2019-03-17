@@ -4,6 +4,7 @@ from BEProjectsApp.serializers import (
     TeacherSerializer,
     ContributorSerializer,
     UserSerializer,
+    LoginSerializer,
 )
 from rest_framework import viewsets
 from rest_framework import filters
@@ -82,3 +83,5 @@ class SearchProjectView(APIView):
             SearchResult.append({label: Result[indx]})
 
         return Response(SearchResult)
+
+
