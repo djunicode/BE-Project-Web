@@ -7,9 +7,10 @@ class ContributorSerializer(serializers.HyperlinkedModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         many=False, view_name="BEProjectsApp:project-detail", read_only=True
     )
+
     class Meta:
         model = Contributor
-        fields = ("id","name", "last_name", "email", "project")
+        fields = ("id", "name", "last_name", "email", "project")
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,12 +50,14 @@ class TeacherSerializer(serializers.ModelSerializer):
         many=True, view_name="BEProjectsApp:project-detail", read_only=True
     )
     user = UserSerializer(read_only=False)
-    
-    url = serializers.HyperlinkedIdentityField(view_name="BEProjectsApp:teacherprofile-detail")
-    
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="BEProjectsApp:teacherprofile-detail"
+    )
+
     class Meta:
         model = TeacherProfile
-        fields = ("pk","url","subject", "project", "user")
+        fields = ("pk", "url", "subject", "project", "user")
 
     def create(self, validated_data):
         user = User(

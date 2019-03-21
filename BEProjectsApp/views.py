@@ -6,7 +6,7 @@ from BEProjectsApp.serializers import (
     UserSerializer,
     LoginSerializer,
 )
-from rest_framework import viewsets,mixins
+from rest_framework import viewsets, mixins
 from rest_framework import filters
 from rest_framework import serializers
 from django.contrib.auth.models import User
@@ -45,6 +45,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
     filterset_fields = ("name", "last_name", "email")
+
 
 class SearchProjectView(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
