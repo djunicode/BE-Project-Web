@@ -4,85 +4,47 @@ from BEProjectsApp.serializers import (
     TeacherSerializer,
     ContributorSerializer,
     UserSerializer,
+    LoginSerializer,
 )
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework.response import Response
+from django.http import HttpResponse
 
-# from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+from .permissions import IsUserOrReadOnly
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    filterset_fields = (
+        "company",
+        "supervisor",
+        "domain",
+        "is_inhouse",
+        "approved",
+        "year_created",
+        "title",
+        "teacher",
+    )
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = TeacherProfile.objects.all()
     serializer_class = TeacherSerializer
+    filterset_fields = ("subject",)
+    permission_classes = (IsUserOrReadOnly, IsAuthenticatedOrReadOnly)
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#    queryset = User.objects.all()
-#    serializer_class = UserSerializer
-
-
-# class AllProjectsView(FlatMultipleModelAPIViewSet):
-#     sorting_fields = ['title','name']
-#     querylist = [
-#         {
-#             'queryset' : Project.objects.all(),
-#             'serializer_class' : ProjectSerializer,
-#             'label' : 'Projects',
-#         },
-#         {
-#             'queryset' : Contributor.objects.all(),
-#             'serializer_class' : ContributorSerializer,
-#             'label' : 'Contributors',
-#         },
-
-#     ]
-#     filter_backends = (filters.SearchFilter,)
-#     search_fields = ('^title','^name')
-
-# import pdb; pdb.set_trace()
-
-# class SearchProjectView(FlatMultipleModelAPIViewSet):
-#     def get_querylist(self):
-#         c = 0
-
-#         title = self.request.query_params['title']
-#         querylist = [
-#             {
-#                 'queryset' : Inhouse_Project.objects.filter(title__startswith = title),
-#                 'serializer_class' : InhouseProjectSerializer,
-#                 'label' : 'InhouseProject',
-#             },
-#             {
-#                 'queryset' : Outhouse_Project.objects.filter(title__startswith = title),
-#                 'serializer_class' : OuthouseProjectSerializer,
-#                 'label' : 'OuthouseProject',
-#             },
-
-#         ]
-
-#         for _ in querylist:
-
-#             c = c +1
-#         c = c-1
-#         print(c)
-
-
-#         return querylist
+    filterset_fields = ("name", "last_name", "email")
 
 
 class SearchProjectView(APIView):
@@ -90,8 +52,9 @@ class SearchProjectView(APIView):
 
     def get(self, request):
         count = []
-        # contributors = []
-        search = request.query_params["name"]
+        SearchResult = []
+
+        search = request.query_params["generic"]
 
         # Get the required projects  based on search
         projects = Project.objects.filter(title__startswith=search)
@@ -100,7 +63,8 @@ class SearchProjectView(APIView):
         context = {"request": request}
 
         # Count the total number of search results
-        count.append({"count": projects.count()})
+        count.append({"ProjectCount": projects.count()})
+        # count.append({"ContributorCount": contributors.count()})
 
         projects = (ProjectSerializer(projects, many=True, context=context)).data
 
@@ -108,16 +72,14 @@ class SearchProjectView(APIView):
             ContributorSerializer(contributors, many=True, context=context)
         ).data
 
-        # Add type to each project i.e. inhouse and outhouse
-        for project in projects:
-            if project["is_inhouse"] == True:
-                project.update({"type": "Inhouse_Project"})
-            else:
-                project.update({"type": "Outhouse_Project"})
-
         # Sort in ascending order of project titles
         projects = sorted(projects, key=lambda k: k["title"])
 
-        # combine inhouse, outhouse and count
-        projects = projects + count + contributors
-        return Response(projects)
+        labels = ["count", "projects", "contributors"]
+
+        Result = [count, projects, contributors]
+
+        for indx, label in enumerate(labels):
+            SearchResult.append({label: Result[indx]})
+
+        return Response(SearchResult)
