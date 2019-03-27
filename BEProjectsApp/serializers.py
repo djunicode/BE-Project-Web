@@ -27,7 +27,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     contributor = serializers.HyperlinkedRelatedField(
         many=True, view_name="BEProjectsApp:contributor-detail", read_only=True
     )
-    # contributers = ContributerSerializer(many=True, read_only=True)
     class Meta:
         model = Project
         fields = (
