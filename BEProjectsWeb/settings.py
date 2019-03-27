@@ -33,7 +33,14 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ],
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_AUTHETICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
 }
+
+# JWT Settings
+SIMPLE_JWT = {"AUTH_HEADER_TYPES": ("JWT",)}
 
 # Application definition
 
@@ -46,6 +53,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "BEProjectsApp",
     "rest_framework",
+    "rest_framework.authtoken",
+    "djoser",
+    # "drf_multiple_model",
     "django_filters",
 ]
 
@@ -125,3 +135,11 @@ STATIC_URL = "/static/"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = MEDIA_DIR
+
+# Djoser
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "",
+    "SEND_ACTIVATION_EMAIL": False,
+    "SERIALIZERS": {},
+}
