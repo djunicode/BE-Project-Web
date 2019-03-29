@@ -14,3 +14,6 @@ pytz==2018.7
 requests==2.21.0
 toml==0.10.0
 urllib3==1.24.1
+djoser==1.1.5
+djangorestframework_simplejwt==4.1.0
+djangorestframework-jwt==1.11.0

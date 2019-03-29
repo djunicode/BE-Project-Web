@@ -1,7 +1,8 @@
 from rest_framework.routers import DefaultRouter, SimpleRouter
 from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include
 from BEProjectsApp import views
+
 
 app_name = "BEProjectsApp"
 router = DefaultRouter()
@@ -12,5 +13,5 @@ router.register(r"contributors", views.ContributorViewSet)
 
 urlpatterns = [
     url(r"^api/", include(router.urls)),
-    path("api/search/", views.SearchProjectView.as_view(), name="search"),
+    url(r"^api/search/", views.SearchProjectView.as_view(), name="search"),
 ]
