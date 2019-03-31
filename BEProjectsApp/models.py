@@ -1,128 +1,85 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 DOMAIN_CHOICES = [
-    (1, ("Data Mining & Analytics")),
-    (2, ("Machine Learning")),
-    (3, ("Deep Learning")),
-    (4, ("Image Processing/Computer Vision")),
-    (5, ("Natural Language Processing/Artificial Intelligence")),
-    (6, ("Networking/Security")),
-    (7, ("Internet of Things(IOT)")),
-    (8, ("Mobile Computing")),
-    (9, ("Big Data")),
-    (10, ("Cloud Computing")),
-    (11, ("Computer Vision & Artificial Intelligence")),
-    (12, ("Blockchain")),
+    ("Data Mining & Analytics", ("Data Mining & Analytics")),
+    ("Machine Learning", ("Machine Learning")),
+    ("Deep Learning", ("Deep Learning")),
+    ("Image Processing/Computer Vision", ("Image Processing/Computer Vision")),
+    (
+        "Natural Language Processing/Artificial Intelligence",
+        ("Natural Language Processing/Artificial Intelligence"),
+    ),
+    ("Networking/Security", ("Networking/Security")),
+    ("Internet of Things(IOT)", ("Internet of Things(IOT)")),
+    ("Mobile Computing", ("Mobile Computing")),
+    ("Big Data", ("Big Data")),
+    ("Cloud Computing", ("Cloud Computing")),
+    (
+        "Computer Vision & Artificial Intelligence",
+        ("Computer Vision & Artificial Intelligence"),
+    ),
+    ("Blockchain", ("Blockchain")),
+    ("Operating Systems", ("Operating Systems")),
 ]
 
 
-class Teacher(models.Model):
+class TeacherProfile(models.Model):
+    user = models.OneToOneField(
+        User, related_name="teacher_user", on_delete=models.CASCADE, primary_key=True
+    )
 
-    teacher_id = models.AutoField(primary_key=True)
-
-    teacher_name = models.CharField(max_length=150)
-
-    username = models.CharField(max_length=150)
-
-    password = models.CharField(max_length=256)
-
+    # additional attributes
     subject = models.CharField(max_length=150)
 
     def __str__(self):
-
-        return self.teacher_name
+        return self.user.username
 
 
 # In house Project model
-class Inhouse_Project(models.Model):
-
+class Project(models.Model):
     # Project title
     title = models.CharField(max_length=100)
     # Id of the teacher mentoring the project
-    teacher_id = models.ForeignKey(
-        Teacher, related_name="teachers", on_delete=models.CASCADE
+    teacher = models.ForeignKey(
+        TeacherProfile, related_name="project", on_delete=models.CASCADE
     )
     # project description
     description = models.TextField()
     # year published and created will be stored
     year_created = models.DateTimeField(default=timezone.now)
-    year_published = models.DateTimeField(blank=True, null=True)
     # PDF to be uploaded
     document = models.FileField()
     # To check whether project is approved or not
     approved = models.BooleanField(default=False)
-    # contributers stored as a text field
-    contributers = models.TextField()
+
     # domain list
     domain = models.CharField(
         choices=DOMAIN_CHOICES, default="none", blank=False, max_length=100
     )
+    # boolean field to check whether the project is inhouse or outhouse
+    is_inhouse = models.BooleanField(default=True)
 
-    """
-
-    The purpose of the pubish function is to create the functionality of drafts where
-
-    the teachers get to approve a project and then it will be published till then
-
-    only created date is stored.
-
-    The display of search results will only be done with the published date so if that
-
-    is empty it should not be shown in the search results.
-
-    """
+    # property of an outhouse project
+    company = models.CharField(max_length=100, blank=True, default="none")
+    supervisor = models.CharField(max_length=100, blank=True, default="none")
 
     def publish(self):
-        self.published_date = timezone.now()
+        self.approved = True
         self.save()
 
     def __str__(self):
         return self.title
 
 
-class Outhouse_Project(models.Model):
-
-    # Store the Project Title
-    name = models.CharField(max_length=100, blank=False, default="Untitled Project")
-    # Store the ID of the Teacher model who is mentoring the project
-    teacher_id = models.ForeignKey(
-        Teacher, related_name="teacher", on_delete=models.CASCADE
+class Contributor(models.Model):
+    name = models.CharField(max_length=100, blank=False)
+    last_name = models.CharField(max_length=100, blank=False)
+    email = models.CharField(max_length=100, blank=False)
+    project = models.ForeignKey(
+        Project, related_name="contributor", on_delete=models.CASCADE
     )
-    # project description
-    description = models.TextField()
-    # year published and created will be stored
-    year_created = models.DateTimeField(default=timezone.now)
-    approved = models.BooleanField(default=False)
-    # to store the files uploaded
-    document = models.FileField()
-    # domain list
-    domain = models.CharField(
-        choices=DOMAIN_CHOICES, default="none", blank=False, max_length=100
-    )
-    # out house details
-    company = models.CharField(max_length=100, blank=False, default="none")
-    supervisor = models.CharField(max_length=100, blank=False, default="none")
-    # contributers stored as a text field
-    contributers = models.TextField()
-
-    """
-
-    The purpose of the pubish function is to create the functionality of drafts where
-
-    the teachers get to approve a project and then it will be published till then
-
-    only created date is stored.
-
-    The display of search results will only be done with the published date so if that
-
-    is empty it should not be shown in the search results.
-
-    """
-
-    def approve(self):
-        self.approved = True
-        self.save()
 
     def __str__(self):
-        return self.name
+        return self.name + " " + self.last_name
