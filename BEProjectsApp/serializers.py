@@ -17,9 +17,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    teacher = serializers.HyperlinkedIdentityField(
-        many=False, view_name="BEProjectsApp:teacherprofile-detail", read_only=True
-    )
+    # teacher = serializers.HyperlinkedIdentityField(
+    #     many=False, view_name="BEProjectsApp:teacherprofile-detail", read_only=True
+    # )
     contributor = serializers.HyperlinkedRelatedField(
         many=True, view_name="BEProjectsApp:contributor-detail", read_only=True
     )
@@ -30,6 +30,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "teacher",
+            "year_created",
             "description",
             "approved",
             "document",
