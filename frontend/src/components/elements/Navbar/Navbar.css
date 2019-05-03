@@ -1,7 +1,33 @@
-.navbar-background{
-  color: #3b2d07 !important,
 
-}
+
 .navbar-brand{
-  color: #fcbb08,
+  font-size: 32px;
+  font-family: Abril Fatface;
+  font-weight: bolder;
+  text-align: center;
+  color: #1E5CB9;
+  width: 188px;
+  height: 32px;
+}
+
+.nav-link{
+
+  color: #092D62;
+  font-size: 18px;
+  font-family: Open Sans;
+  font-weight:bold;
+  text-align: center;
+  width: 150px;
+  height: 43px;
+}
+
+.navbar-text{
+  color: #092D62;
+  font-size: 18px;
+  font-family: open sans;
+  font:bold;
+  text-align: center;
+  width: 364px;
+  height: 43px;
+
 }
