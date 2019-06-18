@@ -1,0 +1,30 @@
+.retrieved-results {
+    background-color: white;
+    width: 100%;
+    border: 2px solid black;
+    padding-top: 15px ;
+    padding-left: 20px;
+    padding-bottom: 15px;
+    margin-bottom: 18px;
+    height:147;
+    width:840;
+    border-color: #E2E2E2;
+    border-radius: 5px 5px 5px 5px;
+    position: relative;
+    left: 40px;
+    top: 70px;
+  }
+  
+h6 {
+  font-size: 14px;
+  color:#578BD8;
+  }
+
+h3{
+  font-size: 20px;
+  color:#747474;
+}  
+h4{
+  font-size: 16px;
+  color:#747474;
+}  
