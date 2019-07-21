@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 
 # Rest framework settings
 REST_FRAMEWORK = {
-
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ],
@@ -53,7 +52,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "djoser",
     "django_filters",
-    'rest_framework_swagger',
+    "rest_framework_swagger",
 ]
 
 MIDDLEWARE = [
