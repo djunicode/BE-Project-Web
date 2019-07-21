@@ -17,3 +17,4 @@ urllib3==1.24.1
 djoser==1.1.5
 djangorestframework_simplejwt==4.1.0
 djangorestframework-jwt==1.11.0
+django-rest-swagger==2.0
