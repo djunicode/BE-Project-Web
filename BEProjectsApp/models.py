@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import date
 from django.contrib.auth.models import User
 
 DOMAIN_CHOICES = [
@@ -48,7 +49,7 @@ class Project(models.Model):
     # project description
     description = models.TextField()
     # year published and created will be stored
-    year_created = models.DateTimeField(default=timezone.now)
+    year_created = models.DateField(default=date.today)
     # PDF to be uploaded
     document = models.FileField()
     # To check whether project is approved or not

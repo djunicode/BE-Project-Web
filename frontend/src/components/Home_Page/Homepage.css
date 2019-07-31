@@ -1,0 +1,48 @@
+.domaintext {
+    color: white;
+    font-size: 17px;
+  }
+  div > p {
+    margin: 0%;
+    padding: 0;
+  }
+  .bground {
+    text-align: center;
+    overflow: hidden;
+  }
+  .lookup {
+    font-size: 32px;
+    color: #5c96eb;
+    padding-top: 60px;
+  }
+  .selectdomain {
+    font-size: 20px;
+    color: #092d62;
+    padding-top: 16px;
+    margin-bottom: 50px;
+  }
+  .domain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: auto;
+    margin-left: 15px;
+    margin-right: 15px;
+    background-color: salmon;
+    width: 170px;
+    height: 150px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 17px;
+    border-radius: 6px;
+  }
+  .interests {
+    font-size: 21px;
+    color: #092d62;
+    margin-top: 35px;
+    margin-bottom: 10px;
+  }
+  .advancesearch {
+    padding-bottom: 31px;
+    font-size: 20px;
+  }

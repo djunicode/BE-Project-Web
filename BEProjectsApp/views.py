@@ -22,6 +22,7 @@ from .permissions import IsUserOrReadOnly
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    # import pdb; pdb.set_trace()
     filterset_fields = (
         "company",
         "supervisor",
@@ -30,7 +31,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         "approved",
         "year_created",
         "title",
-        "teacher",
+        "teacher__user__username",
     )
 
 
