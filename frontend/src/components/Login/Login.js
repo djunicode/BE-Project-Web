@@ -9,16 +9,21 @@ class Login extends Component {
 
   handleChange = async e => {
     e.preventDefault(); // console.log(e.target.name, e.target.value);
-    await this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   handleSubmit = async e => {
     e.preventDefault();
-    // await console.log(this.state);
-    axios.post(`http://127.0.0.1:8000/auth/jwt/create/ username=${this.state.username} password=${this.state.password}`, this.state).then(res => {
-      //   token = res.data.token;
-      localStorage.setItem("token", `{res.data.token}`);
-    });
+    console.log(this.state);
+    axios
+      .post(
+        `http://127.0.0.1:8000/auth/jwt/create/ username=${this.state.username} password=${this.state.password}`,
+        this.state
+      )
+      .then(res => {
+        //   token = res.data.token;
+        localStorage.setItem("token", `{res.data.token}`);
+      });
   };
 
   render() {
@@ -63,16 +68,14 @@ class Login extends Component {
                     />
                   </div>
                   <div className="form-group">
-                    {/* <label htmlFor="remember-me" className="text-info"><span>Remember me</span> <span><input id="remember-me" name="remember-me" type="checkbox" /></span></label><br /> */}
                     <button
                       className="btn btn-primary"
-                      //   value="submit"
+                      //value="submit"
                       onClick={this.handleSubmit}
-                    />
+                    >
+                      Submit
+                    </button>
                   </div>
-                  {/* <div id="register-link" className="text-right">
-                                <a href="#" className="text-info">Register here</a>
-                            </div> */}
                 </form>
               </div>
             </div>
