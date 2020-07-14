@@ -5,7 +5,7 @@ from rest_framework_swagger.views import get_swagger_view
 from BEProjectsApp import views
 
 
-app_name = "BEProjectsApp"
+# app_name = "BEProjectsApp"
 router = DefaultRouter()
 router.register(r"projects", views.ProjectViewSet)
 router.register(r"teachers", views.TeacherViewSet)
@@ -17,7 +17,7 @@ schema_view = get_swagger_view(title="BEProjects")
 
 
 urlpatterns = [
-    url(r"^api/", include(router.urls)),
+    url(r"^api/", include((router.urls, "api"))),
     url(r"^api/search/", views.SearchProjectView.as_view(), name="search"),
     url(r"^schema/$", schema_view),
 ]
