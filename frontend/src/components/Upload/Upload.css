@@ -1,0 +1,111 @@
+.head {
+  color: #092d62;
+  padding: 0.5rem;
+  font-weight: bold;
+}
+.flex {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 25%;
+}
+input {
+  height: 40px;
+  border: 1px solid blue;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  font-size: 14px;
+}
+select {
+  height: 40px;
+  border: 1px solid blue;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  font-size: 14px;
+  background-color: white;
+  color: gray;
+}
+textarea {
+  border: 1px solid blue;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  font-size: 16px;
+  background-color: white;
+  color: gray;
+}
+.link {
+  display: flex;
+  flex-direction: row;
+}
+.link1 {
+  width: 47.5%;
+  margin-right: 5%;
+}
+h3 {
+  color: #092d62;
+  margin: 1rem;
+}
+.contibutors {
+  border: 1px solid lightblue;
+  width: 70%;
+  margin: 70px 15%;
+  border-radius: 10px;
+}
+.inner > input {
+  width: 40%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.upload {
+  width: 100px;
+  height: 40px;
+  background-color: blue;
+  color: white;
+  margin-top: 40px;
+  margin-left: 1100px;
+}
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  height: 40px;
+  width: 40%;
+  border: 1px solid blue;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  font-size: 15px;
+  color: gray;
+  cursor: pointer;
+  padding-top: 8px;
+}
+/* ::-webkit-datetime-edit-month-field {
+    display: none;
+  }
+  ::-webkit-datetime-edit-year-field {
+    display: none;
+  }
+  ::-webkit-datetime-edit-day-field {
+    display: none;
+  }
+  ::-webkit-datetime-edit-text {
+    display: none;
+  } */
+input[type="date"] {
+  text-align: right;
+}
+input[type="date"]:before {
+  color: gray;
+  content: attr(placeholder) !important;
+  margin-right: 0.5em;
+}
+input[type="date"]:focus:before {
+  content: "" !important;
+}
+.contri {
+  margin-left: 86%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}

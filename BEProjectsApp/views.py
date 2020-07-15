@@ -1,4 +1,4 @@
-from BEProjectsApp.models import Project, TeacherProfile, Contributor
+from BEProjectsApp.models import Project, TeacherProfile, Contributor, DOMAIN_CHOICES
 from BEProjectsApp.serializers import (
     ProjectSerializer,
     TeacherSerializer,
@@ -84,3 +84,10 @@ class SearchProjectView(APIView):
             SearchResult.append({label: Result[indx]})
 
         return Response(SearchResult)
+
+class GetDomainView(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get(self,request):
+        domains = [domain[0] for domain in DOMAIN_CHOICES]
+        return Response(domains)

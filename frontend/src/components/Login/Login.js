@@ -4,21 +4,26 @@ import axios from "axios";
 class Login extends Component {
   state = {
     username: "",
-    password: ""
+    password: "",
   };
 
-  handleChange = async e => {
+  handleChange = async (e) => {
     e.preventDefault(); // console.log(e.target.name, e.target.value);
     await this.setState({ [e.target.name]: e.target.value });
   };
 
-  handleSubmit = async e => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     // await console.log(this.state);
-    axios.post(`http://127.0.0.1:8000/auth/jwt/create/ username=${this.state.username} password=${this.state.password}`, this.state).then(res => {
-      //   token = res.data.token;
-      localStorage.setItem("token", `{res.data.token}`);
-    });
+    axios
+      .post(
+        `http://127.0.0.1:8000/auth/jwt/create/ username=${this.state.username} password=${this.state.password}`,
+        this.state
+      )
+      .then((res) => {
+        //   token = res.data.token;
+        localStorage.setItem("token", `${res.data.token}`);
+      });
   };
 
   render() {
@@ -34,7 +39,7 @@ class Login extends Component {
               <div id="login-box" className="col-md-12">
                 <form id="login-form" className="form">
                   <h3 className="text-center text-info">Login</h3>
-                  <div className="form-group">
+                  <div className="form-group text-center">
                     <label htmlFor="username" className="text-info">
                       Username:
                     </label>
@@ -48,7 +53,7 @@ class Login extends Component {
                       onChange={this.handleChange}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-group text-center">
                     <label htmlFor="password" className="text-info">
                       Password:
                     </label>
@@ -62,13 +67,14 @@ class Login extends Component {
                       onChange={this.handleChange}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-group text-center">
                     {/* <label htmlFor="remember-me" className="text-info"><span>Remember me</span> <span><input id="remember-me" name="remember-me" type="checkbox" /></span></label><br /> */}
                     <button
-                      className="btn btn-primary"
-                      //   value="submit"
+                      className="btn btn-primary text-center"
                       onClick={this.handleSubmit}
-                    />
+                    >
+                      Login
+                    </button>
                   </div>
                   {/* <div id="register-link" className="text-right">
                                 <a href="#" className="text-info">Register here</a>
