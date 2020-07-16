@@ -146,3 +146,21 @@ class Login(generics.GenericAPIView):
         else:
             data = {"Message": "There was error authenticating"}
             return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Delete_Project(generics.GenericAPIView):
+    authentication_classes = [
+        TokenAuthentication,
+    ]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        pk = request.data["pk"]
+        p = Project.objects.get(id=pk)
+        try:
+            p.delete()
+            data = {"Message": "Successfully Deleted"}
+            return JsonResponse(data, status=status.HTTP_200_OK)
+        except:
+            data = {"Message": "Error deleteing project"}
+            return JsonResponse(data, status=status.HTTP_200_OK)
