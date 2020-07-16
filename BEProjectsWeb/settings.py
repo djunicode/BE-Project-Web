@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     "djoser",
     "django_filters",
     "rest_framework_swagger",
-    
 ]
 
 MIDDLEWARE = [

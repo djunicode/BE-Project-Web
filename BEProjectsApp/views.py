@@ -97,15 +97,16 @@ class GetDomainView(APIView):
         domains = [domain[0] for domain in DOMAIN_CHOICES]
         return Response(domains)
 
+
 class Approve(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    
-    def post(self,request):
+
+    def post(self, request):
         pk = request.data["pk"]
         print(pk)
         try:
             p = Project.objects.get(id=pk)
-            
+
             p.approved = True
             p.save()
             data = {"flag": 1, "Message": "ok"}
@@ -113,9 +114,3 @@ class Approve(APIView):
         except:
             data = {"flag": 0, "Message": "No such Project exists"}
             return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
-    
-
-    
-
-    
-    
