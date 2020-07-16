@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "djoser",
     "django_filters",
     "rest_framework_swagger",
+    
 ]
 
 MIDDLEWARE = [
@@ -138,4 +139,11 @@ DJOSER = {
     "ACTIVATION_URL": "",
     "SEND_ACTIVATION_EMAIL": False,
     "SERIALIZERS": {},
+}
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.TokenAuthentication"
+    ]
 }

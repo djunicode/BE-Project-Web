@@ -23,10 +23,10 @@ DOMAIN_CHOICES = [
     ),
     ("Blockchain", ("Blockchain")),
     ("Operating Systems", ("Operating Systems")),
-    ("GAN's",("GAN's")),
-    ("Audio Processing",("Audio Processing")),
-    ("Video Processing",("Video Processing")),
-    ("Cryptography",("Cryptography")),
+    ("GAN's", ("GAN's")),
+    ("Audio Processing", ("Audio Processing")),
+    ("Video Processing", ("Video Processing")),
+    ("Cryptography", ("Cryptography")),
 ]
 
 

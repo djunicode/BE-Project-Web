@@ -6,17 +6,21 @@ from BEProjectsApp.serializers import (
     UserSerializer,
     LoginSerializer,
 )
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.views import APIView
+from rest_framework import generics, status
 from rest_framework import viewsets, mixins
 from rest_framework import filters
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-
+from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
+from rest_framework.decorators import api_view
 from .permissions import IsUserOrReadOnly
+from rest_framework.views import APIView
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -85,9 +89,32 @@ class SearchProjectView(APIView):
 
         return Response(SearchResult)
 
+
 class GetDomainView(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def get(self,request):
+    def get(self, request):
         domains = [domain[0] for domain in DOMAIN_CHOICES]
         return Response(domains)
+
+class Approve(APIView):
+    
+    def post(self,request):
+        pk = request.data["pk"]
+        print(pk)
+        try:
+            p = Project.objects.get(id=pk)
+            
+            p.approved = True
+            p.save()
+            data = {"flag": 1, "Message": "ok"}
+            return JsonResponse(data, status=status.HTTP_200_OK)
+        except:
+            data = {"flag": 0, "Message": "No such Project exists"}
+            return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    
+
+    
+    
