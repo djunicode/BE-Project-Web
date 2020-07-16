@@ -98,6 +98,7 @@ class GetDomainView(APIView):
         return Response(domains)
 
 class Approve(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     
     def post(self,request):
         pk = request.data["pk"]
