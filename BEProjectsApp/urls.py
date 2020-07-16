@@ -22,4 +22,5 @@ urlpatterns = [
     url(r"^schema/$", schema_view),
     url(r"^api/get_domains/$", views.GetDomainView.as_view(), name="domain"),
     path("api/Approve_project", views.Approve.as_view(), name="Approve Project"),
+    path("api/Login", views.Login.as_view(), name="Login"),
 ]

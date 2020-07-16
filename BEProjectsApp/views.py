@@ -6,6 +6,7 @@ from BEProjectsApp.serializers import (
     UserSerializer,
     LoginSerializer,
 )
+from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework import generics, status
@@ -21,6 +22,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view
 from .permissions import IsUserOrReadOnly
 from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -91,6 +94,7 @@ class SearchProjectView(APIView):
 
 
 class GetDomainView(APIView):
+
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get(self, request):
@@ -98,10 +102,15 @@ class GetDomainView(APIView):
         return Response(domains)
 
 
-class Approve(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+class Approve(generics.GenericAPIView):
+    authentication_classes = [
+        TokenAuthentication,
+    ]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request):
+        print(request.user)
+
         pk = request.data["pk"]
         print(pk)
         try:
@@ -113,4 +122,27 @@ class Approve(APIView):
             return JsonResponse(data, status=status.HTTP_200_OK)
         except:
             data = {"flag": 0, "Message": "No such Project exists"}
+            return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Login(generics.GenericAPIView):
+    def post(self, request):
+        Username = request.data["username"]
+        Password = request.data["password"]
+        user = authenticate(request, username=Username, password=Password)
+
+        if user is not None:
+            token, _ = Token.objects.get_or_create(user=user)
+            print(token.key)
+
+            login(request, user)
+            u = TeacherProfile.objects.get(user=user)
+            data = {
+                "Username": u.user.username,
+                "Subject": u.subject,
+                "Token": token.key,
+            }
+            return JsonResponse(data, status=status.HTTP_200_OK)
+        else:
+            data = {"Message": "There was error authenticating"}
             return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
