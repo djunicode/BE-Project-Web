@@ -146,7 +146,7 @@ class Login(generics.GenericAPIView):
                 return JsonResponse(data, status=status.HTTP_200_OK)
             except:
                 data = {"Message": "No Teacher Profile exists for this user"}
-                return JsonResponse(data, status=status.HTTP_404_NOT_FOUND) 
+                return JsonResponse(data, status=status.HTTP_404_NOT_FOUND)
         else:
             data = {"Message": "There was error authenticating"}
             return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
