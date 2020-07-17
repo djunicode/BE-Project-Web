@@ -15,15 +15,16 @@ class Login extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     // await console.log(this.state);
-    axios
-      .post(
-        `http://127.0.0.1:8000/auth/jwt/create/ username=${this.state.username} password=${this.state.password}`,
-        this.state
-      )
-      .then((res) => {
-        //   token = res.data.token;
-        localStorage.setItem("token", `${res.data.token}`);
-      });
+    // change this to post a form data as the username and password are to be posted as the part of data part of the request
+    // axios
+    //   .post(
+    //     `http://127.0.0.1:8000/api/Login/ username=${this.state.username} password=${this.state.password}`,
+    //     this.state
+    //   )
+    //   .then((res) => {
+    //     //   token = res.data.token;
+    //     localStorage.setItem("token", `${res.data.token}`);
+    //   });
   };
 
   render() {
