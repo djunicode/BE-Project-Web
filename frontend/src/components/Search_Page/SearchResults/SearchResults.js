@@ -16,7 +16,7 @@ export default class SearchResults extends Component{
                 </div>
                 <div className="col">
                   <h6>Guide</h6>
-                  <h4>Lord Sheku</h4>
+                  <h4>Pranit Sir</h4>
                 </div>
                 <div className="col">
                   <h6>GroupMembers</h6>
@@ -35,7 +35,7 @@ export default class SearchResults extends Component{
                 </div>
                 <div className="col">
                   <h6>Guide</h6>
-                  <h4>Lord Sheku</h4>
+                  <h4>Pranit Sir</h4>
                 </div>
                 <div className="col">
                   <h6>GroupMembers</h6>
@@ -54,7 +54,7 @@ export default class SearchResults extends Component{
                 </div>
                 <div className="col">
                   <h6>Guide</h6>
-                  <h4>Lord Sheku</h4>
+                  <h4>Pranit Sir</h4>
                 </div>
                 <div className="col">
                   <h6>GroupMembers</h6>
@@ -73,7 +73,7 @@ export default class SearchResults extends Component{
                 </div>
                 <div className="col">
                   <h6>Guide</h6>
-                  <h4>Lord Sheku</h4>
+                  <h4>Pranit Sir</h4>
                 </div>
                 <div className="col">
                   <h6>GroupMembers</h6>
@@ -92,7 +92,7 @@ export default class SearchResults extends Component{
                 </div>
                 <div className="col">
                   <h6>Guide</h6>
-                  <h4>Lord Sheku</h4>
+                  <h4>Pranit Sir</h4>
                 </div>
                 <div className="col">
                   <h6>GroupMembers</h6>
