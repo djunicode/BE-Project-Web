@@ -48,9 +48,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
     queryset = TeacherProfile.objects.all()
     serializer_class = TeacherSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = [
-        "subject",
-    ]
+    filterset_fields = ["subject"]
     permission_classes = (IsUserOrReadOnly, IsAuthenticatedOrReadOnly)
 
 
@@ -109,9 +107,7 @@ class GetDomainView(APIView):
 
 
 class Approve(generics.GenericAPIView):
-    authentication_classes = [
-        TokenAuthentication,
-    ]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request):
@@ -159,9 +155,7 @@ class Login(generics.GenericAPIView):
 
 
 class Delete_Project(generics.GenericAPIView):
-    authentication_classes = [
-        TokenAuthentication,
-    ]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request):
