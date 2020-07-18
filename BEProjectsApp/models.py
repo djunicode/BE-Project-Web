@@ -53,7 +53,8 @@ class Project(models.Model):
     # project description
     description = models.TextField()
     # year published and created will be stored
-    year_created = models.DateField(default=date.today)
+    # year_created = models.DateField(default=date.today)
+    year_created = models.PositiveSmallIntegerField(default=int(str(date.today())[:4]))
     # PDF to be uploaded
     document = models.FileField()
     # To check whether project is approved or not
