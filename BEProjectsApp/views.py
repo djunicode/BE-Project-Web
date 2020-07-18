@@ -24,13 +24,15 @@ from .permissions import IsUserOrReadOnly
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     # import pdb; pdb.set_trace()
-    filterset_fields = (
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
         "company",
         "supervisor",
         "domain",
@@ -39,20 +41,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
         "year_created",
         "title",
         "teacher__user__username",
-    )
+    ]
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = TeacherProfile.objects.all()
     serializer_class = TeacherSerializer
-    filterset_fields = ("subject",)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+        "subject",
+    ]
     permission_classes = (IsUserOrReadOnly, IsAuthenticatedOrReadOnly)
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
-    filterset_fields = ("name", "last_name", "email")
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["name", "last_name", "email"]
 
 
 class SearchProjectView(APIView):
