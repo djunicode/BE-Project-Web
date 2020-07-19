@@ -25,6 +25,8 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
+import json
+from django.shortcuts import get_object_or_404
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -104,6 +106,52 @@ class GetDomainView(APIView):
     def get(self, request):
         domains = [domain[0] for domain in DOMAIN_CHOICES]
         return Response(domains)
+
+
+class CreateProjectWithContributors(generics.GenericAPIView):
+    def post(self, request):
+        try:
+            # print(request.data)
+            data = request.data
+            print(json.loads(data["project"]))
+            proj = json.loads(data["project"])
+            print(json.loads(data["contributors"]))
+            cont = json.loads(data["contributors"])
+            try:
+                teacher = TeacherProfile.objects.get(pk=proj["teacher"])
+            except:
+                return JsonResponse(
+                    {"Message": "Teacher id not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            # teacher = get_object_or_404(TeacherProfile,pk=proj["teacher"])
+            print(data["document"])
+            project = Project(
+                title=proj["title"],
+                teacher=teacher,
+                description=proj["description"],
+                year_created=proj["year_created"],
+                document=data["document"],
+                domain=proj["domain"],
+                approved=proj["approved"],
+                is_inhouse=proj["is_inhouse"],
+                company="" if proj["is_inhouse"] else proj["company"],
+                supervisor="" if proj["is_inhouse"] else proj["supervisor"],
+            )
+            print(project)
+            project.save()
+            for contributor in cont:
+                contributor_var = Contributor(
+                    name=contributor["name"],
+                    last_name=contributor["last_name"],
+                    email=contributor["email"],
+                    project=project,
+                )
+                contributor_var.save()
+        except Exception as e:
+            print(e)
+            return JsonResponse({"Message": "error"}, status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"Message": "Success"}, status=status.HTTP_201_CREATED)
 
 
 class Approve(generics.GenericAPIView):
