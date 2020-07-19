@@ -188,7 +188,10 @@ class Login(generics.GenericAPIView):
 
                 login(request, user)
                 u = TeacherProfile.objects.get(user=user)
+                print(u)
                 data = {
+                    "Name": u.user.first_name + " " + u.user.last_name,
+                    "id": u.pk,
                     "Username": u.user.username,
                     "Subject": u.subject,
                     "Token": token.key,
