@@ -111,7 +111,7 @@ class GetDomainView(APIView):
 class CreateProjectWithContributors(generics.GenericAPIView):
     def post(self, request):
         try:
-            # print(request.data)
+            print(request.data)
             data = request.data
             print(json.loads(data["project"]))
             proj = json.loads(data["project"])
