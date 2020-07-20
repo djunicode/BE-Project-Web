@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormNextBack = styled.div`
-  float:right;
+  display: flex;
+  justify-content: flex-end;
   margin-top:20px;
   margin-bottom:20px;
 `
