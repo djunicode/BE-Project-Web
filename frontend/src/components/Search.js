@@ -4,7 +4,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import queryString from 'query-string';
 import styled from 'styled-components';
 import ProjectList from './ProjectList';
-import { Domains } from "../staticData";
 
 const useStyles = makeStyles((theme) => ({
   searchBox:{
@@ -14,11 +13,19 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     marginTop: 8,
     marginBottom:8,
-    minWidth: 200,
+    width: 200,
+    
+  },
+  fixHeight:{
+    minHeight:'90vh'
   },
   makeCenter : {
     display:'flex',
     justifyContent:'center'
+  },
+  filterButtons:{
+    marginTop:10,
+    marginBlock:10
   }
 }));
 const ProjectContent = styled.div`
@@ -31,7 +38,7 @@ margin-top:30px;
 const SearchContainer = styled.div`
 
 `
-const getOptionsForYear = () => {
+export const getOptionsForYear = () => {
   let curr = new Date().getFullYear();
   let data = [];
   for(let i = curr;i>=2015;i--)
@@ -51,7 +58,7 @@ function Search(props) {
   const [projects,setProjects] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [currentSearchFilter, setcurrentSearchFilter] = useState(false);
-  
+  const [DomainOptions, setDomainOptions] = useState([]);
   
   const classes = useStyles();
 
@@ -63,12 +70,25 @@ function Search(props) {
     fetch(`http://127.0.0.1:8000/api/teachers`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         setTeachers(result);
       })
       .catch(error => console.log('error', error));
   }
   const applyFilters = () => {
+    if(currentSearchFilter) {
+      let x = false;
+      if (house=="In-House") x=true; 
+      const newProjects = projects.filter(project => {
+        return (
+          project.domain==domain ||
+          project.year_created==year ||
+          project.house==x ||
+          project.teacher==faculty
+        )
+      });
+      setProjects(newProjects);
+      return;
+    }
     var requestOptions = {
       method: 'GET',
       redirect: 'follow'
@@ -80,10 +100,9 @@ function Search(props) {
     else if(house=="Out-House"){
       houseParam="False";
     }
-    fetch(`http://127.0.0.1:8000/api/projects?domain=${domain}&year_created=${year}&teacher__user__username=${faculty}&title=${currentSearchFilter?searchTerm:""}&is_inhouse=${houseParam}`, requestOptions)
+    fetch(`http://127.0.0.1:8000/api/projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log('on filter',result);
         setProjects(result);
       })
       .catch(error => console.log('error', error));
@@ -95,11 +114,10 @@ function Search(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch(`http://127.0.0.1:8000/api/projects?domain=${domain}&year_created=${year}&teacher__user__username=${faculty}&title=${searchTerm}`, requestOptions)
+      fetch(`http://127.0.0.1:8000/api/search?generic=${searchTerm}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-          console.log('on search',result);
-          setProjects(result);
+          setProjects(result[1].projects);
         })
         .catch(error => console.log('error', error));
     } 
@@ -113,25 +131,36 @@ function Search(props) {
       iniDomain = params.query;
       setdomain(iniDomain);
     }
-    console.log('params : ',params);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow'
     };
     
-    fetch(`http://127.0.0.1:8000/api/projects/?domain=${iniDomain}`, requestOptions)
+    fetch(`http://127.0.0.1:8000/api/projects/?domain=${iniDomain}&approved=True`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         setProjects(result);
       })
       .catch(error => console.log('error', error));
-
+    
+    const getDomains = () => {
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      fetch("http://127.0.0.1:8000/api/get_domains/", requestOptions)
+        .then(response => response.json())
+        .then(result => { 
+          setDomainOptions(result)
+        })
+        .catch(error => console.log('error', error));
+    }
     getTeachers();
+    getDomains();
   },[])
   return (
     <SearchContainer>
-      <Grid container spacing={2}>
+      <Grid container className={classes.fixHeight} >
         <Grid item md={3} xs={12} className={classes.makeCenter}>
           <Filters>
             <h6>Filters</h6>
@@ -146,10 +175,10 @@ function Search(props) {
                   onChange={(e) => setdomain(e.target.value)}
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
-                  <MenuItem value="" disabled>
+                  <MenuItem value="" >
                     Domains
                   </MenuItem>
-                  {Domains.map(domain => {
+                  {DomainOptions.map(domain => {
                     return (
                       <MenuItem 
                         value={domain}
@@ -172,7 +201,7 @@ function Search(props) {
                   onChange={(e) => setyear(e.target.value)}
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
-                  <MenuItem value="" disabled>
+                  <MenuItem value="" >
                     Year
                   </MenuItem>
                   {
@@ -202,14 +231,14 @@ function Search(props) {
                   onChange={(e) => setfaculty(e.target.value)}
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
-                  <MenuItem value="" disabled>
+                  <MenuItem value="">
                     Faculty
                   </MenuItem>
                   {
                     teachers.map(teacher => {
                       return (
                         <MenuItem 
-                          value={teacher.user.username}
+                          value={teacher.pk}
                         >
                           {teacher.user.first_name} {teacher.user.last_name}
                         </MenuItem>
@@ -248,9 +277,12 @@ function Search(props) {
                 label="Apply on Current Search"
               />
             </div>
-            <Button variant="contained" color="primary" onClick={applyFilters} fullWidth>
-              Apply Filters
-            </Button>
+            <div className={classes.filterButtons}>
+              <Button variant="contained" color="primary" onClick={applyFilters} fullWidth>
+                Apply Filters
+              </Button>
+            </div>
+            
           </Filters>
         </Grid>
         <Grid item md={9} xs={12}>
@@ -259,7 +291,7 @@ function Search(props) {
               <TextField
                 className={classes.searchBox}
                 id="input-with-icon-textfield"
-                placeholder="Search Student Name or Project Name.."
+                placeholder="Search Project Name.."
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e) => setsearchTerm(e.target.value)}
@@ -273,7 +305,10 @@ function Search(props) {
                 }}
               />
             </div>
-            <ProjectList projects={projects}/>
+            <ProjectList 
+            projects={projects}
+            teachers={teachers}
+            />
           </ProjectContent>
           
         </Grid>

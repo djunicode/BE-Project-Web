@@ -27,21 +27,16 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-  cardStyle:{
-    minHeight: 150,
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    color: 'white',
-    borderRadius: 5,
-    wordBreak: 'break-all',
-    background: 'salmon',
-  }
+  
+  fixHeight:{
+    minHeight:'90vh'
+  },
 }));
-export default function Login() {
+export default function Login(props) {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error,setError] = useState(null);
   const classes = useStyles();
   
   const signIn = () => {
@@ -58,12 +53,26 @@ export default function Login() {
     };
 
     fetch("http://127.0.0.1:8000/api/Login", requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
+      .then(response => response.json())
+      .then(result => {
+        if(!result.hasOwnProperty("Message")) {
+          setError(null);
+          localStorage.setItem('Token', result.Token);
+          localStorage.setItem('Name', result.Name);
+          localStorage.setItem('Username', result.Username);
+          localStorage.setItem('id', result.id);
+          localStorage.setItem('Subject',result.Subject);
+          localStorage.setItem('Status', 'LoggedIn');
+          props.history.push("/teacher");
+        }
+        else {
+          setError(result.Message);
+        }
+      })
       .catch(error => console.log('error', error));
   }
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" className={classes.fixHeight}>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -101,13 +110,16 @@ export default function Login() {
             fullWidth
             variant="contained"
             color="primary"
-            // onClick={signIn}
+            onClick={signIn}
             className={classes.submit}
           >
             Sign In
           </Button>
           
         </form>
+        {error && (
+          <div style={{color:'red'}}>{error}</div>
+        )}
       </div>
       
     </Container>

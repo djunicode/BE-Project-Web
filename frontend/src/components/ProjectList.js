@@ -4,8 +4,8 @@ import { Grid } from '@material-ui/core';
 
 const ProjectContainer = styled.div`
   padding:8px;
-  margin-top:20px;
-  margin-bottom:20px;
+  margin-top:10px;
+  margin-bottom:10px;
 
 `
 const ProjectCard = styled.div`
@@ -24,75 +24,74 @@ const ProjectCardDetail = styled.div`
   font-size: 16px;
   color: #747474;
 `
-const getTeacherName = (pk) => {
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
-  var name;
-  fetch(`http://127.0.0.1:8000/api/teachers/${pk}`, requestOptions)
-    .then(response => response.json())
-    .then(result => {
-      console.log(result.user.username);
-      name = result.user.username;
-    })
-    .catch(error => console.log('error', error));
-  
-  console.log(name);
+
+const getTeacherName = (teachers,pk) => {
+  let name="";
+  if(teachers.length > 0) {
+    let teacher = teachers.filter(val => val.pk==pk);
+    name = teacher[0].user.first_name +" "+teacher[0].user.last_name;
+  }
   return name;
 }
+
 function ProjectList(props) {
   const [projects, setprojects] = useState([]);
+  
   React.useEffect(() => {
     setprojects(props.projects);
-  },[props.projects])
+  },[props.projects]);
+  
   return (
-      <ProjectContainer>
+    <ProjectContainer>
+      {
+        projects.length?<>
           {
-            projects.length?<>
-              {
-                projects.map(project => {
-                  return (
-                    <ProjectCard>
-                      <div>
-                        <ProjectCardDes>Project Name</ProjectCardDes>
-                        <h3>{project.title}</h3>
-                      </div>
-                      <Grid container>
-                        <Grid item md={4} xs={12}>
-                          <ProjectCardDes>Domain</ProjectCardDes>
-                          <ProjectCardDetail> {project.domain} </ProjectCardDetail>
-                        </Grid>
-                        <Grid item md={4} xs={12}>
-                          <ProjectCardDes>Guide</ProjectCardDes>
-                          <ProjectCardDetail> {getTeacherName(project.teacher)} </ProjectCardDetail>
-                        </Grid>
-                        <Grid item md={4} xs={12}>
-                          <ProjectCardDes>Group Members</ProjectCardDes>
-                          <ProjectCardDetail>
-                            {
-                              [0].map(dummy => {
-                                let cbs='';
-                                project.contributor.forEach(contri => {
-                                  cbs+=`${contri.name},`
-                                })
-                                cbs = cbs.slice(0,-1);
-                                return cbs;
-                              })
-                            }
-                          </ProjectCardDetail>
-                        </Grid>
-                      </Grid>
-                    </ProjectCard>
-                  )
-                })
-              }
-            </>:
-            <div>
-              No Projects Found
-            </div>
+            projects.map(project => {
+              return (
+                <ProjectCard>
+                  <div>
+                    <ProjectCardDes>Project Name</ProjectCardDes>
+                    <h5>{project.title}</h5>
+                  </div>
+                  <Grid container>
+                    <Grid item md={3} xs={12}>
+                      <ProjectCardDes>Domain</ProjectCardDes>
+                      <ProjectCardDetail> {project.domain} </ProjectCardDetail>
+                    </Grid>
+                    <Grid item md={3} xs={12}>
+                      <ProjectCardDes>Guide</ProjectCardDes>
+                      <ProjectCardDetail> {getTeacherName(props.teachers,project.teacher)} </ProjectCardDetail>
+                    </Grid>
+                    <Grid item md={3} xs={12}>
+                      <ProjectCardDes>Year</ProjectCardDes>
+                      <ProjectCardDetail> {project.year_created} </ProjectCardDetail>
+                    </Grid>
+                    <Grid item md={3} xs={12}>
+                      <ProjectCardDes>Group Members</ProjectCardDes>
+                      <ProjectCardDetail>
+                        {
+                          [0].map(dummy => {
+                            let cbs='';
+                            project.contributor.forEach(contri => {
+                              cbs+=`${contri.name},`
+                            })
+                            cbs = cbs.slice(0,-1);
+                            return cbs;
+                          })
+                        }
+                      </ProjectCardDetail>
+                    </Grid>
+                  </Grid>
+                </ProjectCard>
+              )
+            })
           }
-      </ProjectContainer>
+        </>:
+        <div>
+          No Projects Found
+        </div>
+      }
+    </ProjectContainer>
   )
 }
 
