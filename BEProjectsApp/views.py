@@ -42,7 +42,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         "approved",
         "year_created",
         "title",
-        "teacher__user__username",
+        "teacher",
     ]
 
 
@@ -166,8 +166,7 @@ class Approve(generics.GenericAPIView):
         try:
             p = Project.objects.get(id=pk)
 
-            p.approved = True
-            p.save()
+            p.publish()
             data = {"flag": 1, "Message": "ok"}
             return JsonResponse(data, status=status.HTTP_200_OK)
         except:
