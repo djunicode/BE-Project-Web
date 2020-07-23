@@ -4,6 +4,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import queryString from 'query-string';
 import styled from 'styled-components';
 import ProjectList from './ProjectList';
+import MainNav from './MainNav';
 
 const useStyles = makeStyles((theme) => ({
   searchBox:{
@@ -158,7 +159,9 @@ function Search(props) {
     getTeachers();
     getDomains();
   },[])
-  return (
+  return (<div>
+    <MainNav/>
+  
     <SearchContainer>
       <Grid container className={classes.fixHeight} >
         <Grid item md={3} xs={12} className={classes.makeCenter}>
@@ -314,6 +317,7 @@ function Search(props) {
         </Grid>
       </Grid>
     </SearchContainer>
+    </div>
   )
 }
 

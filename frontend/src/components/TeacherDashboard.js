@@ -3,6 +3,7 @@ import { Grid, Paper, Tabs, Tab, makeStyles,Box,Typography, Container, Avatar, B
 import PropTypes from 'prop-types';
 import ProjectApproval from './ProjectsApproval';
 import ProjectList from './ProjectList';
+import MainNav from './MainNav';
 
 const useStyles = makeStyles({
   root: {
@@ -107,7 +108,8 @@ function TeacherDashboard(props) {
     };
     getData();
   },[])
-  return (
+  return (<div>
+    <MainNav/>
     <div>
       <Grid container className={classes.fixHeight}>
         <Grid item md={3} xs={12} className={classes.userInfo}>
@@ -182,6 +184,7 @@ function TeacherDashboard(props) {
         </Grid>
       </Grid>
     </div>
+  </div>
   )
 }
 

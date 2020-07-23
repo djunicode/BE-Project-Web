@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import styled from 'styled-components'
-import { Grid } from '@material-ui/core';
-
+import { Grid, IconButton } from '@material-ui/core';
+import DescriptionIcon from '@material-ui/icons/Description';
 const ProjectContainer = styled.div`
   padding:8px;
   margin-top:10px;
@@ -49,10 +49,23 @@ function ProjectList(props) {
             projects.map(project => {
               return (
                 <ProjectCard>
-                  <div>
-                    <ProjectCardDes>Project Name</ProjectCardDes>
-                    <h5>{project.title}</h5>
-                  </div>
+                  <Grid container>
+                    <Grid item md={9} xs={9}>
+                      <ProjectCardDes>Project Name</ProjectCardDes>
+                      <h5>{project.title}</h5>
+                    </Grid>
+                    <Grid item md={3} xs={3}>
+                    <IconButton 
+                      target="_blank" 
+                      variant="contained" 
+                      color="primary" 
+                      href={project.document}
+                      
+                      >
+                        <DescriptionIcon/>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
                   <Grid container>
                     <Grid item md={3} xs={12}>
                       <ProjectCardDes>Domain</ProjectCardDes>
