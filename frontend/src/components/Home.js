@@ -4,6 +4,7 @@ import { Container, Grid, Typography, Paper } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import MainNav from './MainNav';
+import { SERVER_URL } from '../config';
 
 const useStyles = makeStyles((theme) => ({
     cardStyle:{
@@ -41,7 +42,7 @@ function Home(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch("http://127.0.0.1:8000/api/get_domains/", requestOptions)
+      fetch(`${SERVER_URL}/api/get_domains/`, requestOptions)
         .then(response => response.json())
         .then(result => { 
           setDomainOptions(result)

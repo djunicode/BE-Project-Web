@@ -258,7 +258,7 @@ function Upload() {
             </Select>
           </FormControl>
         </Grid>
-          {house=='Out-House'?<>
+          {house=='Out-House' && <>
             <Grid item xs={12} md={6}>
               <TextField 
               fullWidth 
@@ -277,30 +277,29 @@ function Upload() {
               onChange={(e) => setsupervisor(e.target.value)} 
               />
             </Grid>
-            </>:
-            <Grid item xs={12} md={12}>
-              <FormControl className={classes.root}>
-                <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={mentor}
-                  onChange={(e) => setmentor(e.target.value)}
-                >
-                  {teachers.map(teacher => {
-                    return (
-                      <MenuItem 
-                        value={teacher.pk}
-                      >
-                        {teacher.user.first_name} {teacher.user.last_name}
-                      </MenuItem>
-                    )
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
+            </>
           }
-        
+        <Grid item xs={12} md={12}>
+          <FormControl className={classes.root}>
+            <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={mentor}
+              onChange={(e) => setmentor(e.target.value)}
+            >
+              {teachers.map(teacher => {
+                return (
+                  <MenuItem 
+                    value={teacher.pk}
+                  >
+                    {teacher.user.first_name} {teacher.user.last_name}
+                  </MenuItem>
+                )
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid item xs={12} md={12}>
           <TextField
             id="outlined-multiline-static"

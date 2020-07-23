@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import styled from 'styled-components';
 import ProjectList from './ProjectList';
 import MainNav from './MainNav';
+import { SERVER_URL } from '../config';
 
 const useStyles = makeStyles((theme) => ({
   searchBox:{
@@ -68,7 +69,7 @@ function Search(props) {
       method: 'GET',
       redirect: 'follow'
     };
-    fetch(`http://127.0.0.1:8000/api/teachers`, requestOptions)
+    fetch(`${SERVER_URL}/api/teachers`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setTeachers(result);
@@ -101,7 +102,7 @@ function Search(props) {
     else if(house=="Out-House"){
       houseParam="False";
     }
-    fetch(`http://127.0.0.1:8000/api/projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
+    fetch(`${SERVER_URL}/api/projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setProjects(result);
@@ -115,7 +116,7 @@ function Search(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch(`http://127.0.0.1:8000/api/search?generic=${searchTerm}`, requestOptions)
+      fetch(`${SERVER_URL}/api/search?generic=${searchTerm}`, requestOptions)
         .then(response => response.json())
         .then(result => {
           setProjects(result[1].projects);
@@ -137,7 +138,7 @@ function Search(props) {
       redirect: 'follow'
     };
     
-    fetch(`http://127.0.0.1:8000/api/projects/?domain=${iniDomain}&approved=True`, requestOptions)
+    fetch(`${SERVER_URL}/api/projects/?domain=${iniDomain}&approved=True`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setProjects(result);
@@ -149,7 +150,7 @@ function Search(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch("http://127.0.0.1:8000/api/get_domains/", requestOptions)
+      fetch(`${SERVER_URL}/api/get_domains/`, requestOptions)
         .then(response => response.json())
         .then(result => { 
           setDomainOptions(result)
