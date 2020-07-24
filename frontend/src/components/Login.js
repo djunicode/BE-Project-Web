@@ -7,7 +7,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import MainNav from './MainNav';
+import { SERVER_URL } from '../config';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -52,7 +53,7 @@ export default function Login(props) {
       redirect: 'follow'
     };
 
-    fetch("http://127.0.0.1:8000/api/Login", requestOptions)
+    fetch(`${SERVER_URL}/api/Login`, requestOptions)
       .then(response => response.json())
       .then(result => {
         if(!result.hasOwnProperty("Message")) {
@@ -71,7 +72,9 @@ export default function Login(props) {
       })
       .catch(error => console.log('error', error));
   }
-  return (
+  return (<div>
+    <MainNav/>
+  
     <Container component="main" maxWidth="xs" className={classes.fixHeight}>
       <CssBaseline />
       <div className={classes.paper}>
@@ -123,5 +126,6 @@ export default function Login(props) {
       </div>
       
     </Container>
+    </div>
   );
 }

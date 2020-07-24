@@ -10,6 +10,7 @@ import {getOptionsForYear} from './Search'
 import { FormControlLabel, RadioGroup, Radio,FormControl, FormLabel, Grid, TextField, MenuItem, Select, InputLabel, Chip, Avatar } from '@material-ui/core';
 
 import styled from 'styled-components';
+import MainNav from './MainNav';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -121,7 +122,7 @@ function Upload() {
     else if(house=="Out-House"){
       if(
         domain=="" || title==""||
-        date=="" || mentor=="" ||
+        date=="" ||
         file==null || description=="" ||
         contributors.length<2 || 
         supervisor=="" || company==""
@@ -194,7 +195,10 @@ function Upload() {
   React.useEffect(() => {
     getTeachers();
   },[])
-  return (<Container maxWidth="md" className={classes.fixHeight}>
+  return (<div>
+    <MainNav/>
+  
+  <Container maxWidth="md" className={classes.fixHeight}>
   <div className={classes.root}>
     <Stepper activeStep={activeStep} alternativeLabel>
       {steps.map((label) => (
@@ -254,7 +258,7 @@ function Upload() {
             </Select>
           </FormControl>
         </Grid>
-          {house=='Out-House'?<>
+          {house=='Out-House' && <>
             <Grid item xs={12} md={6}>
               <TextField 
               fullWidth 
@@ -273,30 +277,29 @@ function Upload() {
               onChange={(e) => setsupervisor(e.target.value)} 
               />
             </Grid>
-            </>:
-            <Grid item xs={12} md={12}>
-              <FormControl className={classes.root}>
-                <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={mentor}
-                  onChange={(e) => setmentor(e.target.value)}
-                >
-                  {teachers.map(teacher => {
-                    return (
-                      <MenuItem 
-                        value={teacher.pk}
-                      >
-                        {teacher.user.first_name} {teacher.user.last_name}
-                      </MenuItem>
-                    )
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
+            </>
           }
-        
+        <Grid item xs={12} md={12}>
+          <FormControl className={classes.root}>
+            <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={mentor}
+              onChange={(e) => setmentor(e.target.value)}
+            >
+              {teachers.map(teacher => {
+                return (
+                  <MenuItem 
+                    value={teacher.pk}
+                  >
+                    {teacher.user.first_name} {teacher.user.last_name}
+                  </MenuItem>
+                )
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid item xs={12} md={12}>
           <TextField
             id="outlined-multiline-static"
@@ -422,6 +425,7 @@ function Upload() {
       )}
     </FormNextBack>
 </Container>
+</div>
 )
 }
 

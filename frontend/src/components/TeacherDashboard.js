@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Grid, Paper, Tabs, Tab, makeStyles,Box,Typography, Container, Avatar, Button } from '@material-ui/core'
 import PropTypes from 'prop-types';
 import ProjectApproval from './ProjectsApproval';
-import ProjectList from './ProjectList';
+import MainNav from './MainNav';
+import { SERVER_URL } from '../config';
 
 const useStyles = makeStyles({
   root: {
@@ -90,7 +91,7 @@ function TeacherDashboard(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch(`http://127.0.0.1:8000/api/teachers/${pk}`, requestOptions)
+      fetch(`${SERVER_URL}/api/teachers/${pk}`, requestOptions)
         .then(response => response.json())
         .then(result => {  
           const projects = result.project;
@@ -107,7 +108,8 @@ function TeacherDashboard(props) {
     };
     getData();
   },[])
-  return (
+  return (<div>
+    <MainNav/>
     <div>
       <Grid container className={classes.fixHeight}>
         <Grid item md={3} xs={12} className={classes.userInfo}>
@@ -182,6 +184,7 @@ function TeacherDashboard(props) {
         </Grid>
       </Grid>
     </div>
+  </div>
   )
 }
 

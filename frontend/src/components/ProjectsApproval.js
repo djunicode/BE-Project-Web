@@ -1,10 +1,10 @@
 import React,{useState} from 'react'
 import styled from 'styled-components'
 import { Grid, Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { SERVER_URL } from '../config';
 
 const ProjectContainer = styled.div`
   padding:8px;
@@ -55,7 +55,7 @@ function ProjectApproval(props) {
       redirect: 'follow'
     };
 
-    fetch("http://localhost:8000/api/Approve_project", requestOptions)
+    fetch(`${SERVER_URL}/api/Approve_project`, requestOptions)
       .then(response => response.text())
       .then(result => window.location.reload(false))
       .catch(error => console.log('error', error));
@@ -76,7 +76,7 @@ function ProjectApproval(props) {
       redirect: 'follow'
     };
 
-    fetch("http://127.0.0.1:8000/api/Delete_Project", requestOptions)
+    fetch(`${SERVER_URL}/api/Delete_Project`, requestOptions)
       .then(response => response.json())
       .then(result => window.location.reload(false))
       .catch(error => console.log('error', error));

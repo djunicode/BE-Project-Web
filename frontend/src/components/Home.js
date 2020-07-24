@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { Container, Grid, Typography, Paper } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
+import MainNav from './MainNav';
+import { SERVER_URL } from '../config';
 
 const useStyles = makeStyles((theme) => ({
     cardStyle:{
@@ -14,7 +16,10 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 5,
       wordBreak: 'break-word',
       background: 'salmon',
-    }
+    },
+    fixHeight:{
+      minHeight:'90vh'
+    },
   }));
 
 const HomeContainer = styled.div`
@@ -37,7 +42,7 @@ function Home(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch("http://127.0.0.1:8000/api/get_domains/", requestOptions)
+      fetch(`${SERVER_URL}/api/get_domains/`, requestOptions)
         .then(response => response.json())
         .then(result => { 
           setDomainOptions(result)
@@ -46,9 +51,10 @@ function Home(props) {
     }
     getDomains();
   },[])
-  return (
+  return (<div>
+    <MainNav/>
     <HomeContainer>
-      <Container maxWidth="md">
+      <Container maxWidth="md" className={classes.fixHeight} >
         <h1 class="styleHeader">Look Up the Archive</h1>
         <p class="styleHeader">Select the domain of the project you are loooking for</p>
         <Grid container spacing={3}>
@@ -68,6 +74,7 @@ function Home(props) {
         </Grid>
       </Container>
     </HomeContainer>
+    </div>
   )
 }
 
