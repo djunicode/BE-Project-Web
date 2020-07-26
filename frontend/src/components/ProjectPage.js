@@ -113,7 +113,7 @@ export default function ProjectPage(props) {
                   {[0].map((dummy) => {
                     let cbs = '';
                     project.contributor.forEach((contri) => {
-                      cbs += `${contri.name},`;
+                      cbs += `${contri.name}`+` ${contri.last_name}`+` (${contri.email}) ; `;
                     });
                     cbs = cbs.slice(0, -1);
                     return cbs;
