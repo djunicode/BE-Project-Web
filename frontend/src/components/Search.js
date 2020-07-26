@@ -160,6 +160,7 @@ function Search(props) {
     getTeachers();
     getDomains();
   },[])
+
   return (<div>
     <MainNav/>
   

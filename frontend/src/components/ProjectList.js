@@ -2,6 +2,21 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Grid, IconButton } from "@material-ui/core";
 import DescriptionIcon from "@material-ui/icons/Description";
+import ProjectPage from './ProjectPage';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  Container: {
+    paddingLeft: '4vh',
+    marginTop: '1vh',
+  },
+  ContainerLast: {
+    paddingLeft: '4vh',
+    marginTop: '1vh',
+    marginBottom: '1vh'
+  }
+}));
+
 const ProjectContainer = styled.div`
   padding: 8px;
   margin-top: 10px;
@@ -34,85 +49,121 @@ const getTeacherName = (teachers, pk) => {
 };
 
 function ProjectList(props) {
+  const classes = useStyles();
+
   const [projects, setprojects] = useState([]);
+  const [currentProj, setCurrentProj] = useState(null);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (project) => {
+    setOpen(true);
+    setCurrentProj(project)
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCurrentProj(null);
+  };
 
   React.useEffect(() => {
     setprojects(props.projects);
   }, [props.projects]);
 
   return (
-    <ProjectContainer>
-      {projects.length ? (
-        <>
-          {projects.map((project) => {
-            return (
-              <ProjectCard>
-                <Grid container>
-                  <Grid item md={9} xs={9}>
-                    <ProjectCardDes>Project Name</ProjectCardDes>
-                    <h5>{project.title}</h5>
-                  </Grid>
-                  <Grid item md={3} xs={3}>
-                    <IconButton
-                      target="_blank"
-                      variant="contained"
-                      color="primary"
-                      href={project.document}
-                    >
-                      <DescriptionIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-                <Grid container>
-                  <Grid item md={12} xs={12}>
-                    <ProjectCardDes>Description</ProjectCardDes>
-                    <ProjectCardDetail>
-                      {" "}
-                      {project.description}{" "}
-                    </ProjectCardDetail>
-                  </Grid>
-                </Grid>
-                <Grid container>
-                  <Grid item md={3} xs={12}>
-                    <ProjectCardDes>Domain</ProjectCardDes>
-                    <ProjectCardDetail> {project.domain} </ProjectCardDetail>
-                  </Grid>
-                  <Grid item md={3} xs={12}>
-                    <ProjectCardDes>Guide</ProjectCardDes>
-                    <ProjectCardDetail>
-                      {" "}
-                      {getTeacherName(props.teachers, project.teacher)}{" "}
-                    </ProjectCardDetail>
-                  </Grid>
-                  <Grid item md={3} xs={12}>
-                    <ProjectCardDes>Year</ProjectCardDes>
-                    <ProjectCardDetail>
-                      {" "}
-                      {project.year_created}{" "}
-                    </ProjectCardDetail>
-                  </Grid>
-                  <Grid item md={3} xs={12}>
-                    <ProjectCardDes>Group Members</ProjectCardDes>
-                    <ProjectCardDetail>
-                      {[0].map((dummy) => {
-                        let cbs = "";
-                        project.contributor.forEach((contri) => {
-                          cbs += `${contri.name},`;
-                        });
-                        cbs = cbs.slice(0, -1);
-                        return cbs;
-                      })}
-                    </ProjectCardDetail>
-                  </Grid>
-                </Grid>
-              </ProjectCard>
-            );
-          })}
-        </>
-      ) : (
-        <div>No Projects Found</div>
-      )}
-    </ProjectContainer>
+    <React.Fragment>
+      <ProjectContainer>
+        {projects.length ? (
+          <>
+            {projects.map((project) => {
+              return (
+                <ProjectCard key={project.id}>
+                  {open ? (
+                    <ProjectPage project={currentProj} openFn={handleClickOpen} closeFn={handleClose} />
+                  ) : null}
+                    <div onClick={handleClickOpen.bind(this, project)}>
+                      <Grid
+                        container
+                        className={classes.Container}
+                      >
+                        <Grid item md={9} xs={9}>
+                          <ProjectCardDes>Project Name</ProjectCardDes>
+                          <h5>{project.title}</h5>
+                        </Grid>
+                        <Grid item md={3} xs={3}>
+                          <IconButton
+                            target="_blank"
+                            variant="contained"
+                            color="primary"
+                            href={project.document}
+                          >
+                            <DescriptionIcon />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                      <Grid
+                        container
+                        className={classes.Container}
+                      >
+                        <Grid item md={12} xs={12}>
+                          <ProjectCardDes>Description</ProjectCardDes>
+                          <ProjectCardDetail>
+                            {' '}
+                            {project.description}{' '}
+                          </ProjectCardDetail>
+                        </Grid>
+                      </Grid>
+                      <Grid
+                        container
+                        className={classes.ContainerLast}
+                      >
+                        <Grid item md={3} xs={12}>
+                          <ProjectCardDes>Domain</ProjectCardDes>
+                          <ProjectCardDetail>
+                            {' '}
+                            {project.domain}{' '}
+                          </ProjectCardDetail>
+                        </Grid>
+                        <Grid item md={3} xs={12}>
+                          <ProjectCardDes>Guide</ProjectCardDes>
+                          <ProjectCardDetail>
+                            {' '}
+                            {getTeacherName(
+                              props.teachers,
+                              project.teacher
+                            )}{' '}
+                          </ProjectCardDetail>
+                        </Grid>
+                        <Grid item md={3} xs={12}>
+                          <ProjectCardDes>Year</ProjectCardDes>
+                          <ProjectCardDetail>
+                            {' '}
+                            {project.year_created}{' '}
+                          </ProjectCardDetail>
+                        </Grid>
+                        <Grid item md={3} xs={12}>
+                          <ProjectCardDes>Group Members</ProjectCardDes>
+                          <ProjectCardDetail>
+                            {[0].map((dummy) => {
+                              let cbs = '';
+                              project.contributor.forEach((contri) => {
+                                cbs += `${contri.name},`;
+                              });
+                              cbs = cbs.slice(0, -1);
+                              return cbs;
+                            })}
+                          </ProjectCardDetail>
+                        </Grid>
+                      </Grid>
+                    </div>
+                </ProjectCard>
+              );
+            })}
+          </>
+        ) : (
+          <div>No Projects Found</div>
+        )}
+      </ProjectContainer>
+    </React.Fragment>
   );
 }
 
