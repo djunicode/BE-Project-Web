@@ -22,7 +22,7 @@ function App() {
           <Route exact path="/" component={Home}/>
           <Route exact path="/search" component={Search}/>
           <SignedInRoute exact path="/login" component={Login}/>
-          <Route exact path="/upload" component={Upload}/>
+          <ProtectedRoute exact path="/upload" component={Upload}/>
           <ProtectedRoute exact path="/teacher" component={TeacherDashboard}/>
           <Route path="*" exact component={() => '404 NOT FOUND'} />{' '}
         </Switch>

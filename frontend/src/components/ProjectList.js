@@ -23,6 +23,12 @@ const ProjectContainer = styled.div`
   margin-bottom: 10px;
 `;
 const ProjectCard = styled.div`
+  &:hover {
+    background: #f5f5f5;
+    box-shadow: 0 28px 28px -28px #999; 
+  }
+  transition: background 0.3s;
+  transition-timing-function: ease;
   border: 1px solid #ded1d1;
   border-radius: 5px;
   padding: 10px;
@@ -55,6 +61,8 @@ function ProjectList(props) {
   const [currentProj, setCurrentProj] = useState(null);
   const [open, setOpen] = React.useState(false);
 
+  let fullScr = false
+
   const handleClickOpen = (project) => {
     setOpen(true);
     setCurrentProj(project)
@@ -64,6 +72,10 @@ function ProjectList(props) {
     setOpen(false);
     setCurrentProj(null);
   };
+
+  if (localStorage.getItem('Token') != null) {
+    fullScr = true
+  }
 
   React.useEffect(() => {
     setprojects(props.projects);
@@ -78,7 +90,7 @@ function ProjectList(props) {
               return (
                 <ProjectCard key={project.id}>
                   {open ? (
-                    <ProjectPage project={currentProj} openFn={handleClickOpen} closeFn={handleClose} />
+                    <ProjectPage project={currentProj} openFn={handleClickOpen} closeFn={handleClose} screen={fullScr} />
                   ) : null}
                     <div onClick={handleClickOpen.bind(this, project)}>
                       <Grid

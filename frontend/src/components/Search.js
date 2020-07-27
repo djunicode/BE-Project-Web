@@ -160,7 +160,6 @@ function Search(props) {
     getTeachers();
     getDomains();
   },[])
-
   return (<div>
     <MainNav/>
   
@@ -219,9 +218,7 @@ function Search(props) {
                         </MenuItem>
                       )
                     })
-                  }
-                  
-                  
+                  }           
                 </Select>
               </FormControl>
             </div>
@@ -249,10 +246,7 @@ function Search(props) {
                         </MenuItem>
                       )
                     })
-                  }
-                  
-                  
-              
+                  }             
                 </Select>
               </FormControl>
             </div>
