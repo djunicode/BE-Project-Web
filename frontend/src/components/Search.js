@@ -218,9 +218,7 @@ function Search(props) {
                         </MenuItem>
                       )
                     })
-                  }
-                  
-                  
+                  }           
                 </Select>
               </FormControl>
             </div>
@@ -248,10 +246,7 @@ function Search(props) {
                         </MenuItem>
                       )
                     })
-                  }
-                  
-                  
-              
+                  }             
                 </Select>
               </FormControl>
             </div>
