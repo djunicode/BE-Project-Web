@@ -6,9 +6,23 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
 import {getOptionsForYear} from './Search' 
-import { FormControlLabel, RadioGroup, Radio,FormControl, FormLabel, Grid, TextField, MenuItem, Select, InputLabel, Chip, Avatar } from '@material-ui/core';
-
+import { FormControlLabel, 
+  RadioGroup, 
+  Radio,FormControl, 
+  FormLabel, 
+  Grid, 
+  TextField, 
+  MenuItem, 
+  Select as MUISelect, 
+  InputLabel, 
+  Chip, 
+  Avatar, 
+  IconButton
+} from '@material-ui/core';
+import Select from 'react-select';
 import styled from 'styled-components';
 import MainNav from './MainNav';
 const useStyles = makeStyles((theme) => ({
@@ -29,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
   fixHeight:{
     minHeight:'90vh'
   },
+  alignedRightButtons:{
+    float:'right',
+    padding:0
+  }
 }));
 
 const FormNextBack = styled.div`
@@ -36,6 +54,10 @@ const FormNextBack = styled.div`
   justify-content: flex-end;
   margin-top:20px;
   margin-bottom:20px;
+`
+const Description = styled.h6`
+  padding-top:10px;
+  padding-bottom:10px;
 `
 function getSteps() {
   return ['Enter Information', 'Enter Contributors'];
@@ -61,6 +83,34 @@ function Upload() {
   const [contriLastName, setcontriLastName] = useState("");
   const [contriEmail, setcontriEmail] = useState("");
   const [DomainOptions, setDomainOptions] = useState([]);
+  const [linksList, setlinksList] = useState([{ description: "", url: "" }]);
+  const [highlights, sethighlights] = useState([{description:""}]);
+  const options = [
+    { value: 'Rohan', label: 'Rohan' },
+    { value: 'Jash', label: 'Jash' },
+    { value: 'Rashmil', label: 'Rashmil' }
+  ]
+
+  // handle input change
+  const handleInputChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...linksList];
+    list[index][name] = value;
+    setlinksList(list);
+  };
+ 
+  // handle click event of the Remove button
+  const handleRemoveClick = index => {
+    const list = [...linksList];
+    list.splice(index, 1);
+    setlinksList(list);
+  };
+ 
+  // handle click event of the Add button
+  const handleAddClick = () => {
+    setlinksList([...linksList, { description: "", url: "" }]);
+  };
+
   React.useEffect(() => {
     const getDomains = () => {
       var requestOptions = {
@@ -96,7 +146,7 @@ function Upload() {
     setErrors("");
     if((activeStep+1)==2)
     {
-      if(!checkErrors())
+      if(!checkErrors)
       {
         submitData();
       }
@@ -243,7 +293,7 @@ function Upload() {
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
             <InputLabel id="domain-label">Domain</InputLabel>
-            <Select
+            <MUISelect
               labelId="domain-label"
               id="domain"
               value={domain}
@@ -255,7 +305,7 @@ function Upload() {
                 )
               })}
               
-            </Select>
+            </MUISelect>
           </FormControl>
         </Grid>
           {house=='Out-House' && <>
@@ -282,7 +332,7 @@ function Upload() {
         <Grid item xs={12} md={12}>
           <FormControl className={classes.root}>
             <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
-            <Select
+            <MUISelect
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={mentor}
@@ -297,7 +347,7 @@ function Upload() {
                   </MenuItem>
                 )
               })}
-            </Select>
+            </MUISelect>
           </FormControl>
         </Grid>
         <Grid item xs={12} md={12}>
@@ -316,7 +366,7 @@ function Upload() {
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
             <InputLabel id="year-label">Year</InputLabel>
-            <Select
+            <MUISelect
               labelId="year-label"
               id="year"
               value={date}
@@ -333,7 +383,7 @@ function Upload() {
                   )
                 })
               }
-            </Select>
+            </MUISelect>
           </FormControl>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -393,6 +443,120 @@ function Upload() {
           </Button>
         </Grid>
       </Grid>
+      <div style={{margin:'10px 0'}}>
+        <Description>Add Contributors</Description>
+        <Select 
+          isMulti
+          name="colors"
+          options={options}
+          className="contri-select"
+          classNamePrefix="selectors"
+        />
+      </div>
+      <div style={{margin:'10px 0'}}>
+        <Description>Links</Description>
+        {linksList.map((x, i) => {
+        return (
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <TextField 
+              id={`link${i}`} 
+              label="Description" 
+              variant="outlined"
+              name="description"
+              value={x.description}
+              onChange={e => handleInputChange(e, i)}
+              fullWidth
+              size="small" 
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField 
+              id={`description${i}`} 
+              label="URL" 
+              variant="outlined"
+              name="url"
+              value={x.url}
+              onChange={e => handleInputChange(e, i)}
+              fullWidth 
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} md={12} >
+            {linksList.length - 1 === i &&
+              <IconButton 
+              className={classes.alignedRightButtons}
+              onClick={handleAddClick}
+              >
+                <AddCircleOutlineOutlinedIcon/>
+              </IconButton>
+            } 
+            {linksList.length !== 1 &&
+              <IconButton 
+              id={`removeLink${i}`}
+              className={classes.alignedRightButtons}
+              onClick={() => handleRemoveClick(i)}
+              >
+                <RemoveCircleOutlineOutlinedIcon/>
+              </IconButton>
+            }
+          </Grid>
+        </Grid>
+        )})}
+      </div>
+      <div style={{margin:'10px 0'}}>
+        <Description>Highlights</Description>
+        {
+          highlights.map((x,i) => {
+            return (
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={12}>
+                  <TextField 
+                    id={`award${i}`} 
+                    label="Description" 
+                    variant="outlined"
+                    name="description"
+                    value={x.description}
+                    onChange={e => {
+                      let { name, value } = e.target;
+                      let list = [...highlights];
+                      list[i][name] = value;
+                      sethighlights(list);
+                    }}
+                    fullWidth
+                    size="small" 
+                  />
+                </Grid>
+                <Grid item xs={12} md={12} >
+                  {highlights.length - 1 === i &&
+                    <IconButton 
+                    className={classes.alignedRightButtons}
+                    onClick={() => {
+                      sethighlights([...highlights, { description: ""}]);
+                    }}
+                    >
+                      <AddCircleOutlineOutlinedIcon/>
+                    </IconButton>
+                  } 
+                  {highlights.length !== 1 &&
+                    <IconButton 
+                    id={`removeHighlight${i}`}
+                    className={classes.alignedRightButtons}
+                    onClick={() => {
+                      let list = [...highlights];
+                      list.splice(i, 1);
+                      sethighlights(list);
+                    }}
+                    >
+                      <RemoveCircleOutlineOutlinedIcon/>
+                    </IconButton>
+                  }
+                </Grid>
+              </Grid>
+            )
+          })
+        }
+      </div>
       <div style={{color:'red'}}>
         {
           errors!==""?errors:""

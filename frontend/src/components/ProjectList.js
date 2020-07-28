@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Grid, IconButton } from "@material-ui/core";
 import DescriptionIcon from "@material-ui/icons/Description";
+import ReactPaginate from 'react-paginate';
+import Pagination from "./Pagination";
+
 const ProjectContainer = styled.div`
   padding: 8px;
   margin-top: 10px;
@@ -35,16 +38,23 @@ const getTeacherName = (teachers, pk) => {
 
 function ProjectList(props) {
   const [projects, setprojects] = useState([]);
-
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [projectsPerPage] = React.useState(2);
+  
   React.useEffect(() => {
     setprojects(props.projects);
   }, [props.projects]);
 
+  // Get current projects
+  const indexOfLastPost = currentPage * projectsPerPage;
+  const indexOfFirstPost = indexOfLastPost - projectsPerPage;
+  const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
+
   return (
     <ProjectContainer>
-      {projects.length ? (
+      {currentProjects.length ? (
         <>
-          {projects.map((project) => {
+          {currentProjects.map((project) => {
             return (
               <ProjectCard>
                 <Grid container>
@@ -108,10 +118,19 @@ function ProjectList(props) {
               </ProjectCard>
             );
           })}
+          <Pagination
+            paginate={(pageNumber) => {
+              setCurrentPage(pageNumber.selected+1)
+            }}
+            projectLength={projects.length}
+            projectsPerPage={projectsPerPage}
+          />
         </>
       ) : (
         <div>No Projects Found</div>
       )}
+      
+      
     </ProjectContainer>
   );
 }

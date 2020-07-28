@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
+import Swal from 'sweetalert2'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -33,6 +34,15 @@ const useStyles = makeStyles((theme) => ({
     minHeight:'90vh'
   },
 }));
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+})
+
 export default function Login(props) {
 
   const [username, setUsername] = useState("");
@@ -65,6 +75,10 @@ export default function Login(props) {
           localStorage.setItem('Subject',result.Subject);
           localStorage.setItem('Status', 'LoggedIn');
           props.history.push("/teacher");
+          Toast.fire({
+            icon: 'success',
+            title: 'Signed in successfully'
+          })
         }
         else {
           setError(result.Message);
