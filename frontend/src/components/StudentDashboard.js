@@ -105,14 +105,7 @@ function TeacherDashboard(props) {
       confirmButtonText:'Yes'
     }).then((result) => {
       if(result.value) {
-        // localStorage.setItem('Token', null);
-        // localStorage.setItem('Status', 'LoggedOut');
-        // localStorage.removeItem('Name');
-        // localStorage.removeItem('Username');
-        // localStorage.removeItem('id');
-        // localStorage.removeItem('Subject');
-        // props.history.push("/login");
-        //add acc to student data
+        //remove from localstorage acc to student data
       }
     })
   }

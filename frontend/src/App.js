@@ -24,7 +24,7 @@ function App() {
           <SignedInRoute exact path="/login" component={Login}/>
           <ProtectedRoute exact path="/upload" component={Upload}/>
           <ProtectedRoute exact path="/teacher" component={TeacherDashboard}/>
-          <Route exact path="/student" component={StudentDashboard}/>
+          <ProtectedRoute exact path="/student" component={StudentDashboard}/>
           <Route path="*" exact component={() => '404 NOT FOUND'} />{' '}
         </Switch>
       </Router>
