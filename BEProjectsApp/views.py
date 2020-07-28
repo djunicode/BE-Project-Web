@@ -181,30 +181,28 @@ class Login(generics.GenericAPIView):
         user = authenticate(request, username=Username, password=Password)
 
         if user is not None:
-            try:
-                token, _ = Token.objects.get_or_create(user=user)
-                print(token.key)
 
-                login(request, user)
-                u = Teacher.objects.get(user=user)
-                print(u)
-                data = {
-                    "Name": u.user.first_name + " " + u.user.last_name,
-                    "id": u.pk,
-                    "Username": u.user.username,
-                    "Subject": u.subject,
-                    "Token": token.key,
-                }
-                return JsonResponse(data, status=status.HTTP_200_OK)
-            except:
-                data = {"Message": "No Teacher Profile exists for this user"}
-                return JsonResponse(data, status=status.HTTP_404_NOT_FOUND)
+            token, _ = Token.objects.get_or_create(user=user)
+            print(token.key)
+
+            login(request, user)
+
+            if user.is_teacher:
+                Role = "Teacher"
+            else:
+                Role = "Contributor/Student"
+            data = {
+                "Name": user.first_name + " " + user.last_name,
+                "id": user.pk,
+                "Username": user.username,
+                "Token": token.key,
+                "Designation": Role,
+            }
+            return JsonResponse(data, status=status.HTTP_200_OK)
+
         else:
             data = {"Message": "There was error authenticating"}
             return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
-
-    def get_serializer_class(self):
-        return LoginSerializer
 
 
 class Delete_Project(generics.GenericAPIView):
