@@ -23,7 +23,9 @@ function MainNav(props) {
               <Nav.Link  href="/upload">
                 <div >Upload</div>
               </Nav.Link>
-              
+              <Nav.Link  href="/student">
+                <div >Student</div>
+              </Nav.Link>
             </Nav>
             <Nav className="ml-auto" style={{display:'contents'}}>
               

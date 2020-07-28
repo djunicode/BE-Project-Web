@@ -3,8 +3,11 @@ import styled from 'styled-components'
 import { Grid, Button } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { SERVER_URL } from '../config';
+import Pagination from './Pagination'
+import Swal from 'sweetalert2'
 
 const ProjectContainer = styled.div`
   padding:8px;
@@ -35,9 +38,17 @@ const ProjectCardDetail = styled.div`
 
 function ProjectApproval(props) {
   const [projects, setprojects] = useState([]);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [projectsPerPage] = React.useState(2);
+
   React.useEffect(() => {
     setprojects(props.projects);
   },[props.projects]);
+
+  // Get current projects
+  const indexOfLastPost = currentPage * projectsPerPage;
+  const indexOfFirstPost = indexOfLastPost - projectsPerPage;
+  const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
 
   const approveProject = (pk) => {
     const word = 'Token ';
@@ -61,6 +72,21 @@ function ProjectApproval(props) {
       .catch(error => console.log('error', error));
 
   }
+  const deleteConfirm = (pk) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.value) {
+        rejectProject(pk);
+      }
+    })
+  } 
   const rejectProject = (pk) => {
     const word = 'Token ';
     const token = word.concat(`${localStorage.getItem('Token')}`);
@@ -84,21 +110,31 @@ function ProjectApproval(props) {
   return (
     <ProjectContainer>
       {
-        projects.length?<>
+        currentProjects.length?<>
           {
-            projects.map(project => {
+            currentProjects.map(project => {
               return (
                 <ProjectCard>
-                  {!props.completed && (
-                    <StatusButtons>
+                  <StatusButtons>
+                    {
+                      localStorage.getItem('Token') &&
                       <IconButton 
-                        id={`${project.id}`}
-                        aria-label="reject"
-                        style={{float:'right'}}
-                        onClick={() => rejectProject(project.id)}
-                      >
-                        <HighlightOffIcon/>
-                      </IconButton>
+                      id={`${project.id}`}
+                      aria-label="edit"
+                      style={{float:'right'}}
+                    >
+                      <EditOutlinedIcon/>
+                    </IconButton>
+                    }
+                    <IconButton 
+                      id={`${project.id}`}
+                      aria-label="reject"
+                      style={{float:'right'}}
+                      onClick={() => deleteConfirm(project.id)}
+                    >
+                      <HighlightOffIcon/>
+                    </IconButton>
+                    {!props.completed && (
                       <IconButton
                       style={{float:'right'}}
                       id={`${project.id}`}
@@ -107,10 +143,8 @@ function ProjectApproval(props) {
                       >
                         <CheckCircleOutlineIcon/>
                       </IconButton>
-                    </StatusButtons>
-
-                  )}
-                  
+                    )}
+                  </StatusButtons>
                   <div>
                     <ProjectCardDes>Project Name</ProjectCardDes>
                     <h5> {project.title} </h5>
@@ -157,12 +191,19 @@ function ProjectApproval(props) {
               )
             })
           }
+          <Pagination
+            paginate={(pageNumber) => {
+              setCurrentPage(pageNumber.selected+1)
+            }}
+            projectLength={projects.length}
+            projectsPerPage={projectsPerPage}
+          /> 
         </>:
         <div>
-          No Projects Projects
+          No Projects Found
         </div>
       }
-        
+       
     </ProjectContainer>
   )
 }

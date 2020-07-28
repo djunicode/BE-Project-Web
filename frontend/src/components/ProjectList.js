@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Grid, IconButton } from "@material-ui/core";
 import DescriptionIcon from "@material-ui/icons/Description";
+import ReactPaginate from 'react-paginate';
+import Pagination from "./Pagination";
 import ProjectPage from './ProjectPage';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -58,6 +60,9 @@ function ProjectList(props) {
   const classes = useStyles();
 
   const [projects, setprojects] = useState([]);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [projectsPerPage] = React.useState(2);
+  
   const [currentProj, setCurrentProj] = useState(null);
   const [open, setOpen] = React.useState(false);
 
@@ -80,6 +85,11 @@ function ProjectList(props) {
   React.useEffect(() => {
     setprojects(props.projects);
   }, [props.projects]);
+
+  // Get current projects
+  const indexOfLastPost = currentPage * projectsPerPage;
+  const indexOfFirstPost = indexOfLastPost - projectsPerPage;
+  const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
 
   return (
     <React.Fragment>
@@ -170,6 +180,13 @@ function ProjectList(props) {
                 </ProjectCard>
               );
             })}
+            <Pagination
+              paginate={(pageNumber) => {
+                setCurrentPage(pageNumber.selected+1)
+              }}
+              projectLength={projects.length}
+              projectsPerPage={projectsPerPage}
+            />
           </>
         ) : (
           <div>No Projects Found</div>
