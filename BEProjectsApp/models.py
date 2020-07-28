@@ -1,7 +1,10 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from django.utils import timezone
 from datetime import date
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 DOMAIN_CHOICES = [
     ("Data Mining & Analytics", ("Data Mining & Analytics")),
@@ -29,8 +32,18 @@ DOMAIN_CHOICES = [
     ("Cryptography", ("Cryptography")),
 ]
 
+YEAR_CHOICES = [("FE", ("FE")), ("SE", ("SE")), ("TE", ("TE")), ("BE", ("BE"))]
 
-class TeacherProfile(models.Model):
+DIVISON_CHOICES = [("A", ("A")), ("B", ("B"))]
+
+
+class User(AbstractUser):
+
+    is_contributor = models.BooleanField(default=False)
+    is_teacher = models.BooleanField(default=False)
+
+
+class Teacher(models.Model):
     user = models.OneToOneField(
         User, related_name="teacher_user", on_delete=models.CASCADE, primary_key=True
     )
@@ -42,34 +55,80 @@ class TeacherProfile(models.Model):
         return self.user.username
 
 
-# In house Project model
+class Contributor(models.Model):
+    user = models.OneToOneField(
+        User,
+        related_name="contributor_user",
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+
+    year = models.CharField(
+        choices=YEAR_CHOICES, default="None", null=False, blank=False, max_length=3
+    )
+    divison = models.CharField(
+        choices=DIVISON_CHOICES, default="None", null=False, blank=False, max_length=2
+    )
+    github_id = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
 class Project(models.Model):
     # Project title
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, null=False, blank=False)
+
     # Id of the teacher mentoring the project
-    teacher = models.ForeignKey(
-        TeacherProfile, related_name="project", on_delete=models.CASCADE
-    )
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+
     # project description
-    description = models.TextField()
+    description = models.TextField(null=False, blank=False)
+
+    # project abstract
+    abstract = models.TextField(null=False, blank=False)
+
     # year published and created will be stored
     # year_created = models.DateField(default=date.today)
-    year_created = models.PositiveSmallIntegerField(default=int(str(date.today())[:4]))
+    year_created = models.PositiveSmallIntegerField(
+        default=int(str(date.today())[:4]), null=False, blank=False
+    )
+
+    # Domain list
+    domain = models.CharField(
+        choices=DOMAIN_CHOICES, default="None", null=False, blank=False, max_length=100
+    )
+
     # PDF to be uploaded
-    document = models.FileField()
+    report = models.FileField(null=True, blank=True)
+
+    # Executable to be uploaded
+    executable = models.FileField(null=True, blank=True)
+
+    # GitHub repo link
+    github_repo = models.URLField(null=True, blank=True)
+
+    # URL of the video demo
+    demo_video = models.URLField(null=True, blank=True)
+
     # To check whether project is approved or not
     approved = models.BooleanField(default=False)
 
-    # domain list
-    domain = models.CharField(
-        choices=DOMAIN_CHOICES, default="none", blank=False, max_length=100
-    )
-    # boolean field to check whether the project is inhouse or outhouse
+    # Boolean field to check whether the project is inhouse or outhouse
     is_inhouse = models.BooleanField(default=True)
 
-    # property of an outhouse project
-    company = models.CharField(max_length=100, blank=True, default="none")
-    supervisor = models.CharField(max_length=100, blank=True, default="none")
+    is_hackathon_project = models.BooleanField(default=False)
+
+    awards = models.TextField(blank=True, default="None")
+
+    # Property of an outhouse project
+    company = models.CharField(max_length=100, blank=True, default="None")
+
+    supervisor = models.CharField(max_length=100, blank=True, default="None")
+
+    journal = models.CharField(max_length=100, blank=True, default="None")
+
+    contributors = models.ManyToManyField(Contributor)
 
     def publish(self):
         self.approved = True
@@ -79,13 +138,4 @@ class Project(models.Model):
         return self.title
 
 
-class Contributor(models.Model):
-    name = models.CharField(max_length=100, blank=False)
-    last_name = models.CharField(max_length=100, blank=False)
-    email = models.CharField(max_length=100, blank=False)
-    project = models.ForeignKey(
-        Project, related_name="contributor", on_delete=models.CASCADE
-    )
-
-    def __str__(self):
-        return self.name + " " + self.last_name
+# In house Project model

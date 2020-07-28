@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 from django.conf.urls import url
 from django.urls import include, path
 from rest_framework_swagger.views import get_swagger_view
-from BEProjectsApp import views
+from . import views
 
 
 # app_name = "BEProjectsApp"
@@ -29,4 +29,9 @@ urlpatterns = [
         views.CreateProjectWithContributors.as_view(),
         name="Create_Project_with_Contributors",
     ),
+    path("project", views.ProjectsView.as_view(), name="project"),
+    path("BrowseProjects", views.BrowseProjects.as_view(), name="BrowseProjects"),
+    path("MyProjects", views.MyProjects.as_view(), name="MyProjects"),
 ]
+
+urlpatterns += router.get_urls()
