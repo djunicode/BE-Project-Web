@@ -32,7 +32,7 @@ urlpatterns = [
     path("project", views.ProjectsView.as_view(), name="project"),
     path("BrowseProjects", views.BrowseProjects.as_view(), name="BrowseProjects"),
     path("MyProjects", views.MyProjects.as_view(), name="MyProjects"),
-    path('UpdateProject/<int:pk>',views.UpdateProject.as_view(),name="UpdateProject")
+    path("UpdateProject/<int:pk>", views.UpdateProject.as_view(), name="UpdateProject"),
 ]
 
 urlpatterns += router.get_urls()

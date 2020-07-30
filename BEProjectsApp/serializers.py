@@ -87,7 +87,8 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=10)
     password = serializers.CharField(style={"input_type": "password"})
 
+
 class UpdateProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Project
-        fields="__all__"
+        model = Project
+        fields = "__all__"

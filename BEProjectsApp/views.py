@@ -6,7 +6,7 @@ from .serializers import (
     UserSerializer,
     LoginSerializer,
     AllProjectSerializer,
-    UpdateProjectSerializer
+    UpdateProjectSerializer,
 )
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
@@ -26,7 +26,9 @@ import json
 from django.shortcuts import get_object_or_404
 from .permissions import Permit
 from django.http import QueryDict
-from .filters import BrowseProjectFilter,ProjectFilter
+from .filters import BrowseProjectFilter, ProjectFilter
+
+
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -262,21 +264,19 @@ class ProjectsView(generics.GenericAPIView):
 
 class BrowseProjects(generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
-    
 
     def get(self, request):
-        
-        
+
         print(request.user)
         u = request.user
 
         print(request.auth)
         if request.auth == None:
-            
-                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
-                AllProjects = ProjectSerializer(filter1.qs, many=True).data
-                return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
- 
+
+            filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+            AllProjects = ProjectSerializer(filter1.qs, many=True).data
+            return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
+
         else:
             if request.user.is_teacher == True:
                 print("1")
@@ -292,7 +292,6 @@ class BrowseProjects(generics.GenericAPIView):
                 filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
                 A = ProjectSerializer(filter1.qs, many=True).data
 
-                
                 return JsonResponse(A, status=status.HTTP_200_OK, safe=False)
 
 
@@ -322,27 +321,19 @@ class MyProjects(generics.GenericAPIView):
 class UpdateProject(generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [Permit]
-    def put(self,request,pk):
-        u=request.user
+
+    def put(self, request, pk):
+        u = request.user
         print(pk)
-        p=Project.objects.get(id=pk)
+        p = Project.objects.get(id=pk)
         print(request.data)
-        
-            
-        
-        serializer=UpdateProjectSerializer(p,data=request.data,partial=True)
-        
+
+        serializer = UpdateProjectSerializer(p, data=request.data, partial=True)
+
         if serializer.is_valid():
             print(serializer.errors)
             serializer.save()
-            return JsonResponse("ok",safe=False)
+            return JsonResponse("ok", safe=False)
         else:
             print(serializer.errors)
-            return JsonResponse("error",safe=False)
-            
-       
-
-       
-        
-
-    
+            return JsonResponse("error", safe=False)
