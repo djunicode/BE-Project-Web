@@ -67,18 +67,31 @@ export default function Login(props) {
       .then(response => response.json())
       .then(result => {
         if(!result.hasOwnProperty("Message")) {
+
           setError(null);
+
+          console.log(result);
+
           localStorage.setItem('Token', result.Token);
           localStorage.setItem('Name', result.Name);
           localStorage.setItem('Username', result.Username);
           localStorage.setItem('id', result.id);
+          localStorage.setItem('Designation', result.Designation);
           localStorage.setItem('Subject',result.Subject);
           localStorage.setItem('Status', 'LoggedIn');
-          props.history.push("/teacher");
+
+          if(result.Designation === 'Teacher'){
+            props.history.push("/teacher");
+          }
+          else{
+            props.history.push("/student")
+          }
+          
           Toast.fire({
             icon: 'success',
             title: 'Signed in successfully'
           })
+
         }
         else {
           setError(result.Message);
