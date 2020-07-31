@@ -92,3 +92,8 @@ class UpdateProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = "__all__"
+
+class UpdateProjectReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Project
+        fields=['report',]

@@ -7,6 +7,7 @@ from .serializers import (
     LoginSerializer,
     AllProjectSerializer,
     UpdateProjectSerializer,
+    UpdateProjectReportSerializer
 )
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
@@ -337,3 +338,20 @@ class UpdateProject(generics.GenericAPIView):
         else:
             print(serializer.errors)
             return JsonResponse("error", safe=False)
+
+
+class UpdateProjectReport(generics.GenericAPIView):
+    def put(self,request,pk):
+        p=Project.objects.get(id=pk)
+        serilaizer=UpdateProjectReportSerializer(p,data=request.data)
+        if serilaizer.is_valid():
+            serilaizer.save()
+            return JsonResponse("ok", safe=False)
+        else:
+            print(serializer.errors)
+            return JsonResponse("error", safe=False)
+
+
+
+
+
