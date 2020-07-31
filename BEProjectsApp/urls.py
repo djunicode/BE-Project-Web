@@ -33,7 +33,13 @@ urlpatterns = [
     path("BrowseProjects", views.BrowseProjects.as_view(), name="BrowseProjects"),
     path("MyProjects", views.MyProjects.as_view(), name="MyProjects"),
     path("UpdateProject/<int:pk>", views.UpdateProject.as_view(), name="UpdateProject"),
-    path("UpdateProjectReport/<int:pk>",views.UpdateProjectReport.as_view(),name="UpdateProjectReport")
+    path(
+        "UpdateProjectReport/<int:pk>",
+        views.UpdateProjectReport.as_view(),
+        name="UpdateProjectReport",
+    ),
+    path("CreateProject", views.CreateProject.as_view(), name="CreateProject"),
+    path("UpdateUser", views.UpdateUser.as_view(), name="UpdateUser"),
 ]
 
 urlpatterns += router.get_urls()

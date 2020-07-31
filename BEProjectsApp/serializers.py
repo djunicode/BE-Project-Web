@@ -5,12 +5,15 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
+        fields = [
+            "id",
             "username",
+            "first_name",
+            "last_name",
             "email",
-            "is_teacher",
             "is_contributor",
-        )
+            "is_teacher",
+        ]
 
 
 class ContributorSerializer(serializers.ModelSerializer):
@@ -18,9 +21,7 @@ class ContributorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contributor
-        fields = [
-            "user",
-        ]
+        fields = "__all__"
 
 
 class TeacherSerializer1(serializers.ModelSerializer):
@@ -28,7 +29,7 @@ class TeacherSerializer1(serializers.ModelSerializer):
 
     class Meta:
         model = Teacher
-        fields = ("user", "subject")
+        fields = "__all__"
 
 
 class AllProjectSerializer(serializers.ModelSerializer):
@@ -53,7 +54,15 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        exclude = ["report"]
+        exclude = [
+            "abstract",
+            "report",
+            "executable",
+            "github_repo",
+            "demo_video",
+            "company",
+            "supervisor",
+        ]
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -93,7 +102,8 @@ class UpdateProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = "__all__"
 
+
 class UpdateProjectReportSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Project
-        fields=['report',]
+        model = Project
+        fields = ["report"]

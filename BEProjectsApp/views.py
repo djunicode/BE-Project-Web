@@ -1,39 +1,36 @@
-from .models import Project, Teacher, Contributor, DOMAIN_CHOICES
+import json
+
+from .models import Project, Teacher, Contributor, User, DOMAIN_CHOICES
 from .serializers import (
     ProjectSerializer,
     TeacherSerializer,
+    TeacherSerializer1,
     ContributorSerializer,
     UserSerializer,
     LoginSerializer,
     AllProjectSerializer,
     UpdateProjectSerializer,
-    UpdateProjectReportSerializer
+    UpdateProjectReportSerializer,
 )
+from .permissions import IsUserOrReadOnly, Permit
+from .filters import BrowseProjectFilter, ProjectFilter
+
+from rest_framework import generics, status, viewsets, mixins, filters, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
-from rest_framework import generics, status, viewsets, mixins, filters, serializers
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view
-from .permissions import IsUserOrReadOnly
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django_filters.rest_framework import DjangoFilterBackend
-import json
+from django.http import JsonResponse, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404
-from .permissions import Permit
-from django.http import QueryDict
-from .filters import BrowseProjectFilter, ProjectFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    # import pdb; pdb.set_trace()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
         "company",
@@ -49,9 +46,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
-    serializer_class = TeacherSerializer
+    serializer_class = TeacherSerializer1
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["subject"]
+    filterset_fields = ["user__first_name", "user__last_name", "subject"]
     permission_classes = (IsUserOrReadOnly, IsAuthenticatedOrReadOnly)
 
 
@@ -59,7 +56,14 @@ class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["name", "last_name", "email"]
+    filterset_fields = [
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+        "user__email",
+        "year",
+        "division",
+    ]
 
 
 class SearchProjectView(APIView):
@@ -180,21 +184,20 @@ class Approve(generics.GenericAPIView):
 
 class Login(generics.GenericAPIView):
     def post(self, request):
-        Username = request.data["username"]
-        Password = request.data["password"]
-        user = authenticate(request, username=Username, password=Password)
+        username = request.data["username"]
+        password = request.data["password"]
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
-
             token, _ = Token.objects.get_or_create(user=user)
-            print(token.key)
 
             login(request, user)
 
             if user.is_teacher:
-                Role = "Teacher"
-            else:
-                Role = "Contributor/Student"
+                role = "Teacher"
+            elif user.is_contributor:
+                role = "Contributor/Student"
+
             data = {
                 "Name": user.first_name + " " + user.last_name,
                 "id": user.pk,
@@ -202,6 +205,7 @@ class Login(generics.GenericAPIView):
                 "Token": token.key,
                 "Designation": Role,
             }
+
             return JsonResponse(data, status=status.HTTP_200_OK)
 
         else:
@@ -324,34 +328,160 @@ class UpdateProject(generics.GenericAPIView):
     permission_classes = [Permit]
 
     def put(self, request, pk):
-        u = request.user
-        print(pk)
-        p = Project.objects.get(id=pk)
-        print(request.data)
+        try:
+            project = Project.objects.get(id=pk)
+            serializer = UpdateProjectSerializer(
+                project, data=request.data, partial=True
+            )
 
-        serializer = UpdateProjectSerializer(p, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(
+                    data=dict(
+                        {"Message": "Successfully updated Project"}, **serializer.data
+                    ),
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                print(serializer.errors)
+                return JsonResponse(
+                    data={"Message": "Error updating Project"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
 
-        if serializer.is_valid():
-            print(serializer.errors)
-            serializer.save()
-            return JsonResponse("ok", safe=False)
-        else:
-            print(serializer.errors)
-            return JsonResponse("error", safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class UpdateUser(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [Permit]
+
+    def put(self, request):
+        try:
+            if request.user.is_teacher:
+                user = Teacher.objects.get(user=request.user)
+                serializer = TeacherSerializer1(user, data=request.data, partial=True)
+            elif request.user.is_contributor:
+                user = Contributor.objects.get(user=request.user)
+                serializer = ContributorSerializer(
+                    user, data=request.data, partial=True
+                )
+
+            if serializer and serializer.is_valid():
+                serializer.save()
+                return JsonResponse(
+                    data=dict(
+                        {"Message": "Successfully updated User"}, **serializer.data
+                    ),
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return JsonResponse(
+                    data={"Message": "Error updating User"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def get_serializer_class(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_teacher:
+                return TeacherSerializer1
+            elif self.request.user.is_contributor:
+                return ContributorSerializer
+
+
+class CreateProject(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [Permit]
+
+    def post(self, request):
+        try:
+            title = request.POST.get("title", None)
+            teacher_id = request.POST.get("teacher", None)
+            contributor_ids = request.POST.getlist("contributors[]", None)
+            description = request.POST.get("description", None)
+            abstract = request.POST.get("abstract", None)
+            domain = request.POST.get("domain", None)
+            github_repo = request.POST.get("github_repo", None)
+            demo_video = request.POST.get("demo_video", None)
+            awards = request.POST.get("awards", None)
+            journal = request.POST.get("journal", None)
+            is_inhouse = (
+                True if request.POST.get("is_inhouse", None) == "True" else False
+            )
+            company = request.POST.get("company", None)
+            supervisor = request.POST.get("supervisor", None)
+            report = request.FILES.get("report", None)
+            executable = request.FILES.get("executable", None)
+
+            teacher = Teacher.objects.get(user__id=teacher_id)
+            contributors = [
+                Contributor.objects.get(user__id=contributor_id)
+                for contributor_id in contributor_ids
+            ]
+
+            project = Project(
+                title=title,
+                teacher=teacher,
+                description=description,
+                abstract=abstract,
+                domain=domain,
+                report=report,
+                executable=executable,
+                github_repo=github_repo,
+                demo_video=demo_video,
+                awards=awards,
+                journal=journal,
+                is_inhouse=is_inhouse,
+                company=company,
+                supervisor=supervisor,
+            )
+            project.save()
+
+            for contributor in contributors:
+                project.contributors.add(contributor)
+
+            return JsonResponse(
+                data={"Message": "Successfully created Project"},
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def get_serializer_class(self):
+        return ProjectSerializer
 
 
 class UpdateProjectReport(generics.GenericAPIView):
-    def put(self,request,pk):
-        p=Project.objects.get(id=pk)
-        serilaizer=UpdateProjectReportSerializer(p,data=request.data)
+    def put(self, request, pk):
+        project = Project.objects.get(id=pk)
+        serilaizer = UpdateProjectReportSerializer(project, data=request.data)
+
         if serilaizer.is_valid():
             serilaizer.save()
-            return JsonResponse("ok", safe=False)
+            return JsonResponse(
+                data={"Message": "Successfully update Project Report"},
+                status=status.HTTP_200_OK,
+            )
         else:
             print(serializer.errors)
-            return JsonResponse("error", safe=False)
-
-
-
-
-
+            return JsonResponse(
+                data={"Message": "Error updating Project Report"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

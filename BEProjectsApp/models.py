@@ -1,10 +1,7 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.utils import timezone
-from datetime import date
 from django.contrib.auth.models import AbstractUser
+from datetime import date
 
 DOMAIN_CHOICES = [
     ("Data Mining & Analytics", ("Data Mining & Analytics")),
@@ -34,11 +31,10 @@ DOMAIN_CHOICES = [
 
 YEAR_CHOICES = [("FE", ("FE")), ("SE", ("SE")), ("TE", ("TE")), ("BE", ("BE"))]
 
-DIVISON_CHOICES = [("A", ("A")), ("B", ("B"))]
+DIVISION_CHOICES = [("A", ("A")), ("B", ("B"))]
 
 
 class User(AbstractUser):
-
     is_contributor = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
 
@@ -51,8 +47,24 @@ class Teacher(models.Model):
     # additional attributes
     subject = models.CharField(max_length=150)
 
-    def __str__(self):
+    @property
+    def user__username(self):
         return self.user.username
+
+    @property
+    def user__email(self):
+        return self.user.email
+
+    @property
+    def user__first_name(self):
+        return self.user.first_name
+
+    @property
+    def user__last_name(self):
+        return self.user.last_name
+
+    def __str__(self):
+        return self.user.get_full_name()
 
 
 class Contributor(models.Model):
@@ -66,13 +78,29 @@ class Contributor(models.Model):
     year = models.CharField(
         choices=YEAR_CHOICES, default="None", null=False, blank=False, max_length=3
     )
-    divison = models.CharField(
-        choices=DIVISON_CHOICES, default="None", null=False, blank=False, max_length=2
+    division = models.CharField(
+        choices=DIVISION_CHOICES, default="None", null=False, blank=False, max_length=2
     )
     github_id = models.URLField(blank=True)
 
-    def __str__(self):
+    @property
+    def user__username(self):
         return self.user.username
+
+    @property
+    def user__email(self):
+        return self.user.email
+
+    @property
+    def user__first_name(self):
+        return self.user.first_name
+
+    @property
+    def user__last_name(self):
+        return self.user.last_name
+
+    def __str__(self):
+        return self.user.get_full_name()
 
 
 class Project(models.Model):
@@ -91,7 +119,7 @@ class Project(models.Model):
     # year published and created will be stored
     # year_created = models.DateField(default=date.today)
     year_created = models.PositiveSmallIntegerField(
-        default=int(str(date.today())[:4]), null=False, blank=False
+        null=False, blank=False, default=int(str(date.today())[:4])
     )
 
     # Domain list
@@ -115,18 +143,16 @@ class Project(models.Model):
     approved = models.BooleanField(default=False)
 
     # Boolean field to check whether the project is inhouse or outhouse
-    is_inhouse = models.BooleanField(default=True)
+    is_inhouse = models.BooleanField(null=False, blank=False, default=True)
 
-    is_hackathon_project = models.BooleanField(default=False)
-
-    awards = models.TextField(blank=True, default="None")
+    awards = models.TextField(null=True, blank=True, default="None")
 
     # Property of an outhouse project
-    company = models.CharField(max_length=100, blank=True, default="None")
+    company = models.CharField(max_length=100, null=True, blank=True, default="None")
 
-    supervisor = models.CharField(max_length=100, blank=True, default="None")
+    supervisor = models.CharField(max_length=100, null=True, blank=True, default="None")
 
-    journal = models.CharField(max_length=100, blank=True, default="None")
+    journal = models.CharField(max_length=100, null=True, blank=True, default="None")
 
     contributors = models.ManyToManyField(Contributor)
 
