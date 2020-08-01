@@ -20,18 +20,21 @@ urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
     url(r"^api/search/", views.SearchProjectView.as_view(), name="search"),
     url(r"^schema/$", schema_view),
-    url(r"^api/get_domains/$", views.GetDomainView.as_view(), name="domain"),
-    path("api/Approve_project", views.Approve.as_view(), name="Approve Project"),
-    path("api/Login", views.Login.as_view(), name="Login"),
-    path("api/Delete_Project", views.Delete_Project.as_view(), name="Delete_Project"),
-    path(
-        "api/create_project",
-        views.CreateProjectWithContributors.as_view(),
-        name="Create_Project_with_Contributors",
-    ),
+    path("get_domains", views.get_domains, name="get_domains"),
+    path("login", views.login, name="login"),
     path("project", views.ProjectsView.as_view(), name="project"),
-    path("BrowseProjects", views.BrowseProjects.as_view(), name="BrowseProjects"),
-    path("MyProjects", views.MyProjects.as_view(), name="MyProjects"),
+    path("my_projects", views.my_projects, name="my_projects"),
+    path("browse_projects", views.browse_projects, name="browse_projects"),
+    path("create_project", views.create_project, name="create_project"),
+    path("approve_project", views.approve_project, name="approve_project"),
+    path("update_project/<int:pk>", views.update_project, name="update_project"),
+    path(
+        "update_project_report/<int:pk>",
+        views.update_project_report,
+        name="update_project_report",
+    ),
+    path("delete_project", views.delete_project, name="delete_project"),
+    path("update_user", views.update_user, name="update_user"),
 ]
 
 urlpatterns += router.get_urls()

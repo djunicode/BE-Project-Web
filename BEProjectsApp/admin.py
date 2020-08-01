@@ -9,7 +9,7 @@ from datetime import date
 class UserAdmin(UserAdmin):
 
     fieldsets = UserAdmin.fieldsets + (
-        (None, {"fields": ("is_contributor", "is_teacher")},),
+        (None, {"fields": ("is_contributor", "is_teacher")}),
     )
 
 
