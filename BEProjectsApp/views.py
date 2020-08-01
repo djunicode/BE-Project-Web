@@ -16,13 +16,17 @@ from .permissions import IsUserOrReadOnly, Permit
 from .filters import BrowseProjectFilter, ProjectFilter
 
 from rest_framework import generics, status, viewsets, mixins, filters, serializers
-from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate, login
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    authentication_classes,
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.decorators import api_view
-from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -104,129 +108,120 @@ class SearchProjectView(APIView):
         return Response(SearchResult)
 
 
-class GetDomainView(APIView):
-
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    def get(self, request):
+@permission_classes([IsAuthenticatedOrReadOnly])
+@api_view(["GET"])
+def get_domains(request):
+    if request.method == "GET":
         domains = [domain[0] for domain in DOMAIN_CHOICES]
         return Response(domains)
+    else:
+        return JsonResponse(
+            data={"Message": "Only GET request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class CreateProjectWithContributors(generics.GenericAPIView):
-    def post(self, request):
+@api_view(["POST"])
+def login(request):
+    if request.method == "POST":
         try:
-            print(request.data)
-            data = request.data
-            print(json.loads(data["project"]))
-            proj = json.loads(data["project"])
-            print(json.loads(data["contributors"]))
-            cont = json.loads(data["contributors"])
-            try:
-                teacher = Teacher.objects.get(pk=proj["teacher"])
-            except:
-                return JsonResponse(
-                    {"Message": "Teacher id not found"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-            # teacher = get_object_or_404(Teacher,pk=proj["teacher"])
-            print(data["document"])
-            project = Project(
-                title=proj["title"],
-                teacher=teacher,
-                description=proj["description"],
-                year_created=proj["year_created"],
-                document=data["document"],
-                domain=proj["domain"],
-                approved=proj["approved"],
-                is_inhouse=proj["is_inhouse"],
-                company="" if proj["is_inhouse"] else proj["company"],
-                supervisor="" if proj["is_inhouse"] else proj["supervisor"],
-            )
-            print(project)
-            project.save()
-            for contributor in cont:
-                contributor_var = Contributor(
-                    name=contributor["name"],
-                    last_name=contributor["last_name"],
-                    email=contributor["email"],
-                    project=project,
-                )
-                contributor_var.save()
+            username = request.data.get("username", None)
+            password = request.data.get("password", None)
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                token, _ = Token.objects.get_or_create(user=user)
+
+                login(request, user)
+
+                if user.is_teacher:
+                    role = "Teacher"
+                elif user.is_contributor:
+                    role = "Contributor/Student"
+
+                data = {
+                    "Name": user.first_name + " " + user.last_name,
+                    "id": user.pk,
+                    "Username": user.username,
+                    "Token": token.key,
+                    "Designation": Role,
+                }
+
+                return JsonResponse(data, status=status.HTTP_200_OK)
+
+            else:
+                data = {"Message": "There was error authenticating"}
+                return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return JsonResponse({"Message": "error"}, status.HTTP_400_BAD_REQUEST)
-        return JsonResponse({"Message": "Success"}, status=status.HTTP_201_CREATED)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return JsonResponse(
+            data={"Message": "Only POST request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    def get_serializer_class(self):
-        return ProjectSerializer
 
-
-class Approve(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def post(self, request):
-        print(request.user)
-
-        pk = request.data["pk"]
-        print(pk)
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+@api_view(["POST"])
+def approve_project(request):
+    if request.method == "POST":
         try:
-            p = Project.objects.get(id=pk)
-
-            p.publish()
-            data = {"flag": 1, "Message": "ok"}
-            return JsonResponse(data, status=status.HTTP_200_OK)
-        except:
-            data = {"flag": 0, "Message": "No such Project exists"}
-            return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
-
-
-class Login(generics.GenericAPIView):
-    def post(self, request):
-        username = request.data["username"]
-        password = request.data["password"]
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            token, _ = Token.objects.get_or_create(user=user)
-
-            login(request, user)
-
-            if user.is_teacher:
-                role = "Teacher"
-            elif user.is_contributor:
-                role = "Contributor/Student"
-
-            data = {
-                "Name": user.first_name + " " + user.last_name,
-                "id": user.pk,
-                "Username": user.username,
-                "Token": token.key,
-                "Designation": Role,
-            }
-
-            return JsonResponse(data, status=status.HTTP_200_OK)
-
-        else:
-            data = {"Message": "There was error authenticating"}
-            return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
+            if request.user.is_teacher:
+                pk = request.data["pk"]
+                try:
+                    project = Project.objects.get(id=pk)
+                    project.publish()
+                    data = {"flag": 1, "Message": "Successfully approved Project"}
+                    return JsonResponse(data, status=status.HTTP_200_OK)
+                except:
+                    data = {"flag": 0, "Message": "Project does not exist"}
+                    return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return JsonResponse(
+                    {"Message": "You are not authorized to perform this action"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return JsonResponse(
+            data={"Message": "Only POST request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class Delete_Project(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def post(self, request):
-        pk = request.data["pk"]
-        p = Project.objects.get(id=pk)
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+@api_view(["POST"])
+def delete_project(request):
+    if request.method == "POST":
         try:
+            pk = request.data["pk"]
+            project = Project.objects.get(id=pk)
             p.delete()
-            data = {"Message": "Successfully Deleted"}
+            data = {"Message": "Successfully deleted Project"}
             return JsonResponse(data, status=status.HTTP_200_OK)
-        except:
-            data = {"Message": "Error deleteing project"}
-            return JsonResponse(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return JsonResponse(
+            data={"Message": "Only POST request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class ProjectsView(generics.GenericAPIView):
@@ -266,68 +261,89 @@ class ProjectsView(generics.GenericAPIView):
 
                 return JsonResponse(data, status=status.HTTP_200_OK, safe=False)
 
+    def get_serializer_class(self):
+        return ProjectSerializer
 
-class BrowseProjects(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
 
-    def get(self, request):
-
-        print(request.user)
-        u = request.user
-
-        print(request.auth)
-        if request.auth == None:
-
-            filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
-            AllProjects = ProjectSerializer(filter1.qs, many=True).data
-            return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
-
-        else:
-            if request.user.is_teacher == True:
-                print("1")
-
-                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
-                A = ProjectSerializer(filter1.qs, many=True).data
-
-                AllProjects = AllProjectSerializer(A, many=True).data
-
-                return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
+@authentication_classes([TokenAuthentication])
+@api_view(["GET"])
+def browse_projects(request):
+    if request.method == "GET":
+        try:
+            if request.user.is_authenticated:
+                if request.user.is_teacher == True:
+                    filtered_projects = ProjectFilter(
+                        request.GET, queryset=Project.objects.all()
+                    )
+                    projects = ProjectSerializer(filtered_projects.qs, many=True).data
+                    all_projects = AllProjectSerializer(projects, many=True).data
+                else:
+                    filtered_projects = ProjectFilter(
+                        request.GET, queryset=Project.objects.all()
+                    )
+                    all_projects = ProjectSerializer(
+                        filtered_projects.qs, many=True
+                    ).data
             else:
-                print("1")
-                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
-                A = ProjectSerializer(filter1.qs, many=True).data
+                filtered_projects = ProjectFilter(
+                    request.GET, queryset=Project.objects.all()
+                )
+                all_projects = ProjectSerializer(filtered_projects.qs, many=True).data
+            return JsonResponse(all_projects, status=status.HTTP_200_OK, safe=False)
 
-                return JsonResponse(A, status=status.HTTP_200_OK, safe=False)
-
-
-class MyProjects(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [Permit]
-
-    def get(self, request):
-        if request.user.is_teacher == True:
-            print("1")
-            t = Teacher.objects.get(user=request.user)
-            k = Project.objects.filter(teacher=t)
-            filter1 = ProjectFilter(request.GET, queryset=k)
-            myProjects = AllProjectSerializer(filter1.qs, many=True).data
-
-            return JsonResponse(myProjects, status=status.HTTP_200_OK, safe=False)
-        else:
-            c = Contributor.objects.get(user=request.user)
-
-            k = Project.objects.filter(contributors=c)
-            filter1 = ProjectFilter(request.GET, queryset=k)
-            myProjects = AllProjectSerializer(filter1.qs, many=True).data
-
-            return JsonResponse(myProjects, status=status.HTTP_200_OK, safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return JsonResponse(
+            data={"Message": "Only GET request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class UpdateProject(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [Permit]
+@authentication_classes([TokenAuthentication])
+@permission_classes([Permit])
+@api_view(["GET"])
+def my_projects(request):
+    if request.method == "GET":
+        try:
+            if request.user.is_teacher == True:
+                teacher = Teacher.objects.get(user=request.user)
+                teacher_projects = Project.objects.filter(teacher=teacher)
+                filtered_projects = ProjectFilter(
+                    request.GET, queryset=teacher_projects
+                )
+                my_projects = AllProjectSerializer(filtered_projects.qs, many=True).data
+            else:
+                contributor = Contributor.objects.get(user=request.user)
+                contributor_projects = Project.objects.filter(contributors=contributor)
+                filtered_projects = ProjectFilter(
+                    request.GET, queryset=contributor_projects
+                )
+                my_projects = AllProjectSerializer(filtered_projects.qs, many=True).data
+            return JsonResponse(my_projects, status=status.HTTP_200_OK, safe=False)
 
-    def put(self, request, pk):
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                data={"Message": "Internal Server Error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    else:
+        return JsonResponse(
+            data={"Message": "Only GET request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([Permit])
+@api_view(["PUT"])
+def update_project(request, pk):
+    if request.method == "PUT":
         try:
             project = Project.objects.get(id=pk)
             serializer = UpdateProjectSerializer(
@@ -355,13 +371,18 @@ class UpdateProject(generics.GenericAPIView):
                 data={"Message": "Internal Server Error"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+    else:
+        return JsonResponse(
+            data={"Message": "Only PUT request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class UpdateUser(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [Permit]
-
-    def put(self, request):
+@authentication_classes([TokenAuthentication])
+@permission_classes([Permit])
+@api_view(["PUT"])
+def update_user(request):
+    if request.method == "PUT":
         try:
             if request.user.is_teacher:
                 user = Teacher.objects.get(user=request.user)
@@ -392,20 +413,18 @@ class UpdateUser(generics.GenericAPIView):
                 data={"Message": "Internal Server Error"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-    def get_serializer_class(self):
-        if self.request.user.is_authenticated:
-            if self.request.user.is_teacher:
-                return TeacherSerializer1
-            elif self.request.user.is_contributor:
-                return ContributorSerializer
+    else:
+        return JsonResponse(
+            data={"Message": "Only PUT request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class CreateProject(generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [Permit]
-
-    def post(self, request):
+@authentication_classes([TokenAuthentication])
+@permission_classes([Permit])
+@api_view(["POST"])
+def create_project(request):
+    if request.method == "POST":
         try:
             title = request.POST.get("title", None)
             teacher_id = request.POST.get("teacher", None)
@@ -463,13 +482,18 @@ class CreateProject(generics.GenericAPIView):
                 data={"Message": "Internal Server Error"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+    else:
+        return JsonResponse(
+            data={"Message": "Only POST request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    def get_serializer_class(self):
-        return ProjectSerializer
 
-
-class UpdateProjectReport(generics.GenericAPIView):
-    def put(self, request, pk):
+@authentication_classes([TokenAuthentication])
+@permission_classes([Permit])
+@api_view(["PUT"])
+def update_project_report(request, pk):
+    if request.method == "PUT":
         project = Project.objects.get(id=pk)
         serilaizer = UpdateProjectReportSerializer(project, data=request.data)
 
@@ -485,3 +509,8 @@ class UpdateProjectReport(generics.GenericAPIView):
                 data={"Message": "Error updating Project Report"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+    else:
+        return JsonResponse(
+            data={"Message": "Only PUT request allowed"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
