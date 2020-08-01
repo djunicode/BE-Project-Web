@@ -122,7 +122,7 @@ def get_domains(request):
 
 
 @api_view(["POST"])
-def login(request):
+def account_login(request):
     if request.method == "POST":
         try:
             username = request.data.get("username", None)
@@ -144,7 +144,7 @@ def login(request):
                     "id": user.pk,
                     "Username": user.username,
                     "Token": token.key,
-                    "Designation": Role,
+                    "Designation": role,
                 }
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
