@@ -21,7 +21,7 @@ urlpatterns = [
     url(r"^api/search/", views.SearchProjectView.as_view(), name="search"),
     url(r"^schema/$", schema_view),
     path("get_domains", views.get_domains, name="get_domains"),
-    path("login", views.login, name="login"),
+    path("account_login", views.account_login, name="account_login"),
     path("project", views.ProjectsView.as_view(), name="project"),
     path("my_projects", views.my_projects, name="my_projects"),
     path("browse_projects", views.browse_projects, name="browse_projects"),
