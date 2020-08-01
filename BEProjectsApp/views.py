@@ -144,7 +144,7 @@ def login(request):
                     "id": user.pk,
                     "Username": user.username,
                     "Token": token.key,
-                    "Designation": Role,
+                    "Designation": role,
                 }
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
