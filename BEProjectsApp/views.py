@@ -122,7 +122,7 @@ def get_domains(request):
 
 
 @api_view(["POST"])
-def login(request):
+def account_login(request):
     if request.method == "POST":
         try:
             username = request.data.get("username", None)
