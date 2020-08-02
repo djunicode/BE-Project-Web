@@ -48,10 +48,9 @@ const ProjectCardDetail = styled.div`
 `;
 
 const getTeacherName = (teachers, pk) => {
-  let name = "";
-  if (teachers.length > 0) {
-    let teacher = teachers.filter((val) => val.pk == pk);
-    name = teacher[0].user.first_name + " " + teacher[0].user.last_name;
+  let name = "";  
+  if (teachers.length > 0) {  
+    name = teachers[0].user.first_name + " " + teachers[0].user.last_name;
   }
   return name;
 };
@@ -87,15 +86,16 @@ function ProjectList(props) {
   }, [props.projects]);
 
   // Get current projects
-  const indexOfLastPost = currentPage * projectsPerPage;
-  const indexOfFirstPost = indexOfLastPost - projectsPerPage;
-  const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
+  // const indexOfLastPost = currentPage * projectsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - projectsPerPage;
+  // const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
 
   return (
     <React.Fragment>
       <ProjectContainer>
         {projects.length ? (
           <>
+            { console.log(projects) }
             {projects.map((project) => {
               return (
                 <ProjectCard key={project.id}>
@@ -103,6 +103,7 @@ function ProjectList(props) {
                     <ProjectPage project={currentProj} openFn={handleClickOpen} closeFn={handleClose} screen={fullScr} />
                   ) : null}
                     <div onClick={handleClickOpen.bind(this, project)}>
+                    {console.log(project)}
                       <Grid
                         container
                         className={classes.Container}
@@ -111,16 +112,18 @@ function ProjectList(props) {
                           <ProjectCardDes>Project Name</ProjectCardDes>
                           <h5>{project.title}</h5>
                         </Grid>
-                        <Grid item md={3} xs={3}>
+                        {(localStorage.getItem('Designation') === "Teacher")? (
+                        <Grid item md={ 3 } xs={ 3 }>
                           <IconButton
                             target="_blank"
                             variant="contained"
                             color="primary"
-                            href={project.document}
+                            href={ project.document }
                           >
                             <DescriptionIcon />
                           </IconButton>
                         </Grid>
+                        ) : null}
                       </Grid>
                       <Grid
                         container
@@ -148,11 +151,7 @@ function ProjectList(props) {
                         <Grid item md={3} xs={12}>
                           <ProjectCardDes>Guide</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {getTeacherName(
-                              props.teachers,
-                              project.teacher
-                            )}{' '}
+                          { project.teacher.user.first_name + " " + project.teacher.user.last_name }
                           </ProjectCardDetail>
                         </Grid>
                         <Grid item md={3} xs={12}>
@@ -167,7 +166,7 @@ function ProjectList(props) {
                           <ProjectCardDetail>
                             {[0].map((dummy) => {
                               let cbs = '';
-                              project.contributor.forEach((contri) => {
+                              project.contributors.forEach((contri) => {
                                 cbs += `${contri.name},`;
                               });
                               cbs = cbs.slice(0, -1);

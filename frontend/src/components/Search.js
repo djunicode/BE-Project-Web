@@ -48,7 +48,6 @@ export const getOptionsForYear = () => {
     data.push(i);
   }
   return data;
-
 }
 
 function Search(props) {
@@ -102,7 +101,7 @@ function Search(props) {
     else if(house=="Out-House"){
       houseParam="False";
     }
-    fetch(`${SERVER_URL}/api/projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
+    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setProjects(result);
@@ -133,12 +132,21 @@ function Search(props) {
       iniDomain = params.query;
       setdomain(iniDomain);
     }
+
+    var token = localStorage.getItem('Token');
+    var finalToken = "Token " + token;
+    console.log(finalToken)
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization",finalToken);
+
     var requestOptions = {
       method: 'GET',
-      redirect: 'follow'
+      redirect: 'follow',
+      headers: myHeaders
     };
     
-    fetch(`${SERVER_URL}/api/projects/?domain=${iniDomain}&approved=True`, requestOptions)
+    fetch(`${SERVER_URL}/browse_projects?domain=${iniDomain}&approved=True`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setProjects(result);
@@ -150,7 +158,7 @@ function Search(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch(`${SERVER_URL}/api/get_domains/`, requestOptions)
+      fetch(`${SERVER_URL}/get_domains`, requestOptions)
         .then(response => response.json())
         .then(result => { 
           setDomainOptions(result)

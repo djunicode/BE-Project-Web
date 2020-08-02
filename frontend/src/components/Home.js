@@ -42,7 +42,7 @@ function Home(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch(`${SERVER_URL}/api/get_domains/`, requestOptions)
+      fetch(`${SERVER_URL}/get_domains`, requestOptions)
         .then(response => response.json())
         .then(result => { 
           setDomainOptions(result)

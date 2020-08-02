@@ -63,7 +63,7 @@ export default function Login(props) {
       redirect: 'follow'
     };
 
-    fetch(`${SERVER_URL}/api/Login`, requestOptions)
+    fetch(`${SERVER_URL}/account_login`, requestOptions)
       .then(response => response.json())
       .then(result => {
         if(!result.hasOwnProperty("Message")) {
