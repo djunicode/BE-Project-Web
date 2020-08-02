@@ -135,7 +135,6 @@ function Search(props) {
 
     var token = localStorage.getItem('Token');
     var finalToken = "Token " + token;
-    console.log(finalToken)
 
     var myHeaders = new Headers();
     myHeaders.append("Authorization",finalToken);

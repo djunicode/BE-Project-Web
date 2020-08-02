@@ -95,7 +95,6 @@ function ProjectList(props) {
       <ProjectContainer>
         {projects.length ? (
           <>
-            { console.log(projects) }
             {projects.map((project) => {
               return (
                 <ProjectCard key={project.id}>
@@ -103,7 +102,6 @@ function ProjectList(props) {
                     <ProjectPage project={currentProj} openFn={handleClickOpen} closeFn={handleClose} screen={fullScr} />
                   ) : null}
                     <div onClick={handleClickOpen.bind(this, project)}>
-                    {console.log(project)}
                       <Grid
                         container
                         className={classes.Container}
@@ -132,8 +130,7 @@ function ProjectList(props) {
                         <Grid item md={12} xs={12}>
                           <ProjectCardDes>Description</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {project.description}{' '}
+                            {project.description}
                           </ProjectCardDetail>
                         </Grid>
                       </Grid>
@@ -144,8 +141,7 @@ function ProjectList(props) {
                         <Grid item md={3} xs={12}>
                           <ProjectCardDes>Domain</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {project.domain}{' '}
+                            {project.domain}
                           </ProjectCardDetail>
                         </Grid>
                         <Grid item md={3} xs={12}>
@@ -157,8 +153,7 @@ function ProjectList(props) {
                         <Grid item md={3} xs={12}>
                           <ProjectCardDes>Year</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {project.year_created}{' '}
+                            {project.year_created}
                           </ProjectCardDetail>
                         </Grid>
                         <Grid item md={3} xs={12}>
