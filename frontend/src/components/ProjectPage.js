@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { dummy_text } from '../config';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,7 +8,31 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import styled from 'styled-components';
 import { Grid, IconButton } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 import DescriptionIcon from '@material-ui/icons/Description';
+import SimpleDialog from './ContriDialog';
+
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+    height: '72px',
+    backgroundColor: '#343a40!important',
+  },
+  title: {
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
+  closeButton: {
+    backgroundColor: '#343a40!important',
+  },
+  closeButtonText: {
+    color: '#fff'
+  }
+}));
 
 const ProjectCardDes_modal = styled.div`
   font-size: 1.2em;
@@ -21,6 +46,9 @@ const ProjectCardDetail_modal = styled.div`
 `;
 
 export default function ProjectPage(props) {
+
+  const classes = useStyles();
+
     const [project, setProject] = React.useState(props.project);
     const [teacher, setTeacher] = React.useState(false);
 
@@ -35,18 +63,24 @@ export default function ProjectPage(props) {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">
-            <h4
-              style={{
-                textAlign: 'center',
-                color: '#578bd8',
-                fontSize: '40px',
-                fontWeight: '600',
-              }}
-            >
-              {'Project Details'}
-            </h4>
-          </DialogTitle>
+          <AppBar className={ classes.appBar }>
+            <Toolbar>
+              <IconButton edge="start" color="inherit" onClick={props.closeFn} aria-label="close">
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h6" className={ classes.title }>
+                <h4
+                  style={ {
+                    textAlign: 'center',
+                    fontSize: '40px',
+                    fontWeight: '400',
+                  } }
+                >
+                  { 'Project Details' }
+                </h4>
+            </Typography>
+            </Toolbar>
+          </AppBar>
           <DialogContent>
             <Grid container style={{ paddingLeft: '2vh', marginTop: '5vh' }}>
               <Grid item md={12} xs={12}>
@@ -70,7 +104,7 @@ export default function ProjectPage(props) {
               </Grid>
               <Grid item md={4} xs={12} style={{ marginTop: '20px' }}>
                 <ProjectCardDes_modal>Guide</ProjectCardDes_modal>
-                <ProjectCardDetail_modal> Teacher</ProjectCardDetail_modal>
+                <ProjectCardDetail_modal>{ project.teacher.user.first_name + " " + project.teacher.user.last_name}</ProjectCardDetail_modal>
               </Grid>
               <Grid item md={4} xs={12} style={{ marginTop: '20px' }}>
                 <ProjectCardDes_modal>Year</ProjectCardDes_modal>
@@ -110,14 +144,7 @@ export default function ProjectPage(props) {
               <Grid item md={12} xs={12}>
                 <ProjectCardDes_modal>Contributors</ProjectCardDes_modal>
                 <ProjectCardDetail_modal>
-                  {[0].map((dummy) => {
-                    let cbs = '';
-                    project.contributor.forEach((contri) => {
-                      cbs += `${contri.name}`+` ${contri.last_name}`+` (${contri.email}) ; `;
-                    });
-                    cbs = cbs.slice(0, -1);
-                    return cbs;
-                  })}
+                  <SimpleDialog details={project.contributors}></SimpleDialog>
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
@@ -132,7 +159,7 @@ export default function ProjectPage(props) {
               <Grid item md={12} xs={12}>
                 <ProjectCardDes_modal>Journal Publication</ProjectCardDes_modal>
                 <ProjectCardDetail_modal>
-                  NA
+                  {project.journal}
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
@@ -147,13 +174,13 @@ export default function ProjectPage(props) {
               <Grid item md={12} xs={12}>
                 <ProjectCardDes_modal>Winning Project</ProjectCardDes_modal>
                 <ProjectCardDetail_modal>
-                  NA
+                  {project.awards}
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={props.closeFn} color="primary" autoFocus>
+          <DialogActions className = {classes.closeButton} >
+            <Button onClick={ props.closeFn } varient="outlined" className={ classes.closeButtonText } autoFocus>
               CLOSE
             </Button>
           </DialogActions>

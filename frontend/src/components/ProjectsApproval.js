@@ -66,7 +66,7 @@ function ProjectApproval(props) {
       redirect: 'follow'
     };
 
-    fetch(`${SERVER_URL}/api/Approve_project`, requestOptions)
+    fetch(`${SERVER_URL}/approve_project`, requestOptions)
       .then(response => response.text())
       .then(result => window.location.reload(false))
       .catch(error => console.log('error', error));
@@ -102,7 +102,7 @@ function ProjectApproval(props) {
       redirect: 'follow'
     };
 
-    fetch(`${SERVER_URL}/api/Delete_Project`, requestOptions)
+    fetch(`${SERVER_URL}/delete_project`, requestOptions)
       .then(response => response.json())
       .then(result => window.location.reload(false))
       .catch(error => console.log('error', error));
