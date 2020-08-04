@@ -94,7 +94,7 @@ function ProjectList(props) {
     <React.Fragment>
       <ProjectContainer>
         {projects.length ? (
-          <>
+          <>{console.log(projects)}
             {projects.map((project) => {
               return (
                 <ProjectCard key={project.id}>
@@ -116,7 +116,7 @@ function ProjectList(props) {
                             target="_blank"
                             variant="contained"
                             color="primary"
-                            href={ project.document }
+                            href={ "http://127.0.0.1:8000"+`${project.report}` }
                           >
                             <DescriptionIcon />
                           </IconButton>

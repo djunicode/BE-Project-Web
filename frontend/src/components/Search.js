@@ -133,11 +133,14 @@ function Search(props) {
       setdomain(iniDomain);
     }
 
-    var token = localStorage.getItem('Token');
-    var finalToken = "Token " + token;
-
     var myHeaders = new Headers();
-    myHeaders.append("Authorization",finalToken);
+
+    if(localStorage.getItem("Token") !== null) {
+      var token = localStorage.getItem('Token');
+      var finalToken = "Token " + token;
+
+      myHeaders.append("Authorization", finalToken);
+    }
 
     var requestOptions = {
       method: 'GET',
