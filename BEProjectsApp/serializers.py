@@ -45,7 +45,7 @@ class AllProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = "__all__"
+        exclude = ("abstract",)
 
 
 class ProjectSerializer(serializers.ModelSerializer):

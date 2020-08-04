@@ -1,6 +1,6 @@
 import json
 
-from .models import Project, Teacher, Contributor, User, DOMAIN_CHOICES
+from .models import *
 from .serializers import (
     ProjectSerializer,
     TeacherSerializer,
@@ -265,43 +265,37 @@ class ProjectsView(generics.GenericAPIView):
         return ProjectSerializer
 
 
-@authentication_classes([TokenAuthentication])
-@api_view(["GET"])
-def browse_projects(request):
-    if request.method == "GET":
-        try:
-            if request.user.is_authenticated:
-                if request.user.is_teacher == True:
-                    filtered_projects = ProjectFilter(
-                        request.GET, queryset=Project.objects.all()
-                    )
-                    projects = ProjectSerializer(filtered_projects.qs, many=True).data
-                    all_projects = AllProjectSerializer(projects, many=True).data
-                else:
-                    filtered_projects = ProjectFilter(
-                        request.GET, queryset=Project.objects.all()
-                    )
-                    all_projects = ProjectSerializer(
-                        filtered_projects.qs, many=True
-                    ).data
-            else:
-                filtered_projects = ProjectFilter(
-                    request.GET, queryset=Project.objects.all()
-                )
-                all_projects = ProjectSerializer(filtered_projects.qs, many=True).data
-            return JsonResponse(all_projects, status=status.HTTP_200_OK, safe=False)
+class BrowseProjects(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
 
-        except Exception as e:
-            print(e)
-            return JsonResponse(
-                data={"Message": "Internal Server Error"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-    else:
-        return JsonResponse(
-            data={"Message": "Only GET request allowed"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+    def get(self, request):
+
+        print(request.user.is_authenticated)
+        u = request.user
+
+        print(request.auth)
+        if request.auth == None:
+            print("0")
+            filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+            AllProjects = ProjectSerializer(filter1.qs, many=True).data
+            return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
+
+        else:
+            if request.user.is_teacher == True:
+                print("1")
+
+                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                # A = ProjectSerializer(filter1.qs, many=True).data
+
+                AllProjects = AllProjectSerializer(filter1.qs, many=True).data
+
+                return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
+            else:
+                print("-1")
+                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                A = ProjectSerializer(filter1.qs, many=True).data
+
+                return JsonResponse(A, status=status.HTTP_200_OK, safe=False)
 
 
 @authentication_classes([TokenAuthentication])
