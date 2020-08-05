@@ -35,6 +35,7 @@ urlpatterns = [
     ),
     path("delete_project", views.delete_project, name="delete_project"),
     path("update_user", views.update_user, name="update_user"),
+    path("search/<str:query>", views.Search.as_view(), name="Search"),
 ]
 
 urlpatterns += router.get_urls()
