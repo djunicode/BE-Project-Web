@@ -301,6 +301,7 @@ class BrowseProjects(generics.GenericAPIView):
 
 class MyProjectSearch(generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
+    permission_classes = [Permit]
 
     def get(self, request, query):
         if request.user.is_contributor:
