@@ -15,6 +15,10 @@ class BrowseProjectFilter(DjangoFilterBackend):
 
 
 class ProjectFilter(django_filters.FilterSet):
+    description = django_filters.CharFilter(lookup_expr="icontains")
+    teacher__user__username = django_filters.CharFilter(lookup_expr="icontains")
+    contributors__user__username = django.filters.CharFilter(lookup_expr="icontains")
+
     class Meta:
         model = Project
         fields = (
@@ -23,4 +27,5 @@ class ProjectFilter(django_filters.FilterSet):
             "year_created",
             "teacher__user__username",
             "is_inhouse",
+            "contributors__user__username",
         )
