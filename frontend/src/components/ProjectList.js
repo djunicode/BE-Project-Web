@@ -48,10 +48,9 @@ const ProjectCardDetail = styled.div`
 `;
 
 const getTeacherName = (teachers, pk) => {
-  let name = "";
-  if (teachers.length > 0) {
-    let teacher = teachers.filter((val) => val.pk == pk);
-    name = teacher[0].user.first_name + " " + teacher[0].user.last_name;
+  let name = "";  
+  if (teachers.length > 0) {  
+    name = teachers[0].user.first_name + " " + teachers[0].user.last_name;
   }
   return name;
 };
@@ -87,15 +86,15 @@ function ProjectList(props) {
   }, [props.projects]);
 
   // Get current projects
-  const indexOfLastPost = currentPage * projectsPerPage;
-  const indexOfFirstPost = indexOfLastPost - projectsPerPage;
-  const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
+  // const indexOfLastPost = currentPage * projectsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - projectsPerPage;
+  // const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
 
   return (
     <React.Fragment>
       <ProjectContainer>
         {projects.length ? (
-          <>
+          <>{console.log(projects)}
             {projects.map((project) => {
               return (
                 <ProjectCard key={project.id}>
@@ -111,16 +110,18 @@ function ProjectList(props) {
                           <ProjectCardDes>Project Name</ProjectCardDes>
                           <h5>{project.title}</h5>
                         </Grid>
-                        <Grid item md={3} xs={3}>
+                        {(localStorage.getItem('Designation') === "Teacher")? (
+                        <Grid item md={ 3 } xs={ 3 }>
                           <IconButton
                             target="_blank"
                             variant="contained"
                             color="primary"
-                            href={project.document}
+                            href={ "http://127.0.0.1:8000"+`${project.report}` }
                           >
                             <DescriptionIcon />
                           </IconButton>
                         </Grid>
+                        ) : null}
                       </Grid>
                       <Grid
                         container
@@ -129,8 +130,7 @@ function ProjectList(props) {
                         <Grid item md={12} xs={12}>
                           <ProjectCardDes>Description</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {project.description}{' '}
+                            {project.description}
                           </ProjectCardDetail>
                         </Grid>
                       </Grid>
@@ -141,25 +141,19 @@ function ProjectList(props) {
                         <Grid item md={3} xs={12}>
                           <ProjectCardDes>Domain</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {project.domain}{' '}
+                            {project.domain}
                           </ProjectCardDetail>
                         </Grid>
                         <Grid item md={3} xs={12}>
                           <ProjectCardDes>Guide</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {getTeacherName(
-                              props.teachers,
-                              project.teacher
-                            )}{' '}
+                          { project.teacher.user.first_name + " " + project.teacher.user.last_name }
                           </ProjectCardDetail>
                         </Grid>
                         <Grid item md={3} xs={12}>
                           <ProjectCardDes>Year</ProjectCardDes>
                           <ProjectCardDetail>
-                            {' '}
-                            {project.year_created}{' '}
+                            {project.year_created}
                           </ProjectCardDetail>
                         </Grid>
                         <Grid item md={3} xs={12}>
@@ -167,7 +161,7 @@ function ProjectList(props) {
                           <ProjectCardDetail>
                             {[0].map((dummy) => {
                               let cbs = '';
-                              project.contributor.forEach((contri) => {
+                              project.contributors.forEach((contri) => {
                                 cbs += `${contri.name},`;
                               });
                               cbs = cbs.slice(0, -1);

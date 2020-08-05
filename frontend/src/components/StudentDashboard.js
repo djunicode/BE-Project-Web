@@ -39,7 +39,7 @@ const useStyles = makeStyles({
     marginTop: 20,
   },
   userInfo : {
-    background:'#e4e4e4'
+    background:'#e4e4e4',
   },
   fixHeight:{
     minHeight:'90vh'
@@ -88,13 +88,14 @@ function TeacherDashboard(props) {
   const [projects, setprojects] = useState([]);
 
   const studentData=[
-    "Username",
-    "SapId",
-    "Name",
+    localStorage.getItem('Username'),
+    localStorage.getItem('Name'),
+    localStorage.getItem('id'),
     "Department",
     "Year",
     "Email"
   ]
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -105,7 +106,8 @@ function TeacherDashboard(props) {
       confirmButtonText:'Yes'
     }).then((result) => {
       if(result.value) {
-        //remove from localstorage acc to student data
+        localStorage.clear();
+        props.history.push("/login");
       }
     })
   }

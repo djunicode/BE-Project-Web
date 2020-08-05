@@ -1,6 +1,6 @@
 import json
 
-from .models import Project, Teacher, Contributor, User, DOMAIN_CHOICES
+from .models import *
 from .serializers import (
     ProjectSerializer,
     TeacherSerializer,
@@ -30,6 +30,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.http import JsonResponse, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -265,43 +266,149 @@ class ProjectsView(generics.GenericAPIView):
         return ProjectSerializer
 
 
-@authentication_classes([TokenAuthentication])
-@api_view(["GET"])
-def browse_projects(request):
-    if request.method == "GET":
-        try:
-            if request.user.is_authenticated:
-                if request.user.is_teacher == True:
-                    filtered_projects = ProjectFilter(
-                        request.GET, queryset=Project.objects.all()
-                    )
-                    projects = ProjectSerializer(filtered_projects.qs, many=True).data
-                    all_projects = AllProjectSerializer(projects, many=True).data
-                else:
-                    filtered_projects = ProjectFilter(
-                        request.GET, queryset=Project.objects.all()
-                    )
-                    all_projects = ProjectSerializer(
-                        filtered_projects.qs, many=True
-                    ).data
-            else:
-                filtered_projects = ProjectFilter(
-                    request.GET, queryset=Project.objects.all()
-                )
-                all_projects = ProjectSerializer(filtered_projects.qs, many=True).data
-            return JsonResponse(all_projects, status=status.HTTP_200_OK, safe=False)
+class BrowseProjects(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
 
-        except Exception as e:
-            print(e)
-            return JsonResponse(
-                data={"Message": "Internal Server Error"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-    else:
-        return JsonResponse(
-            data={"Message": "Only GET request allowed"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+    def get(self, request):
+
+        print(request.user.is_authenticated)
+        u = request.user
+
+        print(request.auth)
+        if request.auth == None:
+            print("0")
+            filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+            AllProjects = ProjectSerializer(filter1.qs, many=True).data
+            return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
+
+        else:
+            if request.user.is_teacher == True:
+                print("1")
+
+                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                # A = ProjectSerializer(filter1.qs, many=True).data
+
+                AllProjects = AllProjectSerializer(filter1.qs, many=True).data
+
+                return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
+            else:
+                print("-1")
+                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                A = ProjectSerializer(filter1.qs, many=True).data
+
+                return JsonResponse(A, status=status.HTTP_200_OK, safe=False)
+
+
+class MyProjectSearch(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [Permit]
+
+    def get(self, request, query):
+        if request.user.is_contributor:
+            c = Contributor.objects.get(user=request.user)
+            p = Project.objects.filter(contributors=c)
+            q = query.split(" ")
+            for query in q:
+                p = p.filter(
+                    Q(description__icontains=query)
+                    | Q(abstract__icontains=query)
+                    | Q(teacher__user__username__icontains=query)
+                    | Q(contributors__user__username__icontains=query)
+                    | Q(title__icontains=query)
+                    | Q(awards__icontains=query)
+                    | Q(contributors__user__first_name__icontains=query)
+                    | Q(teacher__user__first_name__icontains=query)
+                    | Q(contributors__user__last_name__icontains=query)
+                    | Q(teacher__user__last_name__icontains=query)
+                ).distinct()
+            l = list(set(p))
+            data = ProjectSerializer(l, many=True).data
+            return JsonResponse(data, safe=False)
+        else:
+            t = Teacher.objects.get(user=request.user)
+            p = Project.objects.filter(teacher=t)
+            q = query.split(" ")
+            for query in q:
+                p = p.filter(
+                    Q(description__icontains=query)
+                    | Q(abstract__icontains=query)
+                    | Q(teacher__user__username__icontains=query)
+                    | Q(contributors__user__username__icontains=query)
+                    | Q(title__icontains=query)
+                    | Q(awards__icontains=query)
+                    | Q(contributors__user__first_name__icontains=query)
+                    | Q(teacher__user__first_name__icontains=query)
+                    | Q(contributors__user__last_name__icontains=query)
+                    | Q(teacher__user__last_name__icontains=query)
+                ).distinct()
+            l = list(set(p))
+            data = AllProjectSerializer(l, many=True).data
+            return JsonResponse(data, safe=False)
+
+
+class Search(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, query):
+        print(query)
+        if request.auth == None:
+
+            q = query.split(" ")
+            for query in q:
+                p = Project.objects.filter(
+                    Q(description__icontains=query)
+                    | Q(abstract__icontains=query)
+                    | Q(teacher__user__username__icontains=query)
+                    | Q(contributors__user__username__icontains=query)
+                    | Q(title__icontains=query)
+                    | Q(awards__icontains=query)
+                    | Q(contributors__user__first_name__icontains=query)
+                    | Q(teacher__user__first_name__icontains=query)
+                    | Q(contributors__user__last_name__icontains=query)
+                    | Q(teacher__user__last_name__icontains=query)
+                ).distinct()
+            l = list(set(p))
+            data = ProjectSerializer(l, many=True).data
+            return JsonResponse(data, safe=False)
+        else:
+            if request.user.is_teacher == True:
+                print(1)
+                q = query.split(" ")
+                for query in q:
+                    p = Project.objects.filter(
+                        Q(description__icontains=query)
+                        | Q(abstract__icontains=query)
+                        | Q(teacher__user__username__icontains=query)
+                        | Q(contributors__user__username__icontains=query)
+                        | Q(title__icontains=query)
+                        | Q(awards__icontains=query)
+                        | Q(contributors__user__first_name__icontains=query)
+                        | Q(teacher__user__first_name__icontains=query)
+                        | Q(contributors__user__last_name__icontains=query)
+                        | Q(teacher__user__last_name__icontains=query)
+                    ).distinct()
+                l = list(set(p))
+                data = AllProjectSerializer(l, many=True).data
+                return JsonResponse(data, safe=False)
+            else:
+                print("-1")
+                q = query.split(" ")
+                for query in q:
+                    p = Project.objects.filter(
+                        Q(description__icontains=query)
+                        | Q(abstract__icontains=query)
+                        | Q(teacher__user__username__icontains=query)
+                        | Q(contributors__user__username__icontains=query)
+                        | Q(title__icontains=query)
+                        | Q(awards__icontains=query)
+                        | Q(contributors__user__first_name__icontains=query)
+                        | Q(teacher__user__first_name__icontains=query)
+                        | Q(contributors__user__last_name__icontains=query)
+                        | Q(teacher__user__last_name__icontains=query)
+                    ).distinct()
+                l = list(set(p))
+                data = ProjectSerializer(l, many=True).data
+                return JsonResponse(data, safe=False)
 
 
 @authentication_classes([TokenAuthentication])

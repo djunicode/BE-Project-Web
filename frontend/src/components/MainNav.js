@@ -23,9 +23,11 @@ function MainNav(props) {
               <Nav.Link  href="/upload">
                 <div >Upload</div>
               </Nav.Link>
-              <Nav.Link  href="/student">
-                <div >Student</div>
+             {(localStorage.getItem('Designation') === "Teacher")? null : (
+              <Nav.Link href="/student">
+                <div>Profile</div>
               </Nav.Link>
+             )}
             </Nav>
             <Nav className="ml-auto" style={{display:'contents'}}>
               

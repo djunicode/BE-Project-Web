@@ -24,7 +24,7 @@ urlpatterns = [
     path("account_login", views.account_login, name="account_login"),
     path("project", views.ProjectsView.as_view(), name="project"),
     path("my_projects", views.my_projects, name="my_projects"),
-    path("browse_projects", views.browse_projects, name="browse_projects"),
+    path("browse_projects", views.BrowseProjects.as_view(), name="browse_projects"),
     path("create_project", views.create_project, name="create_project"),
     path("approve_project", views.approve_project, name="approve_project"),
     path("update_project/<int:pk>", views.update_project, name="update_project"),
@@ -35,6 +35,12 @@ urlpatterns = [
     ),
     path("delete_project", views.delete_project, name="delete_project"),
     path("update_user", views.update_user, name="update_user"),
+    path("search/<str:query>", views.Search.as_view(), name="Search"),
+    path(
+        "MyProjectSearch/<str:query>",
+        views.MyProjectSearch.as_view(),
+        name="MyProjectSearch",
+    ),
 ]
 
 urlpatterns += router.get_urls()
