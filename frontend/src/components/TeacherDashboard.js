@@ -83,6 +83,7 @@ function TeacherDashboard(props) {
         localStorage.removeItem('Username');
         localStorage.removeItem('id');
         localStorage.removeItem('Subject');
+        localStorage.removeItem('Designation');
         props.history.push("/login");
       }
     })
