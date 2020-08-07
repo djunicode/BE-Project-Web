@@ -20,6 +20,7 @@ urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
     url(r"^api/search/", views.SearchProjectView.as_view(), name="search"),
     url(r"^schema/$", schema_view),
+    path("change_password", views.change_password, name="change_password"),
     path("get_domains", views.get_domains, name="get_domains"),
     path("account_login", views.account_login, name="account_login"),
     path("project", views.ProjectsView.as_view(), name="project"),

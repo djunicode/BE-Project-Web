@@ -11,6 +11,7 @@ from .serializers import (
     AllProjectSerializer,
     UpdateProjectSerializer,
     UpdateProjectReportSerializer,
+    ChangePasswordSerializer,
 )
 from .permissions import IsUserOrReadOnly, Permit
 from .filters import BrowseProjectFilter, ProjectFilter
@@ -107,6 +108,21 @@ class SearchProjectView(APIView):
             SearchResult.append({label: Result[indx]})
 
         return Response(SearchResult)
+
+
+@permission_classes([IsAuthenticatedOrReadOnly])
+@api_view(["POST"])
+def change_password(request):
+    user = authenticate(
+        username=request.user.username, password=request.POST.get("current_password")
+    )
+    if not user:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    serializer = ChangePasswordSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    request.user.set_password(serializer.validated_data["new_password"])
+    request.user.save()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @permission_classes([IsAuthenticatedOrReadOnly])
