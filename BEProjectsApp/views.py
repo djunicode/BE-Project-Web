@@ -151,18 +151,30 @@ def account_login(request):
 
                 login(request, user)
 
-                if user.is_teacher:
-                    role = "Teacher"
-                elif user.is_contributor:
-                    role = "Contributor/Student"
-
                 data = {
                     "Name": user.first_name + " " + user.last_name,
                     "id": user.pk,
                     "Username": user.username,
                     "Token": token.key,
-                    "Designation": role,
                 }
+
+                if user.is_teacher:
+                    role = "Teacher"
+                    subject = user.teacher_user.subject
+                    data.update({"Designation": role, "Subject": subject})
+                elif user.is_contributor:
+                    role = "Contributor/Student"
+                    github_id = user.contributor_user.github_id
+                    division = user.contributor_user.division
+                    year = user.contributor_user.year
+                    data.update(
+                        {
+                            "Designation": role,
+                            "Github ID": github_id,
+                            "Division": division,
+                            "Year": year,
+                        }
+                    )
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
 
