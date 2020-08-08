@@ -571,6 +571,7 @@ def create_project(request):
             demo_video = request.POST.get("demo_video", None)
             awards = request.POST.get("awards", None)
             journal = request.POST.get("journal", None)
+            year_created = request.POST.get("year_created", None)
             is_inhouse = (
                 True if request.POST.get("is_inhouse", None) == "True" else False
             )
@@ -597,6 +598,7 @@ def create_project(request):
                 demo_video=demo_video,
                 awards=awards,
                 journal=journal,
+                year_created=year_created,
                 is_inhouse=is_inhouse,
                 company=company,
                 supervisor=supervisor,
