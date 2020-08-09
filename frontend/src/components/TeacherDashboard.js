@@ -68,7 +68,8 @@ function TeacherDashboard(props) {
   };
   const teacherData = [
     localStorage.getItem('Username'),
-    localStorage.getItem('Name')
+    localStorage.getItem('Name'),
+    localStorage.getItem('Subject')
   ]
   const logout = () => {
     Swal.fire({

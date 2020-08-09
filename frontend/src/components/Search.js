@@ -81,7 +81,8 @@ function Search(props) {
     else if(house=="Out-House"){
       houseParam="False";
     }
-    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
+    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=
+    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setProjects(result);
@@ -131,7 +132,6 @@ function Search(props) {
     fetch(`${SERVER_URL}/browse_projects?domain=${iniDomain}&approved=True`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         setProjects(result);
       })
       .catch(error => console.log('error', error));

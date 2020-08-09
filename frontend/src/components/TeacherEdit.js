@@ -32,7 +32,13 @@ function TeacherEdit() {
     }
     fetch(`${SERVER_URL}/update_user`,requestOptions)
       .then(response => response.json())
-      .then(result => props.location.reload(false))
+      .then(result => {
+        if(result.Message === 'Successfully updated User') {
+          localStorage.setItem('Subject',subject);
+          window.location.reload(false);
+        }
+        
+      })
   }
   return (
     <div>

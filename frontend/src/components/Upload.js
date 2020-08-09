@@ -16,9 +16,6 @@ import { FormControlLabel,
   MenuItem, 
   Select as MUISelect, 
   InputLabel, 
-  Chip, 
-  Avatar, 
-  IconButton
 } from '@material-ui/core';
 import Select from 'react-select';
 import styled from 'styled-components';
@@ -61,6 +58,32 @@ const Description = styled.h6`
 `
 function getSteps() {
   return ['Enter Necessary Information', 'Enter Links'];
+}
+
+export const youtubeValid = /^(https\:\/\/)(www\.youtube\.com\/watch\?v=).+$/;
+export const githubValid = /^(https\:\/\/)(github\.com\/).+$/;
+
+const youtubeCheck = (url) => {
+  if(url=="") {
+    return false
+  }
+  else if(!youtubeValid.test(url)){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+export const githubCheck = (url) => {
+  if(url=="") {
+    return false
+  }
+  else if(!githubValid.test(url)){
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 function Upload() {
@@ -108,7 +131,7 @@ function Upload() {
         submitData();
       }
       else {
-        setErrors("Please enter all inputs and atleast two contributors");
+        setErrors("Please enter required inputs in proper format and atleast two contributors");
         return;
       }
     }
@@ -118,8 +141,10 @@ function Upload() {
     if(house=="In-House") {
       if(
         domain=="" || title==""||
-        date=="" || mentor=="" || description=="" 
-        
+        date=="" || mentor=="" || description=="" ||
+        abstract == "" || report==null
+        || youtubeCheck(youtube) || githubCheck(gitLink) ||
+        contributors.length<2
       )
       {
         return true;
@@ -128,8 +153,12 @@ function Upload() {
     else if(house=="Out-House"){
       if(
         domain=="" || title==""||
-        date=="" || description=="" ||
+        date=="" || mentor=="" || description=="" ||
+        abstract =="" ||
         supervisor=="" || company==""
+        || report==null 
+        || youtubeCheck(youtube) || githubCheck(gitLink) ||
+        contributors.length<2
       )
       {
         return true;
@@ -142,7 +171,6 @@ function Upload() {
   };
 
   const submitData = () => {
-    console.log('contris',contributors);
     const word = 'Token ';
     const token = word.concat(`${localStorage.getItem('Token')}`);
     var myHeaders = new Headers();
@@ -153,6 +181,7 @@ function Upload() {
       teacher:mentor,
       description,
       abstract,
+      year_created:date,
       domain,
       github_repo:gitLink,
       demo_video:youtube,
@@ -171,14 +200,13 @@ function Upload() {
       projectData.company=company;
       projectData.supervisor=supervisor;
     }
-    // formdata.append("project",JSON.stringify(project)); 
-    // formdata.append("contributors",JSON.stringify(contributors));
-    // formdata.append("report",report);
-    // formdata.append("executable",executableFile);
     Object.keys(projectData).forEach(val => {
       formdata.append(`${val}`,projectData[val]);
     });
-    formdata.append("contributors[]",contributors);
+    contributors.map(val => {
+      formdata.append("contributors[]",val);
+    })
+    
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -212,13 +240,13 @@ function Upload() {
       })
   }
   const contributorsChange = (newValue,action) => {
-    console.log('chnaged');
     setContributors(() => {
       return newValue?newValue.map(contri => {
         return contri.value;
       }):[]
     });
   }
+  
   return (<div>
     <MainNav/>
   
@@ -257,7 +285,7 @@ function Upload() {
       </div>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12}>
-          <Description>Add Contributors</Description>
+          <Description>*Add Contributors</Description>
           <Select 
             isMulti
             name="colors"
@@ -270,14 +298,14 @@ function Upload() {
         <Grid item xs={12} md={6}>
           <TextField fullWidth 
           id="title" 
-          label="Title"
+          label="*Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)} 
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
-            <InputLabel id="domain-label">Domain</InputLabel>
+            <InputLabel id="domain-label">*Domain</InputLabel>
             <MUISelect
               labelId="domain-label"
               id="domain"
@@ -303,7 +331,7 @@ function Upload() {
               <TextField 
               fullWidth 
               id="company" 
-              label="Company"
+              label="*Company"
               value={company}
               onChange={(e) => setCompany(e.target.value)} 
               />
@@ -312,7 +340,7 @@ function Upload() {
               <TextField 
               fullWidth 
               id="supervisor" 
-              label="Supervisor" 
+              label="*Supervisor" 
               value={supervisor}
               onChange={(e) => setsupervisor(e.target.value)} 
               />
@@ -321,7 +349,7 @@ function Upload() {
           }
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
-            <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
+            <InputLabel id="demo-simple-select-label">*Mentor</InputLabel>
             <MUISelect
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -343,7 +371,7 @@ function Upload() {
         </Grid>
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
-            <InputLabel id="year-label">Year</InputLabel>
+            <InputLabel id="year-label">*Year</InputLabel>
             <MUISelect
               labelId="year-label"
               id="year"
@@ -373,7 +401,7 @@ function Upload() {
             inputProps={{
               maxLength:200
             }}
-            placeholder="Description"
+            placeholder="*Description"
             fullWidth
             helperText={`${description.length}/200`}
             value={description}
@@ -386,7 +414,7 @@ function Upload() {
             id="abstract"
             multiline
             rows={8}
-            placeholder="Abstract"
+            placeholder="*Abstract"
             fullWidth
             value={abstract}
             onChange={(e) => setabstract(e.target.value)}
@@ -394,7 +422,7 @@ function Upload() {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Description>Report</Description>
+          <Description>*Report</Description>
           <input type="file"
             id="report"
             name="report"
@@ -408,6 +436,16 @@ function Upload() {
             name="exec"
             onChange={(e) => setExecFile(e.target.files[0])}
           />
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <div className="alert alert-warning" role="alert">
+            <div>
+              * Required Fields
+            </div>
+            <div>
+              This fields will not be editable later !
+            </div>
+          </div>
         </Grid>
       </Grid>
     </div>:
@@ -423,6 +461,7 @@ function Upload() {
             value={gitLink}
             onChange={e => setGitLink(e.target.value)}
             fullWidth
+            helperText="Format : https://github.com/project-name-prefixes"
             size="small" 
           />
         </Grid>
@@ -435,6 +474,7 @@ function Upload() {
             value={youtube}
             onChange={e => setYoutube(e.target.value)}
             fullWidth
+            helperText="Format: https://www.youtube.com/watch?v=video-id"
             size="small" 
           />
         </Grid>
@@ -463,9 +503,11 @@ function Upload() {
           />
         </Grid>
       </Grid>
-      <div style={{color:'red'}}>
+      <div>
         {
-          errors!==""?errors:""
+          errors!==""?<div className="alert alert-danger mt-3 mb-3" role="alert">
+            {errors} !
+        </div>:""
         }
       </div>
     </div>  

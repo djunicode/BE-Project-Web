@@ -8,22 +8,6 @@ import Swal from 'sweetalert2'
 import UserInfo from './UserInfo';
 import StudentEdit from './StudentEdit';
 
-const DummyStudentProject = [{
-  approved: false,
-  company: "none",
-  description: "extra info...",
-  contributor:[{name:"Test1"},{name:"Test2"}],
-  document: "http://127.0.0.1:8000/media/60004180085_ostl-undertaking.pdf",
-  domain: "Cryptography",
-  id: 456856,
-  is_inhouse: true,
-  supervisor: "none",
-  teacher: 354546,
-  title: "Test student project,dummy detail,delete will not work",
-  year_created: 2020,
-
-}];
-
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
@@ -90,10 +74,9 @@ function TeacherDashboard(props) {
   const studentData=[
     localStorage.getItem('Username'),
     localStorage.getItem('Name'),
-    localStorage.getItem('id'),
-    "Department",
-    "Year",
-    "Email"
+    localStorage.getItem('year'),
+    localStorage.getItem('division'),
+    localStorage.getItem('githubId')
   ]
 
   const handleChange = (event, newValue) => {

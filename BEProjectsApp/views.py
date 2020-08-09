@@ -170,7 +170,7 @@ def account_login(request):
                     data.update(
                         {
                             "Designation": role,
-                            "Github ID": github_id,
+                            "github_id": github_id,
                             "Division": division,
                             "Year": year,
                         }

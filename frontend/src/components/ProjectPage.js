@@ -129,6 +129,15 @@ export default function ProjectPage(props) {
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
+           
+            <Grid container style={{ paddingLeft: '2vh', marginTop: '5vh' }}>
+              <Grid item md={12} xs={12}>
+                <ProjectCardDes_modal>Type</ProjectCardDes_modal>
+                <ProjectCardDetail_modal>
+                  {project.is_inhouse?'In-House':'Out-House'} Project
+                </ProjectCardDetail_modal>
+              </Grid>
+            </Grid>
             <Grid
               container
               style={{
@@ -174,18 +183,20 @@ export default function ProjectPage(props) {
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
-            <Grid container>
-              <Grid item xs={12} md={12}>
-              <ProjectCardDes_modal style={{marginBottom:10,paddingLeft:'2vh'}}>Demo</ProjectCardDes_modal>
-              <iframe 
-                width="100%" 
-                height="345" 
-                style={{marginLeft:'2vh'}}
-                src="https://www.youtube.com/embed/tgbNymZ7vqY"
-              >
-              </iframe>
+            {project.demo_video &&
+              <Grid container>
+                <Grid item xs={12} md={12}>
+                <ProjectCardDes_modal style={{marginBottom:10,paddingLeft:'2vh'}}>Demo</ProjectCardDes_modal>
+                <iframe 
+                  width="100%" 
+                  height="345" 
+                  style={{marginLeft:'2vh'}}
+                  src={`https://www.youtube.com/embed/${project.demo_video.replace("https://www.youtube.com/watch?v=","")}`}
+                >
+                </iframe>
+                </Grid>
               </Grid>
-            </Grid>
+            }
           </DialogContent>
           <DialogActions className = {classes.closeButton} >
             <Button onClick={ props.closeFn } varient="outlined" className={ classes.closeButtonText } autoFocus>
