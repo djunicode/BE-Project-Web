@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import ProjectList from './ProjectList';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
+import { getOptionsForYear, getTeachers,getDomains } from '../commonFuncs';
 
 const useStyles = makeStyles((theme) => ({
   searchBox:{
@@ -40,15 +41,6 @@ margin-top:30px;
 const SearchContainer = styled.div`
 
 `
-export const getOptionsForYear = () => {
-  let curr = new Date().getFullYear();
-  let data = [];
-  for(let i = curr;i>=2015;i--)
-  {
-    data.push(i);
-  }
-  return data;
-}
 
 function Search(props) {
   const [domain, setdomain] = useState("");
@@ -63,18 +55,6 @@ function Search(props) {
   
   const classes = useStyles();
 
-  const getTeachers = () => {
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow'
-    };
-    fetch(`${SERVER_URL}/api/teachers`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        setTeachers(result);
-      })
-      .catch(error => console.log('error', error));
-  }
   const applyFilters = () => {
     if(currentSearchFilter) {
       let x = false;
@@ -83,8 +63,8 @@ function Search(props) {
         return (
           project.domain==domain ||
           project.year_created==year ||
-          project.house==x ||
-          project.teacher==faculty
+          project.is_inhouse==x ||
+          project.teacher.user.id==faculty
         )
       });
       setProjects(newProjects);
@@ -101,7 +81,8 @@ function Search(props) {
     else if(house=="Out-House"){
       houseParam="False";
     }
-    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=${year}&teacher=${faculty}&is_inhouse=${houseParam}`, requestOptions)
+    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=
+    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         setProjects(result);
@@ -115,10 +96,10 @@ function Search(props) {
         method: 'GET',
         redirect: 'follow'
       };
-      fetch(`${SERVER_URL}/api/search?generic=${searchTerm}`, requestOptions)
+      fetch(`${SERVER_URL}/search/${searchTerm}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-          setProjects(result[1].projects);
+          setProjects(result);
         })
         .catch(error => console.log('error', error));
     } 
@@ -155,20 +136,13 @@ function Search(props) {
       })
       .catch(error => console.log('error', error));
     
-    const getDomains = () => {
-      var requestOptions = {
-        method: 'GET',
-        redirect: 'follow'
-      };
-      fetch(`${SERVER_URL}/get_domains`, requestOptions)
-        .then(response => response.json())
-        .then(result => { 
-          setDomainOptions(result)
-        })
-        .catch(error => console.log('error', error));
+    const collect = async() => {
+      const doms = await getDomains();
+      setDomainOptions(doms);
+      const teacherOpts = await getTeachers();
+      setTeachers(teacherOpts);
     }
-    getTeachers();
-    getDomains();
+    collect();
   },[])
   return (<div>
     <MainNav/>
@@ -250,7 +224,8 @@ function Search(props) {
                     teachers.map(teacher => {
                       return (
                         <MenuItem 
-                          value={teacher.pk}
+                          value={teacher.user.id}
+                          key={`faculty${teacher.user.id}`}
                         >
                           {teacher.user.first_name} {teacher.user.last_name}
                         </MenuItem>
@@ -300,7 +275,7 @@ function Search(props) {
               <TextField
                 className={classes.searchBox}
                 id="input-with-icon-textfield"
-                placeholder="Search Project Name.."
+                placeholder="Search Project.."
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e) => setsearchTerm(e.target.value)}

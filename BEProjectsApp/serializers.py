@@ -56,7 +56,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         exclude = [
-            "abstract",
             "report",
             "executable",
             "github_repo",

@@ -6,9 +6,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
-import {getOptionsForYear} from './Search' 
+import {getOptionsForYear, getTeachers} from '../commonFuncs' 
 import { FormControlLabel, 
   RadioGroup, 
   Radio,FormControl, 
@@ -18,13 +16,12 @@ import { FormControlLabel,
   MenuItem, 
   Select as MUISelect, 
   InputLabel, 
-  Chip, 
-  Avatar, 
-  IconButton
 } from '@material-ui/core';
 import Select from 'react-select';
 import styled from 'styled-components';
 import MainNav from './MainNav';
+import { SERVER_URL } from '../config';
+import { getDomains } from '../commonFuncs';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -60,7 +57,33 @@ const Description = styled.h6`
   padding-bottom:10px;
 `
 function getSteps() {
-  return ['Enter Information', 'Enter Contributors'];
+  return ['Enter Necessary Information', 'Enter Links'];
+}
+
+export const youtubeValid = /^(https\:\/\/)(www\.youtube\.com\/watch\?v=).+$/;
+export const githubValid = /^(https\:\/\/)(github\.com\/).+$/;
+
+const youtubeCheck = (url) => {
+  if(url=="") {
+    return false
+  }
+  else if(!youtubeValid.test(url)){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+export const githubCheck = (url) => {
+  if(url=="") {
+    return false
+  }
+  else if(!githubValid.test(url)){
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 function Upload() {
@@ -68,7 +91,8 @@ function Upload() {
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
   const [house, setHouse] = React.useState('In-House');
-  const [file, setFile] = useState(null);
+  const [report, setReport] = useState(null);
+  const [executableFile, setExecFile] = useState(null)
   const [title, setTitle] = useState("");
   const [domain, setdomain] = useState("");
   const [mentor, setmentor] = useState("");
@@ -78,80 +102,36 @@ function Upload() {
   const [date, setdate] = useState("");
   const [teachers, setTeachers] = useState([]);
   const [contributors, setContributors] = useState([]);
+  const [contributorOpts, setcontributorOpts] = useState([]);
   const [errors, setErrors] = useState("");
-  const [contriName, setcontriName] = useState("");
-  const [contriLastName, setcontriLastName] = useState("");
-  const [contriEmail, setcontriEmail] = useState("");
   const [DomainOptions, setDomainOptions] = useState([]);
-  const [linksList, setlinksList] = useState([{ description: "", url: "" }]);
-  const [highlights, sethighlights] = useState([{description:""}]);
-  const options = [
-    { value: 'Rohan', label: 'Rohan' },
-    { value: 'Jash', label: 'Jash' },
-    { value: 'Rashmil', label: 'Rashmil' }
-  ]
-
-  // handle input change
-  const handleInputChange = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...linksList];
-    list[index][name] = value;
-    setlinksList(list);
-  };
- 
-  // handle click event of the Remove button
-  const handleRemoveClick = index => {
-    const list = [...linksList];
-    list.splice(index, 1);
-    setlinksList(list);
-  };
- 
-  // handle click event of the Add button
-  const handleAddClick = () => {
-    setlinksList([...linksList, { description: "", url: "" }]);
-  };
+  const [gitLink,setGitLink] = useState("");
+  const [publication,setPublication] = useState("");
+  const [youtube,setYoutube] = useState("");
+  const [abstract, setabstract] = useState("");
+  const [awards, setawards] = useState("");
 
   React.useEffect(() => {
-    const getDomains = () => {
-      var requestOptions = {
-        method: 'GET',
-        redirect: 'follow'
-      };
-      fetch("http://127.0.0.1:8000/api/get_domains/", requestOptions)
-        .then(response => response.json())
-        .then(result => { 
-          setDomainOptions(result)
-        })
-        .catch(error => console.log('error', error));
+    const collect = async() => {
+      const doms = await getDomains();
+      setDomainOptions(doms);
+      const teacherOpts = await getTeachers();
+      setTeachers(teacherOpts);
+      getContribitors();
     }
-    getDomains();
+    collect();
   },[]);
-  const addContributor = () => {
-    setContributors(prev => {
-      return [
-        ...prev,
-        {
-          name:contriName,
-          last_name:contriLastName,
-          email:contriEmail
-        }
-      ]
-    });
-    setcontriName("");
-    setcontriLastName("");
-    setcontriEmail("");
-  }
   
   const handleNext = () => {
     setErrors("");
     if((activeStep+1)==2)
     {
-      if(!checkErrors)
+      if(!checkErrors())
       {
         submitData();
       }
       else {
-        setErrors("Please enter all inputs and atleast two contributors");
+        setErrors("Please enter required inputs in proper format and atleast two contributors");
         return;
       }
     }
@@ -161,9 +141,10 @@ function Upload() {
     if(house=="In-House") {
       if(
         domain=="" || title==""||
-        date=="" || mentor=="" ||
-        file==null || description=="" ||
-        contributors.length<2 
+        date=="" || mentor=="" || description=="" ||
+        abstract == "" || report==null
+        || youtubeCheck(youtube) || githubCheck(gitLink) ||
+        contributors.length<2
       )
       {
         return true;
@@ -172,10 +153,12 @@ function Upload() {
     else if(house=="Out-House"){
       if(
         domain=="" || title==""||
-        date=="" ||
-        file==null || description=="" ||
-        contributors.length<2 || 
+        date=="" || mentor=="" || description=="" ||
+        abstract =="" ||
         supervisor=="" || company==""
+        || report==null 
+        || youtubeCheck(youtube) || githubCheck(gitLink) ||
+        contributors.length<2
       )
       {
         return true;
@@ -188,63 +171,82 @@ function Upload() {
   };
 
   const submitData = () => {
+    const word = 'Token ';
+    const token = word.concat(`${localStorage.getItem('Token')}`);
     var myHeaders = new Headers();
+    myHeaders.append('Authorization', `${token}`);
     var formdata = new FormData();
-    let project = {
+    let projectData = {
       title,
       teacher:mentor,
-      year_created:date,
       description,
-      approved:false,
-      domain
+      abstract,
+      year_created:date,
+      domain,
+      github_repo:gitLink,
+      demo_video:youtube,
+      journal:publication,
+      awards,
+      report,
+      executable:executableFile,
     };
     if(house=="In-House")
     {
-      project.is_inhouse=true;
+      projectData.is_inhouse="True";
     }
     else
     {
-      project.is_inhouse=false;
-      project.company=company;
-      project.supervisor=supervisor;
+      projectData.is_inhouse="False";
+      projectData.company=company;
+      projectData.supervisor=supervisor;
     }
-    formdata.append("project",JSON.stringify(project)); 
-    formdata.append("contributors",JSON.stringify(contributors));
-    formdata.append("document",file);
+    Object.keys(projectData).forEach(val => {
+      formdata.append(`${val}`,projectData[val]);
+    });
+    contributors.map(val => {
+      formdata.append("contributors[]",val);
+    })
+    
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: formdata,
       redirect: 'follow'
     };
-    fetch("http://localhost:8000/api/create_project", requestOptions)
+    fetch(`${SERVER_URL}/create_project`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        //
+        console.log('submit',result);
       })
       .catch(error => console.log('error', error));
   }
-  const getTeachers = () => {
+  
+  const getContribitors = () => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow'
     };
-    fetch(`http://127.0.0.1:8000/api/teachers`, requestOptions)
+    fetch(`${SERVER_URL}/contributors`,requestOptions)
       .then(response => response.json())
       .then(result => {
-        setTeachers(result);
+        setcontributorOpts(() => {
+          return result.map(val => {
+            return {
+              value:val.user.id,
+              label:`${val.user.first_name} ${val.user.last_name}`
+            }
+          }) 
+        })
       })
-      .catch(error => console.log('error', error));
   }
-  const handleDeleteContributor = (i) => {
-    const newContributors =  contributors.filter((val,index) => {
-      return index!=i;
+  const contributorsChange = (newValue,action) => {
+    setContributors(() => {
+      return newValue?newValue.map(contri => {
+        return contri.value;
+      }):[]
     });
-    setContributors(newContributors);
   }
-  React.useEffect(() => {
-    getTeachers();
-  },[])
+  
   return (<div>
     <MainNav/>
   
@@ -282,17 +284,28 @@ function Upload() {
         </Grid>
       </div>
       <Grid container spacing={2}>
+        <Grid item xs={12} md={12}>
+          <Description>*Add Contributors</Description>
+          <Select 
+            isMulti
+            name="colors"
+            options={contributorOpts}
+            className="contri-select"
+            classNamePrefix="selectors"
+            onChange={contributorsChange}
+          />
+        </Grid>
         <Grid item xs={12} md={6}>
           <TextField fullWidth 
           id="title" 
-          label="Title"
+          label="*Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)} 
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
-            <InputLabel id="domain-label">Domain</InputLabel>
+            <InputLabel id="domain-label">*Domain</InputLabel>
             <MUISelect
               labelId="domain-label"
               id="domain"
@@ -301,7 +314,12 @@ function Upload() {
             >
               {DomainOptions.map(domain => {
                 return (
-                  <MenuItem value={domain}>{domain}</MenuItem>
+                  <MenuItem 
+                    value={domain}
+                    key={domain}
+                  >
+                    {domain}
+                  </MenuItem>
                 )
               })}
               
@@ -313,7 +331,7 @@ function Upload() {
               <TextField 
               fullWidth 
               id="company" 
-              label="Company"
+              label="*Company"
               value={company}
               onChange={(e) => setCompany(e.target.value)} 
               />
@@ -322,16 +340,16 @@ function Upload() {
               <TextField 
               fullWidth 
               id="supervisor" 
-              label="Supervisor" 
+              label="*Supervisor" 
               value={supervisor}
               onChange={(e) => setsupervisor(e.target.value)} 
               />
             </Grid>
             </>
           }
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
-            <InputLabel id="demo-simple-select-label">Mentor</InputLabel>
+            <InputLabel id="demo-simple-select-label">*Mentor</InputLabel>
             <MUISelect
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -341,7 +359,8 @@ function Upload() {
               {teachers.map(teacher => {
                 return (
                   <MenuItem 
-                    value={teacher.pk}
+                    value={teacher.user.id}
+                    key={`teacher${teacher.user.id}`}
                   >
                     {teacher.user.first_name} {teacher.user.last_name}
                   </MenuItem>
@@ -350,22 +369,9 @@ function Upload() {
             </MUISelect>
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={12}>
-          <TextField
-            id="outlined-multiline-static"
-            multiline
-            rows={5}
-            placeholder="Description"
-            fullWidth
-            value={description}
-            className="inputs"
-            onChange={(e) => setdescription(e.target.value)}
-            variant="outlined"
-          />
-        </Grid>
         <Grid item xs={12} md={6}>
           <FormControl className={classes.root}>
-            <InputLabel id="year-label">Year</InputLabel>
+            <InputLabel id="year-label">*Year</InputLabel>
             <MUISelect
               labelId="year-label"
               id="year"
@@ -377,6 +383,7 @@ function Upload() {
                   return (
                     <MenuItem 
                       value={item}
+                      key={item}
                     >
                       {item}
                     </MenuItem>
@@ -386,180 +393,121 @@ function Upload() {
             </MUISelect>
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={6}>
-          
-          <input type="file"
-            style={{marginTop:20}}
-            onChange={(e) => setFile(e.target.files[0])}
+        <Grid item xs={12} md={12}>
+          <TextField
+            id="description"
+            multiline
+            rows={2}
+            inputProps={{
+              maxLength:200
+            }}
+            placeholder="*Description"
+            fullWidth
+            helperText={`${description.length}/200`}
+            value={description}
+            onChange={(e) => setdescription(e.target.value)}
+            variant="outlined"
           />
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <TextField
+            id="abstract"
+            multiline
+            rows={8}
+            placeholder="*Abstract"
+            fullWidth
+            value={abstract}
+            onChange={(e) => setabstract(e.target.value)}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Description>*Report</Description>
+          <input type="file"
+            id="report"
+            name="report"
+            onChange={(e) => setReport(e.target.files[0])}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Description>Executable File</Description>
+          <input type="file"
+            id="exec"
+            name="exec"
+            onChange={(e) => setExecFile(e.target.files[0])}
+          />
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <div className="alert alert-warning" role="alert">
+            <div>
+              * Required Fields
+            </div>
+            <div>
+              This fields will not be editable later !
+            </div>
+          </div>
         </Grid>
       </Grid>
     </div>:
     <div>
-      <div>
-        {
-          contributors.map((contri,index) => {
-            return(
-              <Chip
-                variant="default"
-                size="medium"
-                style={{margin:10}}
-                avatar={<Avatar>{contri.name.toUpperCase()[0]}{contri.last_name.toUpperCase()[0]}</Avatar>}
-                label={contri.name+" "+contri.last_name}
-                onDelete={() => handleDeleteContributor(index)}
-              />
-            )
-          })
-        }
-      
-      </div>
       <Grid container spacing={2}>
+        
         <Grid item xs={12} md={6}>
-          <TextField fullWidth id="contriName" label="Name"
-          value={contriName}
-          onChange={e => setcontriName(e.target.value)}
+          <TextField 
+            label="Github Repository Link" 
+            variant="outlined"
+            id="github"
+            name="github"
+            value={gitLink}
+            onChange={e => setGitLink(e.target.value)}
+            fullWidth
+            helperText="Format : https://github.com/project-name-prefixes"
+            size="small" 
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextField fullWidth id="contriLastName" label="Last Name" 
-          value={contriLastName}
-          onChange={e => setcontriLastName(e.target.value)}
+          <TextField 
+            label="YouTube Link" 
+            variant="outlined"
+            id="youtube"
+            name="youtube"
+            value={youtube}
+            onChange={e => setYoutube(e.target.value)}
+            fullWidth
+            helperText="Format: https://www.youtube.com/watch?v=video-id"
+            size="small" 
           />
         </Grid>
         <Grid item xs={12} md={12}>
-          <TextField fullWidth id="contriEmail" label="Email" 
-          value={contriEmail}
-          onChange={e => setcontriEmail(e.target.value)}
+          <TextField 
+            label="Publication Link" 
+            variant="outlined"
+            id="publication"
+            name="publication"
+            value={publication}
+            onChange={e => setPublication(e.target.value)}
+            fullWidth
+            size="small" 
           />
         </Grid>
         <Grid item xs={12} md={12}>
-          <Button 
-          style={{float:'right'}}
-          variant="contained" 
-          color="primary"
-          onClick={addContributor}
-          >
-            Add Contributor
-          </Button>
+          <TextField 
+            id="awards"
+            multiline
+            rows={2}
+            variant="outlined"
+            placeholder="Awards"
+            fullWidth
+            value={awards}
+            onChange={(e) => setawards(e.target.value)}
+          />
         </Grid>
       </Grid>
-      <div style={{margin:'10px 0'}}>
-        <Description>Add Contributors</Description>
-        <Select 
-          isMulti
-          name="colors"
-          options={options}
-          className="contri-select"
-          classNamePrefix="selectors"
-        />
-      </div>
-      <div style={{margin:'10px 0'}}>
-        <Description>Links</Description>
-        {linksList.map((x, i) => {
-        return (
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <TextField 
-              id={`link${i}`} 
-              label="Description" 
-              variant="outlined"
-              name="description"
-              value={x.description}
-              onChange={e => handleInputChange(e, i)}
-              fullWidth
-              size="small" 
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField 
-              id={`description${i}`} 
-              label="URL" 
-              variant="outlined"
-              name="url"
-              value={x.url}
-              onChange={e => handleInputChange(e, i)}
-              fullWidth 
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} md={12} >
-            {linksList.length - 1 === i &&
-              <IconButton 
-              className={classes.alignedRightButtons}
-              onClick={handleAddClick}
-              >
-                <AddCircleOutlineOutlinedIcon/>
-              </IconButton>
-            } 
-            {linksList.length !== 1 &&
-              <IconButton 
-              id={`removeLink${i}`}
-              className={classes.alignedRightButtons}
-              onClick={() => handleRemoveClick(i)}
-              >
-                <RemoveCircleOutlineOutlinedIcon/>
-              </IconButton>
-            }
-          </Grid>
-        </Grid>
-        )})}
-      </div>
-      <div style={{margin:'10px 0'}}>
-        <Description>Highlights</Description>
+      <div>
         {
-          highlights.map((x,i) => {
-            return (
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={12}>
-                  <TextField 
-                    id={`award${i}`} 
-                    label="Description" 
-                    variant="outlined"
-                    name="description"
-                    value={x.description}
-                    onChange={e => {
-                      let { name, value } = e.target;
-                      let list = [...highlights];
-                      list[i][name] = value;
-                      sethighlights(list);
-                    }}
-                    fullWidth
-                    size="small" 
-                  />
-                </Grid>
-                <Grid item xs={12} md={12} >
-                  {highlights.length - 1 === i &&
-                    <IconButton 
-                    className={classes.alignedRightButtons}
-                    onClick={() => {
-                      sethighlights([...highlights, { description: ""}]);
-                    }}
-                    >
-                      <AddCircleOutlineOutlinedIcon/>
-                    </IconButton>
-                  } 
-                  {highlights.length !== 1 &&
-                    <IconButton 
-                    id={`removeHighlight${i}`}
-                    className={classes.alignedRightButtons}
-                    onClick={() => {
-                      let list = [...highlights];
-                      list.splice(i, 1);
-                      sethighlights(list);
-                    }}
-                    >
-                      <RemoveCircleOutlineOutlinedIcon/>
-                    </IconButton>
-                  }
-                </Grid>
-              </Grid>
-            )
-          })
-        }
-      </div>
-      <div style={{color:'red'}}>
-        {
-          errors!==""?errors:""
+          errors!==""?<div className="alert alert-danger mt-3 mb-3" role="alert">
+            {errors} !
+        </div>:""
         }
       </div>
     </div>  

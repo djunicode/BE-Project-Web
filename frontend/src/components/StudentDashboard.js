@@ -5,24 +5,8 @@ import ProjectApproval from './ProjectsApproval';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
 import Swal from 'sweetalert2'
-import EditProfile from './EditProfile';
 import UserInfo from './UserInfo';
-
-const DummyStudentProject = [{
-  approved: false,
-  company: "none",
-  description: "extra info...",
-  contributor:[{name:"Test1"},{name:"Test2"}],
-  document: "http://127.0.0.1:8000/media/60004180085_ostl-undertaking.pdf",
-  domain: "Cryptography",
-  id: 456856,
-  is_inhouse: true,
-  supervisor: "none",
-  teacher: 354546,
-  title: "Test student project,dummy detail,delete will not work",
-  year_created: 2020,
-
-}];
+import StudentEdit from './StudentEdit';
 
 const useStyles = makeStyles({
   root: {
@@ -90,10 +74,9 @@ function TeacherDashboard(props) {
   const studentData=[
     localStorage.getItem('Username'),
     localStorage.getItem('Name'),
-    localStorage.getItem('id'),
-    "Department",
-    "Year",
-    "Email"
+    localStorage.getItem('year'),
+    localStorage.getItem('division'),
+    localStorage.getItem('githubId')
   ]
 
   const handleChange = (event, newValue) => {
@@ -113,7 +96,22 @@ function TeacherDashboard(props) {
   }
   React.useEffect(() => {
     const getData = () => {
-      //set projects from endpoint
+      const word = 'Token ';
+      const token = word.concat(`${localStorage.getItem('Token')}`);
+      var myHeaders = new Headers();
+      myHeaders.append('Authorization', `${token}`);
+      var requestOptions = {
+        method: 'GET',
+        headers:myHeaders,
+        redirect: 'follow'
+      };
+      fetch(`${SERVER_URL}/my_projects`, requestOptions)
+        .then(response => response.json())
+        .then(result => {  
+          console.log('res',result);
+          setprojects(result);
+        })
+        .catch(error => console.log('error', error));
     };
     getData();
   },[])
@@ -157,12 +155,12 @@ function TeacherDashboard(props) {
           </div>
           <TabPanel value={value} index={0}>
             <ProjectApproval 
-              projects={DummyStudentProject}
+              projects={projects}
               completed={true}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <EditProfile/>
+            <StudentEdit/>
           </TabPanel>
         </Grid>
       </Grid>

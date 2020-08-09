@@ -4,22 +4,22 @@ from django.contrib.auth.models import AbstractUser
 from datetime import date
 
 DOMAIN_CHOICES = [
-    ("Data Mining & Analytics", ("Data Mining & Analytics")),
+    ("Data Mining and Analytics", ("Data Mining and Analytics")),
     ("Machine Learning", ("Machine Learning")),
     ("Deep Learning", ("Deep Learning")),
-    ("Image Processing/Computer Vision", ("Image Processing/Computer Vision")),
+    ("Image Processing / Computer Vision", ("Image Processing / Computer Vision")),
     (
-        "Natural Language Processing/Artificial Intelligence",
-        ("Natural Language Processing/Artificial Intelligence"),
+        "Natural Language Processing / Artificial Intelligence",
+        ("Natural Language Processing / Artificial Intelligence"),
     ),
-    ("Networking/Security", ("Networking/Security")),
+    ("Networking / Security", ("Networking / Security")),
     ("Internet of Things(IOT)", ("Internet of Things(IOT)")),
     ("Mobile Computing", ("Mobile Computing")),
     ("Big Data", ("Big Data")),
     ("Cloud Computing", ("Cloud Computing")),
     (
-        "Computer Vision & Artificial Intelligence",
-        ("Computer Vision & Artificial Intelligence"),
+        "Computer Vision and Artificial Intelligence",
+        ("Computer Vision and Artificial Intelligence"),
     ),
     ("Blockchain", ("Blockchain")),
     ("Operating Systems", ("Operating Systems")),

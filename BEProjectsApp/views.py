@@ -170,7 +170,7 @@ def account_login(request):
                     data.update(
                         {
                             "Designation": role,
-                            "Github ID": github_id,
+                            "github_id": github_id,
                             "Division": division,
                             "Year": year,
                         }
@@ -236,7 +236,7 @@ def delete_project(request):
         try:
             pk = request.data["pk"]
             project = Project.objects.get(id=pk)
-            p.delete()
+            project.delete()
             data = {"Message": "Successfully deleted Project"}
             return JsonResponse(data, status=status.HTTP_200_OK)
 

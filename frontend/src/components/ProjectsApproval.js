@@ -39,7 +39,7 @@ const ProjectCardDetail = styled.div`
 function ProjectApproval(props) {
   const [projects, setprojects] = useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [projectsPerPage] = React.useState(2);
+  const projectsPerPage = 10;
 
   React.useEffect(() => {
     setprojects(props.projects);
@@ -67,7 +67,7 @@ function ProjectApproval(props) {
     };
 
     fetch(`${SERVER_URL}/approve_project`, requestOptions)
-      .then(response => response.text())
+      .then(response => response.json())
       .then(result => window.location.reload(false))
       .catch(error => console.log('error', error));
 
@@ -160,8 +160,8 @@ function ProjectApproval(props) {
                         {
                           [0].map(dummy => {
                             let cbs='';
-                            project.contributor.forEach(contri => {
-                              cbs+=`${contri.name},`
+                            project.contributors.forEach(contri => {
+                              cbs+=`${contri.user.first_name},`
                             })
                             cbs = cbs.slice(0,-1);
                             return cbs;
@@ -180,7 +180,7 @@ function ProjectApproval(props) {
                       target="_blank" 
                       variant="contained" 
                       color="primary" 
-                      href={project.document}
+                      href={`${SERVER_URL}${project.report}`}
                       
                       >
                         Download
