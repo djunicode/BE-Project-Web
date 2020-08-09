@@ -48,6 +48,7 @@ class AllProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = "__all__"
 
+
 class ProjectSerializer(serializers.ModelSerializer):
     contributors = ContributorSerializer(many=True, read_only=True)
     teacher = TeacherSerializer1(many=False, read_only=True)
