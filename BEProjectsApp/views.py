@@ -208,7 +208,7 @@ def delete_project(request):
         try:
             pk = request.data["pk"]
             project = Project.objects.get(id=pk)
-            p.delete()
+            project.delete()
             data = {"Message": "Successfully deleted Project"}
             return JsonResponse(data, status=status.HTTP_200_OK)
 

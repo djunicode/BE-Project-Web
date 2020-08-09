@@ -1,5 +1,6 @@
 import React,{useState} from 'react'
 import { Grid, TextField, FormControl, InputLabel, MenuItem, Select, makeStyles, Button } from '@material-ui/core';
+import { SERVER_URL } from '../config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,44 +13,60 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function EditProfile() {
-  const [firstName, setfirstName] = useState("Rohan");
-  const [lastName, setLastName] = useState("Mistry");
-  const [year, setYear] = useState("TE");
-  const [email, setEmail] = useState("test@email.com");
+function StudentEdit() {
+  const [githubId, setgithubId] = useState(
+    localStorage.getItem("githubId")?
+    localStorage.getItem("githubId"):
+    ""
+  );
+  const [division, setdivision] = useState(localStorage.getItem("division"));
+  const [year, setYear] = useState(localStorage.getItem("year"));
   const classes = useStyles();
 
-  const changeDetails = () => {
+  React.useEffect(() => {
 
+  })
+  const changeDetails = (props) => {
+    const word = 'Token ';
+    const token = word.concat(`${localStorage.getItem('Token')}`);
+    var myHeaders = new Headers();
+    myHeaders.append('Authorization', `${token}`);
+    var formdata = new FormData();
+    formdata.append("github_id",githubId);
+    formdata.append("year",year);
+    formdata.append("division",division);
+    
+    var requestOptions = {
+      method: 'PUT',
+      headers: myHeaders,
+      body: formdata,
+      redirect:'follow'
+    }
+    fetch(`${SERVER_URL}/update_user`,requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        //
+      })
   }
   return (
     <div>
       <Grid container spacing={2}>
-        <Grid item md={6} xs={12}>
+        <Grid item md={12} xs={12}>
           <TextField 
-          id="userFirstName" 
-          label="First Name" 
+          id="githubId" 
           fullWidth
-          value={firstName}
-          onChange={e => setfirstName(e.target.value)}
+          value={githubId}
+          label="Github Id"
+          onChange={e => setgithubId(e.target.value)}
           />
         </Grid>
         <Grid item md={6} xs={12}>
           <TextField 
-            id="userLastName" 
-            label="Last Name" 
+            id="division" 
+            label="Division" 
             fullWidth
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            />
-        </Grid>
-        <Grid item md={6} xs={12}>
-          <TextField 
-            id="userEmail" 
-            label="Email" 
-            fullWidth
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            value={division}
+            onChange={e => setdivision(e.target.value)}
           />
         </Grid>
         <Grid item md={6} xs={12}>
@@ -84,4 +101,4 @@ function EditProfile() {
   )
 }
 
-export default EditProfile
+export default StudentEdit

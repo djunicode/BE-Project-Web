@@ -9,16 +9,20 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-import PersonIcon from '@material-ui/icons/Person';
-import { blue } from '@material-ui/core/colors';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import EmailIcon from '@material-ui/icons/Email';
 
 const useStyles = makeStyles({
   avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
+    backgroundColor: 'white',
+    color: 'black',
   },
   contriButton: {
     marginRight: '20px',
+  },
+  dialogHeader:{
+    background:'black',
+    color:'white'
   }
 });
 
@@ -40,12 +44,17 @@ function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
-      <DialogTitle id="simple-dialog-title">Contact User</DialogTitle>
+      <DialogTitle 
+        id="simple-dialog-title"
+        className={classes.dialogHeader}
+      >
+        Contact User
+      </DialogTitle>
       <List>
         <ListItem>
           <ListItemAvatar>
             <Avatar className={classes.avatar}>
-              <PersonIcon />
+              <GitHubIcon/>
             </Avatar>
           </ListItemAvatar>
           <ListItemText
@@ -56,7 +65,7 @@ function SimpleDialog(props) {
         <ListItem>
           <ListItemAvatar>
             <Avatar className={classes.avatar}>
-              <PersonIcon />
+              <EmailIcon/>
             </Avatar>
           </ListItemAvatar>
           <ListItemText

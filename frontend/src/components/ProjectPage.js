@@ -76,7 +76,7 @@ export default function ProjectPage(props) {
                     fontWeight: '400',
                   } }
                 >
-                  { 'Project Details' }
+                  Project Details
                 </h4>
             </Typography>
             </Toolbar>
@@ -86,6 +86,14 @@ export default function ProjectPage(props) {
               <Grid item md={12} xs={12}>
                 <ProjectCardDes_modal>Project Name</ProjectCardDes_modal>
                 <h4>{project.title}</h4>
+              </Grid>
+            </Grid>
+            <Grid container style={{ paddingLeft: '2vh', marginTop: '5vh' }}>
+              <Grid item md={12} xs={12}>
+                <ProjectCardDes_modal>Description</ProjectCardDes_modal>
+                <ProjectCardDetail_modal>
+                  {project.description}
+                </ProjectCardDetail_modal>
               </Grid>
             </Grid>
             <Grid
@@ -117,20 +125,8 @@ export default function ProjectPage(props) {
               <Grid item md={12} xs={12}>
                 <ProjectCardDes_modal>Abstract</ProjectCardDes_modal>
                 <ProjectCardDetail_modal>
-                  {dummy_text}
-                  {dummy_text}
+                  {project.abstract}
                 </ProjectCardDetail_modal>
-                <h7
-                  style={{
-                    textAlign: 'center',
-                    color: '#578bd8',
-                    fontSize: '2vh',
-                  }}
-                >
-                  {
-                    'Please contact the contributor or teacher for more details...'
-                  }
-                </h7>
               </Grid>
             </Grid>
             <Grid
@@ -172,10 +168,22 @@ export default function ProjectPage(props) {
               }}
             >
               <Grid item md={12} xs={12}>
-                <ProjectCardDes_modal>Winning Project</ProjectCardDes_modal>
+                <ProjectCardDes_modal>Awards</ProjectCardDes_modal>
                 <ProjectCardDetail_modal>
                   {project.awards}
                 </ProjectCardDetail_modal>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={12} md={12}>
+              <ProjectCardDes_modal style={{marginBottom:10,paddingLeft:'2vh'}}>Demo</ProjectCardDes_modal>
+              <iframe 
+                width="100%" 
+                height="345" 
+                style={{marginLeft:'2vh'}}
+                src="https://www.youtube.com/embed/tgbNymZ7vqY"
+              >
+              </iframe>
               </Grid>
             </Grid>
           </DialogContent>

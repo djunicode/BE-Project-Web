@@ -23,17 +23,20 @@ function MainNav(props) {
               <Nav.Link  href="/upload">
                 <div >Upload</div>
               </Nav.Link>
-             {(localStorage.getItem('Designation') === "Teacher")? null : (
+             {/* {(localStorage.getItem('Designation') === "Teacher")? null : (
               <Nav.Link href="/student">
                 <div>Profile</div>
               </Nav.Link>
-             )}
+             )} */}
             </Nav>
             <Nav className="ml-auto" style={{display:'contents'}}>
               
               {
                 localStorage.getItem('Status') == 'LoggedIn'?
-                <IconButton href="/teacher">
+                <IconButton 
+                  href={(localStorage.getItem('Designation')==='Teacher')?
+                  "/teacher":"/student"}
+                >
                   <AccountCircleOutlinedIcon style={{color:'white'}}/>
                 </IconButton>:
                 <Nav.Link href="/login" className="BottomButton" >

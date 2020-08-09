@@ -6,6 +6,7 @@ import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
 import Swal from 'sweetalert2'
 import UserInfo from './UserInfo';
+import TeacherEdit from './TeacherEdit';
 
 const useStyles = makeStyles({
   root: {
@@ -67,8 +68,7 @@ function TeacherDashboard(props) {
   };
   const teacherData = [
     localStorage.getItem('Username'),
-    localStorage.getItem('Name'),
-    localStorage.getItem('Subject')
+    localStorage.getItem('Name')
   ]
   const logout = () => {
     Swal.fire({
@@ -77,27 +77,27 @@ function TeacherDashboard(props) {
       confirmButtonText:'Yes'
     }).then((result) => {
       if(result.value) {
-        localStorage.setItem('Token', null);
-        localStorage.setItem('Status', 'LoggedOut');
-        localStorage.removeItem('Name');
-        localStorage.removeItem('Username');
-        localStorage.removeItem('id');
-        localStorage.removeItem('Subject');
+        localStorage.clear();
         props.history.push("/login");
       }
     })
   }
   React.useEffect(() => {
     const getData = () => {
-      var pk = localStorage.getItem("id");
+      const word = 'Token ';
+      const token = word.concat(`${localStorage.getItem('Token')}`);
+      var myHeaders = new Headers();
+      myHeaders.append('Authorization', `${token}`);
       var requestOptions = {
         method: 'GET',
+        headers:myHeaders,
         redirect: 'follow'
       };
-      fetch(`${SERVER_URL}/api/teachers/${pk}`, requestOptions)
+      fetch(`${SERVER_URL}/my_projects`, requestOptions)
         .then(response => response.json())
         .then(result => {  
-          const projects = result.project;
+          console.log(result);
+          const projects = result;
           const approved_proj = projects.filter(project => {
             return project.approved==true
           });
@@ -146,6 +146,7 @@ function TeacherDashboard(props) {
               >
                 <Tab label="Pending" {...a11yProps(0)} />
                 <Tab label="Approved"  {...a11yProps(1)} />
+                <Tab label="Edit Profile" {...a11yProps(2)}/>
               </Tabs>
             </Paper>
           </div>
@@ -160,6 +161,9 @@ function TeacherDashboard(props) {
               projects={approved}
               completed={true}
             />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <TeacherEdit/>
           </TabPanel>
         </Grid>
       </Grid>
