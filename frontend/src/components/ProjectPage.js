@@ -54,7 +54,7 @@ export default function ProjectPage(props) {
 
     return (
       <React.Fragment>
-        {console.log(props.screen)}
+        {console.log(project)}
         <Dialog
           maxWidth={'lg'}
           open={true}
@@ -129,7 +129,20 @@ export default function ProjectPage(props) {
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
-           
+            { project.demo_video &&
+              <Grid container style={{ marginTop: '5vh'}}>
+                <Grid item xs={ 12 } md={ 12 }>
+                  <ProjectCardDes_modal style={ { marginBottom: 10, paddingLeft: '2vh' } }>Demo</ProjectCardDes_modal>
+                  <iframe
+                    width="50%"
+                    height="345"
+                    style={ { marginLeft: '2vh' } }
+                    src={ `https://www.youtube.com/embed/${project.demo_video.replace("https://www.youtube.com/watch?v=", "")}` }
+                  >
+                  </iframe>
+                </Grid>
+              </Grid>
+            }
             <Grid container style={{ paddingLeft: '2vh', marginTop: '5vh' }}>
               <Grid item md={12} xs={12}>
                 <ProjectCardDes_modal>Type</ProjectCardDes_modal>
@@ -153,21 +166,21 @@ export default function ProjectPage(props) {
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
-            <Grid
+            { project.journal ? (<Grid
               container
-              style={{
+              style={ {
                 paddingLeft: '2vh',
                 marginTop: '5vh',
                 marginBottom: '5vh',
-              }}
+              } }
             >
-              <Grid item md={12} xs={12}>
+              <Grid item md={ 12 } xs={ 12 }>
                 <ProjectCardDes_modal>Journal Publication</ProjectCardDes_modal>
                 <ProjectCardDetail_modal>
-                  {project.journal}
+                  { project.journal }
                 </ProjectCardDetail_modal>
               </Grid>
-            </Grid>
+            </Grid>): (null) }
             <Grid
               container
               style={{
@@ -183,20 +196,6 @@ export default function ProjectPage(props) {
                 </ProjectCardDetail_modal>
               </Grid>
             </Grid>
-            {project.demo_video &&
-              <Grid container>
-                <Grid item xs={12} md={12}>
-                <ProjectCardDes_modal style={{marginBottom:10,paddingLeft:'2vh'}}>Demo</ProjectCardDes_modal>
-                <iframe 
-                  width="100%" 
-                  height="345" 
-                  style={{marginLeft:'2vh'}}
-                  src={`https://www.youtube.com/embed/${project.demo_video.replace("https://www.youtube.com/watch?v=","")}`}
-                >
-                </iframe>
-                </Grid>
-              </Grid>
-            }
           </DialogContent>
           <DialogActions className = {classes.closeButton} >
             <Button onClick={ props.closeFn } varient="outlined" className={ classes.closeButtonText } autoFocus>

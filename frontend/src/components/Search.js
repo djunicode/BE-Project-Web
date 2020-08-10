@@ -90,11 +90,25 @@ function Search(props) {
       .catch(error => console.log('error', error));
   }
   const makeSearch = (event) => {
+    console.log(searchTerm)
     var code = event.keyCode || event.which;
     if(code === 13) { 
+      console.log("Hi")
+
+      var myHeaders = new Headers();
+
+      if (localStorage.getItem("Token") !== null) {
+        var token = localStorage.getItem('Token');
+        var finalToken = "Token " + token;
+
+        myHeaders.append("Authorization", finalToken);
+      }
+      console.log(finalToken, myHeaders)
+
       var requestOptions = {
         method: 'GET',
-        redirect: 'follow'
+        redirect: 'follow',
+        headers: myHeaders
       };
       fetch(`${SERVER_URL}/search/${searchTerm}`, requestOptions)
         .then(response => response.json())
@@ -102,7 +116,7 @@ function Search(props) {
           setProjects(result);
         })
         .catch(error => console.log('error', error));
-    } 
+    }
     
   }
   React.useEffect(() => {

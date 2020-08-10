@@ -122,7 +122,7 @@ def change_password(request):
     serializer.is_valid(raise_exception=True)
     request.user.set_password(serializer.validated_data["new_password"])
     request.user.save()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    return JsonResponse(data={}, status=status.HTTP_204_NO_CONTENT)
 
 
 @permission_classes([IsAuthenticatedOrReadOnly])

@@ -110,6 +110,7 @@ function TeacherDashboard(props) {
         .then(result => {  
           console.log('res',result);
           setprojects(result);
+          console.log(result)
         })
         .catch(error => console.log('error', error));
     };

@@ -6,8 +6,9 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { SERVER_URL } from '../config';
+import Upload from '../components/Upload';
 import Pagination from './Pagination'
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 const ProjectContainer = styled.div`
   padding:8px;
@@ -38,17 +39,25 @@ const ProjectCardDetail = styled.div`
 
 function ProjectApproval(props) {
   const [projects, setprojects] = useState([]);
+  const [edit, setEdit] = useState(false);
+  const [editProj, setEditProj] = useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const projectsPerPage = 10;
+  const projectsPerPage = 3;
 
   React.useEffect(() => {
     setprojects(props.projects);
+    console.log(props.projects)
   },[props.projects]);
 
   // Get current projects
   const indexOfLastPost = currentPage * projectsPerPage;
   const indexOfFirstPost = indexOfLastPost - projectsPerPage;
   const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
+
+  const editProject = (project) => {
+    setEdit(true)
+    setEditProj(project)
+  }
 
   const approveProject = (pk) => {
     const word = 'Token ';
@@ -107,104 +116,109 @@ function ProjectApproval(props) {
       .then(result => window.location.reload(false))
       .catch(error => console.log('error', error));
   }
+
+  
   return (
-    <ProjectContainer>
-      {
-        currentProjects.length?<>
+    <React.Fragment>
+      {edit? <Upload editing={true} data={editProj} /> : (
+        <ProjectContainer>
           {
-            currentProjects.map(project => {
-              return (
-                <ProjectCard>
-                  <StatusButtons>
-                    {
-                      localStorage.getItem('Token') &&
-                      <IconButton 
-                      id={`${project.id}`}
-                      aria-label="edit"
-                      style={{float:'right'}}
-                    >
-                      <EditOutlinedIcon/>
-                    </IconButton>
-                    }
-                    <IconButton 
-                      id={`${project.id}`}
-                      aria-label="reject"
-                      style={{float:'right'}}
-                      onClick={() => deleteConfirm(project.id)}
-                    >
-                      <HighlightOffIcon/>
-                    </IconButton>
-                    {!props.completed && (
-                      <IconButton
-                      style={{float:'right'}}
-                      id={`${project.id}`}
-                      aria-label="approve"
-                      onClick={() => approveProject(project.id)} 
-                      >
-                        <CheckCircleOutlineIcon/>
-                      </IconButton>
-                    )}
-                  </StatusButtons>
-                  <div>
-                    <ProjectCardDes>Project Name</ProjectCardDes>
-                    <h5> {project.title} </h5>
-                  </div>
-                  <Grid container>
-                    <Grid item md={3} xs={12}>
-                      <ProjectCardDes>Domain</ProjectCardDes>
-                      <ProjectCardDetail> {project.domain} </ProjectCardDetail>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                      <ProjectCardDes>Group Members</ProjectCardDes>
-                      <ProjectCardDetail>
+            currentProjects.length ? <>
+              {
+                currentProjects.map(project => {
+                  return (
+                    <ProjectCard>
+                      <StatusButtons>
                         {
-                          [0].map(dummy => {
-                            let cbs='';
-                            project.contributors.forEach(contri => {
-                              cbs+=`${contri.user.first_name},`
-                            })
-                            cbs = cbs.slice(0,-1);
-                            return cbs;
-                          })
+                          localStorage.getItem('Token') &&
+                          <IconButton
+                            id={ `${project.id}` }
+                            aria-label="edit"
+                            style={ { float: 'right' } }
+                            onClick={ () => editProject(project) }
+                          >
+                            <EditOutlinedIcon />
+                          </IconButton>
                         }
-                      </ProjectCardDetail>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                      <ProjectCardDes>Year</ProjectCardDes>
-                      <ProjectCardDetail>
-                        {project.year_created}
-                      </ProjectCardDetail>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                      <Button 
-                      target="_blank" 
-                      variant="contained" 
-                      color="primary" 
-                      href={`${SERVER_URL}${project.report}`}
-                      
-                      >
-                        Download
+                        <IconButton
+                          id={ `${project.id}` }
+                          aria-label="reject"
+                          style={ { float: 'right' } }
+                          onClick={ () => deleteConfirm(project.id) }
+                        >
+                          <HighlightOffIcon />
+                        </IconButton>
+                        { !props.completed && (
+                          <IconButton
+                            style={ { float: 'right' } }
+                            id={ `${project.id}` }
+                            aria-label="approve"
+                            onClick={ () => approveProject(project.id) }
+                          >
+                            <CheckCircleOutlineIcon />
+                          </IconButton>
+                        ) }
+                      </StatusButtons>
+                      <div>
+                        <ProjectCardDes>Project Name</ProjectCardDes>
+                        <h5> { project.title } </h5>
+                      </div>
+                      <Grid container>
+                        <Grid item md={ 3 } xs={ 12 }>
+                          <ProjectCardDes>Domain</ProjectCardDes>
+                          <ProjectCardDetail> { project.domain } </ProjectCardDetail>
+                        </Grid>
+                        <Grid item md={ 3 } xs={ 12 }>
+                          <ProjectCardDes>Group Members</ProjectCardDes>
+                          <ProjectCardDetail>
+                            {
+                              [0].map(dummy => {
+                                let cbs = '';
+                                project.contributors.forEach(contri => {
+                                  cbs += `${contri.user.first_name},`
+                                })
+                                cbs = cbs.slice(0, -1);
+                                return cbs;
+                              })
+                            }
+                          </ProjectCardDetail>
+                        </Grid>
+                        <Grid item md={ 3 } xs={ 12 }>
+                          <ProjectCardDes>Year</ProjectCardDes>
+                          <ProjectCardDetail>
+                            { project.year_created }
+                          </ProjectCardDetail>
+                        </Grid>
+                        <Grid item md={ 3 } xs={ 12 }>
+                          <Button
+                            target="_blank"
+                            variant="outlined"
+                            color="primary"
+                            href={ `${SERVER_URL}${project.report}` }
+                          >
+                            Download
                       </Button>
-                    </Grid>
-                  </Grid>
-                </ProjectCard>
-              )
-            })
-          }
-          <Pagination
-            paginate={(pageNumber) => {
-              setCurrentPage(pageNumber.selected+1)
-            }}
-            projectLength={projects.length}
-            projectsPerPage={projectsPerPage}
-          /> 
-        </>:
-        <div>
-          No Projects Found
+                        </Grid>
+                      </Grid>
+                    </ProjectCard>
+                  )
+                })
+              }
+              <Pagination
+                paginate={ (pageNumber) => {
+                  setCurrentPage(pageNumber.selected + 1)
+                } }
+                projectLength={ projects.length }
+                projectsPerPage={ projectsPerPage }
+              />
+            </> :
+              <div>
+                No Projects Found
         </div>
-      }
-       
-    </ProjectContainer>
+          }
+        </ProjectContainer>
+      )}
+    </React.Fragment>
   )
 }
 
