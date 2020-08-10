@@ -62,6 +62,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "demo_video",
             "company",
             "supervisor",
+            "journal",
         ]
 
 
