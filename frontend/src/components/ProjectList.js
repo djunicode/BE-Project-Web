@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import Pagination from "./Pagination";
 import ProjectPage from './ProjectPage';
 import { makeStyles } from '@material-ui/core/styles';
+import { SERVER_URL } from "../config";
 
 const useStyles = makeStyles((theme) => ({
   Container: {
@@ -26,8 +27,11 @@ const ProjectContainer = styled.div`
 `;
 const ProjectCard = styled.div`
   &:hover {
-    background: #f5f5f5;
-    box-shadow: 0 28px 28px -28px #999; 
+    background: white;
+    border: 2px dashed #1d4cd2;
+    outline: none;
+    cursor: pointer;
+    box-shadow: none;
   }
   transition: background 0.3s;
   transition-timing-function: ease;
@@ -60,7 +64,7 @@ function ProjectList(props) {
 
   const [projects, setprojects] = useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [projectsPerPage] = React.useState(2);
+  const projectsPerPage = 10;
   
   const [currentProj, setCurrentProj] = useState(null);
   const [open, setOpen] = React.useState(false);
@@ -86,20 +90,25 @@ function ProjectList(props) {
   }, [props.projects]);
 
   // Get current projects
-  // const indexOfLastPost = currentPage * projectsPerPage;
-  // const indexOfFirstPost = indexOfLastPost - projectsPerPage;
-  // const currentProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
+  const indexOfLastPost = currentPage * projectsPerPage;
+  const indexOfFirstPost = indexOfLastPost - projectsPerPage;
+  const slicedProjects = projects.slice(indexOfFirstPost, indexOfLastPost);
 
   return (
     <React.Fragment>
       <ProjectContainer>
-        {projects.length ? (
-          <>{console.log(projects)}
-            {projects.map((project) => {
+        {slicedProjects.length ? (
+          <>
+            {slicedProjects.map((project) => {
               return (
                 <ProjectCard key={project.id}>
                   {open ? (
-                    <ProjectPage project={currentProj} openFn={handleClickOpen} closeFn={handleClose} screen={fullScr} />
+                    <ProjectPage 
+                      project={currentProj} 
+                      openFn={handleClickOpen} 
+                      closeFn={handleClose} 
+                      screen={fullScr} 
+                    />
                   ) : null}
                     <div onClick={handleClickOpen.bind(this, project)}>
                       <Grid
@@ -116,7 +125,7 @@ function ProjectList(props) {
                             target="_blank"
                             variant="contained"
                             color="primary"
-                            href={ "http://127.0.0.1:8000"+`${project.report}` }
+                            href={ SERVER_URL+`${project.report}` }
                           >
                             <DescriptionIcon />
                           </IconButton>
@@ -162,7 +171,7 @@ function ProjectList(props) {
                             {[0].map((dummy) => {
                               let cbs = '';
                               project.contributors.forEach((contri) => {
-                                cbs += `${contri.name},`;
+                                cbs += `${contri.user.first_name},`;
                               });
                               cbs = cbs.slice(0, -1);
                               return cbs;

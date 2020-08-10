@@ -25,7 +25,7 @@ class ProjectFilter(django_filters.FilterSet):
             "domain",
             "approved",
             "year_created",
-            "teacher__user__username",
+            "teacher__user__id",
             "is_inhouse",
             "contributors__user__username",
         )

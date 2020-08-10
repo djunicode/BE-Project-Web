@@ -1,3 +1,4 @@
+from django.contrib.auth import password_validation
 from .models import Teacher, Project, Contributor, User
 from rest_framework import serializers
 
@@ -45,7 +46,7 @@ class AllProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        exclude = ("abstract",)
+        fields = "__all__"
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -55,7 +56,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         exclude = [
-            "abstract",
             "report",
             "executable",
             "github_repo",
@@ -107,3 +107,12 @@ class UpdateProjectReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ["report"]
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        password_validation.validate_password(value)
+        return value

@@ -11,6 +11,7 @@ from .serializers import (
     AllProjectSerializer,
     UpdateProjectSerializer,
     UpdateProjectReportSerializer,
+    ChangePasswordSerializer,
 )
 from .permissions import IsUserOrReadOnly, Permit
 from .filters import BrowseProjectFilter, ProjectFilter
@@ -110,6 +111,21 @@ class SearchProjectView(APIView):
 
 
 @permission_classes([IsAuthenticatedOrReadOnly])
+@api_view(["POST"])
+def change_password(request):
+    user = authenticate(
+        username=request.user.username, password=request.POST.get("current_password")
+    )
+    if not user:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    serializer = ChangePasswordSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    request.user.set_password(serializer.validated_data["new_password"])
+    request.user.save()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@permission_classes([IsAuthenticatedOrReadOnly])
 @api_view(["GET"])
 def get_domains(request):
     if request.method == "GET":
@@ -135,18 +151,30 @@ def account_login(request):
 
                 login(request, user)
 
-                if user.is_teacher:
-                    role = "Teacher"
-                elif user.is_contributor:
-                    role = "Contributor/Student"
-
                 data = {
                     "Name": user.first_name + " " + user.last_name,
                     "id": user.pk,
                     "Username": user.username,
                     "Token": token.key,
-                    "Designation": role,
                 }
+
+                if user.is_teacher:
+                    role = "Teacher"
+                    subject = user.teacher_user.subject
+                    data.update({"Designation": role, "Subject": subject})
+                elif user.is_contributor:
+                    role = "Contributor/Student"
+                    github_id = user.contributor_user.github_id
+                    division = user.contributor_user.division
+                    year = user.contributor_user.year
+                    data.update(
+                        {
+                            "Designation": role,
+                            "github_id": github_id,
+                            "Division": division,
+                            "Year": year,
+                        }
+                    )
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
 
@@ -208,7 +236,7 @@ def delete_project(request):
         try:
             pk = request.data["pk"]
             project = Project.objects.get(id=pk)
-            p.delete()
+            project.delete()
             data = {"Message": "Successfully deleted Project"}
             return JsonResponse(data, status=status.HTTP_200_OK)
 
@@ -543,6 +571,7 @@ def create_project(request):
             demo_video = request.POST.get("demo_video", None)
             awards = request.POST.get("awards", None)
             journal = request.POST.get("journal", None)
+            year_created = request.POST.get("year_created", None)
             is_inhouse = (
                 True if request.POST.get("is_inhouse", None) == "True" else False
             )
@@ -569,6 +598,7 @@ def create_project(request):
                 demo_video=demo_video,
                 awards=awards,
                 journal=journal,
+                year_created=year_created,
                 is_inhouse=is_inhouse,
                 company=company,
                 supervisor=supervisor,

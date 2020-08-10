@@ -8,7 +8,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       render={(props) => {
         if (
           localStorage.getItem('Token') != null &&
-          localStorage.getItem('Status') == 'LoggedIn'
+          localStorage.getItem('Status') === 'LoggedIn'
         ) {
           return <Component {...props} />;
         } else {
