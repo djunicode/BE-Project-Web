@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {getOptionsForYear, getTeachers} from '../commonFuncs' 
 import { FormControlLabel, 
   RadioGroup, 
@@ -25,6 +26,7 @@ import styled from 'styled-components';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
 import { getDomains } from '../commonFuncs';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -105,7 +107,7 @@ function Upload(props) {
   const [description, setdescription] = useState("");
   const [date, setdate] = useState("");
   const [teachers, setTeachers] = useState([]);
-  const [contributors, setContributors] = useState([]);
+  const [contributors, setContributors] = useState(null);
   const [contributorOpts, setcontributorOpts] = useState([]);
   const [errors, setErrors] = useState("");
   const [DomainOptions, setDomainOptions] = useState([]);
@@ -128,7 +130,8 @@ function Upload(props) {
       setGitLink(props.data.github_repo);
       setYoutube(props.data.demo_video);
       setPublication(props.data.journal);
-      setawards(props.data.awards)
+      setawards(props.data.awards);
+      setHouse(props.data.is_inhouse?"In-House":"Out-House");
     }
   },[]);
   
@@ -159,7 +162,7 @@ function Upload(props) {
         date=="" || mentor=="" || description=="" ||
         abstract == "" || report==null
         || youtubeCheck(youtube) || githubCheck(gitLink) ||
-        contributors.length<2
+        (contributors?(contributors.length<2)?true:false:true)
       )
       {
         return true;
@@ -173,7 +176,7 @@ function Upload(props) {
         supervisor=="" || company==""
         || report==null 
         || youtubeCheck(youtube) || githubCheck(gitLink) ||
-        contributors.length<2
+        (contributors?(contributors.length<2)?true:false:true)
       )
       {
         return true;
@@ -191,12 +194,6 @@ function Upload(props) {
     var myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     var formdata = new FormData();
-    let projectData = {
-      github_repo: gitLink,
-      demo_video: youtube,
-      journal: publication,
-      awards: awards
-    };
     formdata.append('github_repo', gitLink);
     formdata.append('demo_video', youtube);
     formdata.append('journal', publication);
@@ -249,8 +246,8 @@ function Upload(props) {
     Object.keys(projectData).forEach(val => {
       formdata.append(`${val}`,projectData[val]);
     });
-    contributors.map(val => {
-      formdata.append("contributors[]",val);
+    contributors.forEach(val => {
+      formdata.append("contributors[]",val.value);
     })
     
     var requestOptions = {
@@ -286,20 +283,17 @@ function Upload(props) {
       })
   }
   const contributorsChange = (newValue,action) => {
-    setContributors(() => {
-      return newValue?newValue.map(contri => {
-        return contri.value;
-      }):[]
-    });
+    setContributors(newValue);
   }
 
   const showContri = () => {
     var allContri = ""
     props.data.contributors.forEach((contri) => {
       allContri = allContri + contri.user.first_name + ' ' + contri.user.last_name + '; ';
-    })
-    return allContri
-};
+    });
+    allContri = allContri.slice(0,-2);
+    return allContri;
+  };
   
   return (
     <div>
@@ -319,40 +313,41 @@ function Upload(props) {
           {activeStep == 0 ? (
             <div>
               <div>
-                {props.editing ? (
-                  <Grid container>
-                    <Grid
-                      item
-                      xs={12}
-                      md={2}
-                      className={classes.verticalCenter}
-                    >
-                      <FormLabel component="legend">Project Type : </FormLabel>
-                    </Grid>
-                    <Grid item xs={12} md={10}>
-                      <FormControl component="fieldset">
-                        <RadioGroup
-                          row
-                          aria-label="house"
-                          name="house"
-                          value={house}
-                          onChange={(e) => setHouse(e.target.value)}
-                        >
-                          <FormControlLabel
-                            value="In-House"
-                            control={<Radio />}
-                            label="In-House"
-                          />
-                          <FormControlLabel
-                            value="Out-House"
-                            control={<Radio />}
-                            label="Out-House"
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                    </Grid>
+                
+                <Grid container>
+                  <Grid
+                    item
+                    xs={12}
+                    md={2}
+                    className={classes.verticalCenter}
+                  >
+                    <FormLabel component="legend">Project Type : </FormLabel>
                   </Grid>
-                ) : null}
+                  <Grid item xs={12} md={10}>
+                    <FormControl component="fieldset">
+                      <RadioGroup
+                        row
+                        aria-label="house"
+                        name="house"
+                        value={house}
+                        onChange={(e) => setHouse(e.target.value)}
+                      >
+                        <FormControlLabel
+                          disabled={props.editing?props.data.is_inhouse?false:true:false}
+                          value="In-House"
+                          control={<Radio />}
+                          label="In-House"
+                        />
+                        <FormControlLabel
+                          disabled={props.editing?props.data.is_inhouse?true:false:false}
+                          value="Out-House"
+                          control={<Radio />}
+                          label="Out-House"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                </Grid>
               </div>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12}>
@@ -372,6 +367,7 @@ function Upload(props) {
                       <Select
                         isMulti
                         name="colors"
+                        value={contributors}
                         options={contributorOpts}
                         className="contri-select"
                         classNamePrefix="selectors"
@@ -381,7 +377,6 @@ function Upload(props) {
                   )}
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  {console.log(props.data)}
                   <TextField
                     fullWidth
                     id="title"
@@ -397,7 +392,7 @@ function Upload(props) {
                   {props.editing ? (
                     <TextField
                       fullWidth
-                      id="title"
+                      id="domain"
                       label="*Domain"
                       InputProps={{
                         readOnly: props.editing,
@@ -502,7 +497,7 @@ function Upload(props) {
                   {props.editing ? (
                     <TextField
                       fullWidth
-                      id="title"
+                      id="year"
                       label="*Year"
                       InputProps={{
                         readOnly: props.editing,
@@ -577,12 +572,29 @@ function Upload(props) {
                       <DescriptionIcon />
                     </IconButton>
                   ) : (
-                    <input
-                      type="file"
-                      id="report"
-                      name="report"
-                      onChange={(e) => setReport(e.target.files[0])}
-                    />
+                    <div>
+                      <label htmlFor="report">
+                        <Button
+                          variant="contained"
+                          color="default"
+                          startIcon={<CloudUploadIcon />}
+                          component="span"
+                        >
+                          Upload
+                        </Button>
+    
+                      </label>
+                      <input
+                        type="file"
+                        id="report"
+                        name="report"
+                        style={{display:'none'}}
+                        onChange={(e) => setReport(e.target.files[0])}
+                      />
+                      <div>
+                        {report?report.name:'No file Chosen'}
+                      </div>
+                    </div>
                   )}
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -597,18 +609,40 @@ function Upload(props) {
                       <DescriptionIcon />
                     </IconButton>
                   ) : (
-                    <input
-                      type="file"
-                      id="exec"
-                      name="exec"
-                      onChange={(e) => setExecFile(e.target.files[0])}
-                    />
+                    <div>
+                      <label htmlFor="exec">
+                        <Button
+                          variant="contained"
+                          color="default"
+                          startIcon={<CloudUploadIcon />}
+                          component="span"
+                        >
+                          Upload
+                        </Button>
+    
+                      </label>
+                      <input
+                        type="file"
+                        id="exec"
+                        name="exec"
+                        style={{display:'none'}}
+                        onChange={(e) => setExecFile(e.target.files[0])}
+                      />
+                      <div>
+                        {executableFile?executableFile.name:'No file Chosen'}
+                      </div>
+                    </div>
+                    
                   )}
                 </Grid>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={12} md={12} style={props.editing?{display:'none'}:{dispay:'block'}}>
                   <div className="alert alert-warning" role="alert">
-                    <div>* Required Fields</div>
-                    <div>This fields will not be editable later !</div>
+                  <div>
+                    * Required Fields
+                  </div>
+                  <div>
+                    All the fields in step 1 will not be editable after creating the project !
+                  </div>
                   </div>
                 </Grid>
               </Grid>

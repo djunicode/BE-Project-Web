@@ -14,7 +14,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom:20
   },
   title: {
-    marginTop: "20px"
+    marginTop: "20px",
+    textAlign:'center'
   }
 }));
 
@@ -120,12 +121,8 @@ function StudentEdit() {
   return (
     <div>
       <Grid container spacing={4} className={classes.title} >
-        <Grid md={ 4 } sm={ 4 } xs={ 4 }>
-        </Grid>
-        <Grid md={ 4 } sm={ 4 } xs={ 4 }>
-          <h6>EDIT USER INFO</h6>
-        </Grid>
-        <Grid md={ 4 } sm={ 4 } xs={ 4 }>
+        <Grid md={12} xs={12}>
+          <h6>Personal Details</h6>
         </Grid>
       </Grid>
       <Grid container spacing={4}>
@@ -189,12 +186,8 @@ function StudentEdit() {
         </Button>
       </div>
       <Grid container spacing={4} className={classes.title} >
-        <Grid md={ 4 } sm={ 4 } xs={ 4 }>
-        </Grid>
-        <Grid md={ 4 } sm={ 4 } xs={ 4 }>
-          <h6>EDIT PASSWORD</h6>
-        </Grid>
-        <Grid md={ 4 } sm={ 4 } xs={ 4 }>
+        <Grid md={12} xs={12}>
+          <h6>Change Password</h6>
         </Grid>
       </Grid>
       <Grid container spacing={ 4 }>

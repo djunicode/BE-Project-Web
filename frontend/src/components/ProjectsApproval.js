@@ -9,6 +9,7 @@ import { SERVER_URL } from '../config';
 import Upload from '../components/Upload';
 import Pagination from './Pagination'
 import Swal from 'sweetalert2';
+import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 
 const ProjectContainer = styled.div`
   padding:8px;
@@ -36,6 +37,10 @@ const ProjectCardDetail = styled.div`
   font-size: 16px;
   color: #747474;
 `
+const Back = styled.div`
+  display:flex;
+  justify-content:flex-end;
+`
 
 function ProjectApproval(props) {
   const [projects, setprojects] = useState([]);
@@ -46,7 +51,6 @@ function ProjectApproval(props) {
 
   React.useEffect(() => {
     setprojects(props.projects);
-    console.log(props.projects)
   },[props.projects]);
 
   // Get current projects
@@ -120,6 +124,17 @@ function ProjectApproval(props) {
   
   return (
     <React.Fragment>
+      {edit?<Back>
+        <Button 
+          variant="outlined" 
+          color="primary"
+          onClick={() => window.location.reload(false)} 
+        >
+          <ArrowBackOutlinedIcon/> My Uploads
+        </Button>
+        
+      </Back>:<></>}
+     
       {edit? <Upload editing={true} data={editProj} /> : (
         <ProjectContainer>
           {
