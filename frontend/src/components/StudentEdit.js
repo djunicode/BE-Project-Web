@@ -2,6 +2,7 @@ import React,{useState} from 'react'
 import { Grid, TextField, FormControl, InputLabel, MenuItem, Select, makeStyles, Button } from '@material-ui/core';
 import { SERVER_URL } from '../config';
 import { githubValid } from './Upload';
+import Swal from 'sweetalert2';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,6 +17,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "20px"
   }
 }));
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 4000,
+  timerProgressBar: true,
+})
 
 function StudentEdit() {
   const [githubId, setgithubId] = useState(
@@ -46,10 +55,23 @@ function StudentEdit() {
       redirect: 'follow'
     }
     fetch(`${SERVER_URL}/change_password`, requestOptions)
-      .then(response => response.json())
       .then(result => {
-        if (result.Message === 'Successfully changed password') {
-          window.location.reload(false);
+        console.log(result)
+        if (result.status === 204) {
+          Toast.fire({
+            icon: 'success',
+            title: 'Password changed successfully'
+          })
+          setNewPass("")
+          setCurrentPass("")
+        }
+        if(result.status === 400){
+          Toast.fire({
+            icon: 'error',
+            title: 'Invalid Credentials'
+          })
+          setNewPass("")
+          setCurrentPass("")
         }
       })  
   }
