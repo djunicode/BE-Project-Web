@@ -117,12 +117,18 @@ def change_password(request):
         username=request.user.username, password=request.POST.get("current_password")
     )
     if not user:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(
+            data={"message": "Wrong password provided"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     serializer = ChangePasswordSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     request.user.set_password(serializer.validated_data["new_password"])
     request.user.save()
-    return JsonResponse(data={}, status=status.HTTP_204_NO_CONTENT)
+    return JsonResponse(
+        data={"message": "Successfully changed password"},
+        status=status.HTTP_204_NO_CONTENT,
+    )
 
 
 @permission_classes([IsAuthenticatedOrReadOnly])
