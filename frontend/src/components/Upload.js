@@ -92,6 +92,7 @@ export const githubCheck = (url) => {
 }
 
 function Upload(props) {
+  const teacherPresent = localStorage.getItem('Designation')=='Teacher'?true:false;
   const classes = useStyles();
   let history = useHistory();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -107,7 +108,16 @@ function Upload(props) {
   const [description, setdescription] = useState("");
   const [date, setdate] = useState("");
   const [teachers, setTeachers] = useState([]);
-  const [contributors, setContributors] = useState(null);
+  const [contributors, setContributors] = useState(
+    teacherPresent?null:
+    [
+      { 
+        value:Number(localStorage.getItem('id')),
+        label:localStorage.getItem('Name'),
+        isFixed:true
+      }
+    ]
+  );
   const [contributorOpts, setcontributorOpts] = useState([]);
   const [errors, setErrors] = useState("");
   const [DomainOptions, setDomainOptions] = useState([]);
@@ -276,15 +286,47 @@ function Upload(props) {
           return result.map(val => {
             return {
               value:val.user.id,
-              label:`${val.user.first_name} ${val.user.last_name}`
+              label:`${val.user.first_name} ${val.user.last_name}`,
+              isFixed:teacherPresent?false:val.user.id==localStorage.getItem('id')?true:false
             }
-          }) 
+          }).filter(user => !user.isFixed) 
         })
       })
   }
-  const contributorsChange = (newValue,action) => {
+  const contributorsChange = (newValue,{action,removedValue}) => {
+    switch (action) {
+      case 'remove-value':
+      case 'pop-value':
+        if (removedValue.isFixed) {
+          return;
+        }
+        break;
+      case 'clear':
+        newValue = teacherPresent?newValue:[
+          { 
+            value:Number(localStorage.getItem('id')),
+            label:localStorage.getItem('Name'),
+            isFixed:true
+          }
+        ];
+        break;
+    }
     setContributors(newValue);
   }
+
+  const styles = {
+    multiValue: (base, state) => {
+      return state.data.isFixed ? { ...base, backgroundColor: 'gray' } : base;
+    },
+    multiValueLabel: (base, state) => {
+      return state.data.isFixed
+        ? { ...base, fontWeight: 'bold', color: 'white', paddingRight: 6 }
+        : base;
+    },
+    multiValueRemove: (base, state) => {
+      return state.data.isFixed ? { ...base, display: 'none' } : base;
+    },
+  };  
 
   const showContri = () => {
     var allContri = ""
@@ -294,7 +336,7 @@ function Upload(props) {
     allContri = allContri.slice(0,-2);
     return allContri;
   };
-  
+
   return (
     <div>
       {props.editing === true ? null : <MainNav />}
@@ -366,12 +408,17 @@ function Upload(props) {
                       <Description>*Add Contributors</Description>
                       <Select
                         isMulti
-                        name="colors"
+                        name="projectMembers"
                         value={contributors}
+                        styles={styles}
                         options={contributorOpts}
                         className="contri-select"
                         classNamePrefix="selectors"
                         onChange={contributorsChange}
+                        isClearable={
+                          teacherPresent?true:
+                          contributors.some(v => !v.isFixed)
+                        }
                       />
                     </React.Fragment>
                   )}
