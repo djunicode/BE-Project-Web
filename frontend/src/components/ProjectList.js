@@ -7,6 +7,8 @@ import Pagination from "./Pagination";
 import ProjectPage from './ProjectPage';
 import { makeStyles } from '@material-ui/core/styles';
 import { SERVER_URL } from "../config";
+import '../../src/card.css';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   Container: {
@@ -33,6 +35,9 @@ const ProjectCard = styled.div`
     cursor: pointer;
     box-shadow: none;
   }
+  overflow: hidden!important;
+  z-index: 1;
+  position: relative!important;
   transition: background 0.3s;
   transition-timing-function: ease;
   border: 1px solid #ded1d1;
@@ -61,6 +66,7 @@ const getTeacherName = (teachers, pk) => {
 
 function ProjectList(props) {
   const classes = useStyles();
+  const matches = useMediaQuery('(min-width:768px)');
 
   const [projects, setprojects] = useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -101,6 +107,7 @@ function ProjectList(props) {
           <>
             {slicedProjects.map((project) => {
               return (
+                <React.Fragment>               
                 <ProjectCard key={project.id}>
                   {open ? (
                     <ProjectPage 
@@ -115,12 +122,12 @@ function ProjectList(props) {
                         container
                         className={classes.Container}
                       >
-                        <Grid item md={9} xs={9}>
+                        <Grid item md={3} xs={9}>
                           <ProjectCardDes>Project Name</ProjectCardDes>
                           <h5>{project.title}</h5>
                         </Grid>
                         {(localStorage.getItem('Designation') === "Teacher")? (
-                        <Grid item md={ 3 } xs={ 3 }>
+                        <Grid item md={3} xs={3}>
                           <IconButton
                             target="_blank"
                             variant="contained"
@@ -130,13 +137,21 @@ function ProjectList(props) {
                             <DescriptionIcon />
                           </IconButton>
                         </Grid>
-                        ) : null}
+                        ) : (
+                            <Grid item md={ 3 } xs={ 3 }>
+                            </Grid>
+                        )}
+                        <Grid item md={3} xs={3}>
+                          { (project.awards && matches) ? (
+                            <h6 className="ribbon">Awarded!</h6>
+                          ) : null }
+                        </Grid>
                       </Grid>
                       <Grid
                         container
                         className={classes.Container}
                       >
-                        <Grid item md={12} xs={12}>
+                        <Grid item md={11} xs={12}>
                           <ProjectCardDes>Description</ProjectCardDes>
                           <ProjectCardDetail>
                             {project.description}
@@ -181,6 +196,7 @@ function ProjectList(props) {
                       </Grid>
                     </div>
                 </ProjectCard>
+                </React.Fragment>
               );
             })}
             <Pagination

@@ -20,10 +20,16 @@ const useStyles = makeStyles({
   contriButton: {
     marginRight: '20px',
   },
-  dialogHeader:{
-    background:'black',
-    color:'white'
-  }
+  dialogHeader: {
+    background: 'black',
+    color: 'white',
+  },
+  text: {
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    paddingRight: '30px',
+    paddingLeft: '30px',
+  },
 });
 
 function SimpleDialog(props) {
@@ -44,33 +50,34 @@ function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
-      <DialogTitle 
-        id="simple-dialog-title"
-        className={classes.dialogHeader}
-      >
+      <DialogTitle id="simple-dialog-title" className={classes.dialogHeader}>
         Contact User
       </DialogTitle>
       <List>
         <ListItem>
           <ListItemAvatar>
             <Avatar className={classes.avatar}>
-              <GitHubIcon/>
+              <GitHubIcon />
             </Avatar>
           </ListItemAvatar>
           <ListItemText
             primary="Github"
-            secondary={props.details.github_id}
+            secondary={
+              props.details.github_id ? props.details.github_id : 'Not found'
+            }
           />
         </ListItem>
         <ListItem>
           <ListItemAvatar>
             <Avatar className={classes.avatar}>
-              <EmailIcon/>
+              <EmailIcon />
             </Avatar>
           </ListItemAvatar>
           <ListItemText
             primary="Email Id"
-            secondary={props.details.user.email}
+            secondary={
+              props.details.user.email ? props.details.user.email : 'Not found'
+            }
           />
         </ListItem>
       </List>
@@ -90,8 +97,10 @@ export default function SimpleDialogDemo(props) {
 
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(props);
+  const [contributorDetails, setContributor] = React.useState(props.details[0]);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (contributor) => {
+    setContributor(contributor)
     setOpen(true);
   };
 
@@ -110,20 +119,24 @@ export default function SimpleDialogDemo(props) {
                 size="small"
                 variant="outlined"
                 color="primary"
-                onClick={handleClickOpen}
+                onClick={handleClickOpen.bind('this', contributor)}
                 className={classes.contriButton}
               >
-                {contributor.user.first_name + ' ' + contributor.user.last_name}
+                <div className={classes.text}>
+                  {contributor.user.first_name +
+                    ' ' +
+                    contributor.user.last_name}
+                </div>
               </Button>
-              <SimpleDialog
-                selectedValue={selectedValue}
-                open={open}
-                onClose={handleClose}
-                details={contributor}
-              />
             </React.Fragment>
           );
         })}
+        <SimpleDialog
+          selectedValue={selectedValue}
+          open={open}
+          onClose={handleClose}
+          details={contributorDetails}
+        />
       </div>
     </React.Fragment>
   );
