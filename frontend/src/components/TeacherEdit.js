@@ -13,7 +13,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom:20
   },
   title: {
-    marginTop: "20px"
+    marginTop: "20px",
+    textAlign:'center'
   }
 }));
 
@@ -31,7 +32,7 @@ function TeacherEdit() {
   const [currentPass, setCurrentPass] = useState("");
   const [newPass, setNewPass] = useState("");
 
-  const changePass = (props) => {
+  const changePass = () => {
     console.log(currentPass, newPass)
     const word = 'Token ';
     const token = word.concat(`${localStorage.getItem('Token')}`);
@@ -69,7 +70,7 @@ function TeacherEdit() {
       }) 
   }
 
-  const changeDetails = (props) => {
+  const changeDetails = () => {
     const word = 'Token ';
     const token = word.concat(`${localStorage.getItem('Token')}`);
     var myHeaders = new Headers();
@@ -94,13 +95,9 @@ function TeacherEdit() {
   }
   return (
     <div>
-      <Grid container spacing={ 4 } className={classes.title}>
-        <Grid md={4} sm={4} xs={4}>
-        </Grid>
-        <Grid md={4} sm={4} xs={4}>
-          <h6>EDIT USER INFO</h6>
-        </Grid>
-        <Grid md={4} sm={4} xs={4}>
+      <Grid container spacing={4} className={classes.title}>
+        <Grid md={12} xs={12}>
+          <h6>Personal Details</h6>
         </Grid>
       </Grid>
       <Grid container spacing={4}>
@@ -125,12 +122,8 @@ function TeacherEdit() {
         </Button>
       </div>
       <Grid container spacing={ 4 } className={classes.title}>
-        <Grid md={4} sm={4} xs={4}>
-        </Grid>
-        <Grid md={4} sm={4} xs={4}>
-          <h6>EDIT PASSWORD</h6>
-        </Grid>
-        <Grid md={4} sm={4} xs={4}>
+        <Grid md={12} xs={12}>
+          <h6>Change Password</h6>
         </Grid>
       </Grid>
       <Grid container spacing={ 4 }>

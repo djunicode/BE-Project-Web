@@ -150,7 +150,7 @@ function TeacherDashboard(props) {
                 centered
               >
                 <Tab label="Uploads" {...a11yProps(0)} />
-                <Tab label="Edit Info"  {...a11yProps(1)} />
+                <Tab label="Settings"  {...a11yProps(1)} />
               </Tabs>
             </Paper>
           </div>
