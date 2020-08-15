@@ -1,6 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import {
+  Link
+} from "react-router-dom";
 import { dummy_text } from '../config';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
@@ -214,18 +217,34 @@ export default function ProjectPage(props) {
               >
                 <Grid item md={ 6 } sm={ 12 }>
                   <Paper className={ classes.paperCover } elevation={ 0 }>
-                    <ProjectCardDes_modal>Awards</ProjectCardDes_modal>
-                    <ProjectCardDetail_modal>
-                      { project.awards }
-                    </ProjectCardDetail_modal>
+                    <ProjectCardDes_modal>Github Link</ProjectCardDes_modal>
+                    { project.github_repo ? (
+                      <ProjectCardDetail_modal>
+                        <a href={ project.github_repo } target="_blank" style={ { color: '#747474', fontSize: "20px" }}>
+                          { project.github_repo }
+                        </a>
+                      </ProjectCardDetail_modal>
+                    ) : (
+                        <ProjectCardDetail_modal>
+                          { "NA" }
+                        </ProjectCardDetail_modal>
+                      ) }
                   </Paper>
                 </Grid>
                 <Grid item md={6} sm={12}>
                   <Paper className={ classes.paperCover } elevation={ 0 }>
                     <ProjectCardDes_modal>Journal Publication</ProjectCardDes_modal>
-                    <ProjectCardDetail_modal>
-                      { project.journal }
-                    </ProjectCardDetail_modal>
+                    {project.journal? (
+                      <ProjectCardDetail_modal>
+                        <a href={ project.journal } target="_blank" style={ { color: '#747474', fontSize: "20px" } }>
+                          { project.journal }
+                        </a>
+                      </ProjectCardDetail_modal>
+                    ) : (
+                        <ProjectCardDetail_modal>
+                          {"NA"}
+                        </ProjectCardDetail_modal>
+                    )}
                   </Paper>
                 </Grid>
               </Grid>
@@ -237,7 +256,57 @@ export default function ProjectPage(props) {
                 marginBottom: '5vh',
               }}
             >
-              
+              {!project.is_inhouse? (
+                <React.Fragment>
+                    <Grid item md={ 6 } sm={ 12 }>
+                      <Paper className={ classes.paperCover } elevation={ 0 }>
+                        <ProjectCardDes_modal>Company</ProjectCardDes_modal>
+                        { project.awards ? (
+                          <ProjectCardDetail_modal>
+                            { project.company }
+                          </ProjectCardDetail_modal>
+                        ) : (
+                            <ProjectCardDetail_modal>
+                              { "NA" }
+                            </ProjectCardDetail_modal>
+                          ) }
+                      </Paper>
+                    </Grid>
+                    <Grid item md={ 6 } sm={ 12 }>
+                      <Paper className={ classes.paperCover } elevation={ 0 }>
+                        <ProjectCardDes_modal>Awards</ProjectCardDes_modal>
+                        { project.awards ? (
+                          <ProjectCardDetail_modal>
+                            { project.awards }
+                          </ProjectCardDetail_modal>
+                        ) : (
+                            <ProjectCardDetail_modal>
+                              { "NA" }
+                            </ProjectCardDetail_modal>
+                          ) }
+                      </Paper>
+                    </Grid>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                      <Grid item md={ 3 } sm={ 12 }>
+                      </Grid>
+                      <Grid item md={ 6 } sm={ 12 }>
+                        <Paper className={ classes.paperCover } elevation={ 0 }>
+                          <ProjectCardDes_modal>Awards</ProjectCardDes_modal>
+                          { project.awards ? (
+                            <ProjectCardDetail_modal>
+                              { project.awards }
+                            </ProjectCardDetail_modal>
+                          ) : (
+                              <ProjectCardDetail_modal>
+                                { "NA" }
+                              </ProjectCardDetail_modal>
+                            ) }
+                        </Paper>
+                      </Grid>
+                </React.Fragment>
+              )}      
             </Grid>
             </Paper>
           </DialogContent>
