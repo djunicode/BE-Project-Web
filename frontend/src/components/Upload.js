@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {getOptionsForYear, getTeachers} from '../commonFuncs' 
 import { FormControlLabel, 
@@ -26,6 +27,15 @@ import styled from 'styled-components';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
 import { getDomains } from '../commonFuncs';
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 4000,
+  timerProgressBar: true,
+});
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -199,79 +209,114 @@ function Upload(props) {
   };
 
   const submitEditData = () => {
-    const word = 'Token ';
-    const token = word.concat(`${localStorage.getItem('Token')}`);
-    var myHeaders = new Headers();
-    myHeaders.append('Authorization', `${token}`);
-    var formdata = new FormData();
-    formdata.append('github_repo', gitLink);
-    formdata.append('demo_video', youtube);
-    formdata.append('journal', publication);
-    formdata.append('awards', awards);
-    var requestOptions = {
-      method: 'PUT',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow',
-    };
-    fetch(`${SERVER_URL}/update_project/${props.data.id}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('updated', result);
-        history.push("/search")
-      })
-      .catch((error) => console.log('error', error));
+    Swal.fire({
+      title: 'Are you sure?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes,update it!'
+    }).then((result) => {
+      if (result.value) {
+       const word = 'Token ';
+       const token = word.concat(`${localStorage.getItem('Token')}`);
+       var myHeaders = new Headers();
+       myHeaders.append('Authorization', `${token}`);
+       var formdata = new FormData();
+       formdata.append('github_repo', gitLink);
+       formdata.append('demo_video', youtube);
+       formdata.append('journal', publication);
+       formdata.append('awards', awards);
+       var requestOptions = {
+         method: 'PUT',
+         headers: myHeaders,
+         body: formdata,
+         redirect: 'follow',
+       };
+       fetch(`${SERVER_URL}/update_project/${props.data.id}`, requestOptions)
+         .then((response) => response.json())
+         .then((result) => {
+           console.log('updated', result);
+           history.push('/search');
+           Toast.fire({
+             icon: 'success',
+             title: 'Details changed successfully',
+           });
+         })
+         .catch((error) => console.log('error', error)); 
+      }
+      else{
+        handleBack();
+      }
+    })
   }
 
   const submitData = () => {
-    const word = 'Token ';
-    const token = word.concat(`${localStorage.getItem('Token')}`);
-    var myHeaders = new Headers();
-    myHeaders.append('Authorization', `${token}`);
-    var formdata = new FormData();
-    let projectData = {
-      title,
-      teacher:mentor,
-      description,
-      abstract,
-      year_created:date,
-      domain,
-      github_repo:gitLink,
-      demo_video:youtube,
-      journal:publication,
-      awards,
-      report,
-      executable:executableFile,
-    };
-    if(house=="In-House")
-    {
-      projectData.is_inhouse="True";
-    }
-    else
-    {
-      projectData.is_inhouse="False";
-      projectData.company=company;
-      projectData.supervisor=supervisor;
-    }
-    Object.keys(projectData).forEach(val => {
-      formdata.append(`${val}`,projectData[val]);
-    });
-    contributors.forEach(val => {
-      formdata.append("contributors[]",val.value);
+    Swal.fire({
+      title: 'Project uploaded',
+      text: "Please wait for the teacher incharge to accept your project",
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Okay!'
+    }).then((result) => {
+      if (result.value) {
+        const word = 'Token ';
+        const token = word.concat(`${localStorage.getItem('Token')}`);
+        var myHeaders = new Headers();
+        myHeaders.append('Authorization', `${token}`);
+        var formdata = new FormData();
+        let projectData = {
+          title,
+          teacher: mentor,
+          description,
+          abstract,
+          year_created: date,
+          domain,
+          github_repo: gitLink,
+          demo_video: youtube,
+          journal: publication,
+          awards,
+          report,
+          executable: executableFile,
+        };
+        if (house == 'In-House') {
+          projectData.is_inhouse = 'True';
+        } else {
+          projectData.is_inhouse = 'False';
+          projectData.company = company;
+          projectData.supervisor = supervisor;
+        }
+        Object.keys(projectData).forEach((val) => {
+          formdata.append(`${val}`, projectData[val]);
+        });
+        contributors.forEach((val) => {
+          formdata.append('contributors[]', val.value);
+        });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow',
+        };
+        fetch(`${SERVER_URL}/create_project`, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            Toast.fire({
+              icon: 'success',
+              title: 'Project submitted successfully',
+            });
+            history.push('/search');
+            console.log('submit', result);
+          })
+          .catch((error) => console.log('error', error));
+      }
+      else{
+        history.push('/search');
+      }
     })
-    
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    };
-    fetch(`${SERVER_URL}/create_project`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log('submit',result);
-      })
-      .catch(error => console.log('error', error));
   }
   
   const getContribitors = () => {

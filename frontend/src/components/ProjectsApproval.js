@@ -9,6 +9,7 @@ import { SERVER_URL } from '../config';
 import Upload from '../components/Upload';
 import Pagination from './Pagination'
 import Swal from 'sweetalert2';
+import ProjectPage from './ProjectPage';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 
 const ProjectContainer = styled.div`
@@ -63,26 +64,53 @@ function ProjectApproval(props) {
     setEditProj(project)
   }
 
+  const [currentProj, setCurrentProj] = useState(null);
+  const [open, setOpen] = React.useState(false);
+
+  let fullScr = false
+
+  const handleClickOpen = (project) => {
+    setOpen(true);
+    setCurrentProj(project)
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCurrentProj(null);
+  };
+
   const approveProject = (pk) => {
-    const word = 'Token ';
-    const token = word.concat(`${localStorage.getItem('Token')}`);
-    var myHeaders = new Headers();
-    myHeaders.append('Authorization', `${token}`);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, accept it!'
+    }).then((result) => {
+      if (result.value) {
+        const word = 'Token ';
+        const token = word.concat(`${localStorage.getItem('Token')}`);
+        var myHeaders = new Headers();
+        myHeaders.append('Authorization', `${token}`);
 
-    var formdata = new FormData();
-    formdata.append("pk", pk);
+        var formdata = new FormData();
+        formdata.append("pk", pk);
 
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    };
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow'
+        };
 
-    fetch(`${SERVER_URL}/approve_project`, requestOptions)
-      .then(response => response.json())
-      .then(result => window.location.reload(false))
-      .catch(error => console.log('error', error));
+        fetch(`${SERVER_URL}/approve_project`, requestOptions)
+          .then(response => response.json())
+          .then(result => window.location.reload(false))
+          .catch(error => console.log('error', error));
+      }
+    })
 
   }
   const deleteConfirm = (pk) => {
@@ -143,78 +171,88 @@ function ProjectApproval(props) {
                 currentProjects.map(project => {
                   return (
                     <ProjectCard>
-                      <StatusButtons>
-                        {
-                          localStorage.getItem('Token') &&
-                          <IconButton
-                            id={ `${project.id}` }
-                            aria-label="edit"
-                            style={ { float: 'right' } }
-                            onClick={ () => editProject(project) }
-                          >
-                            <EditOutlinedIcon />
-                          </IconButton>
-                        }
-                        <IconButton
-                          id={ `${project.id}` }
-                          aria-label="reject"
-                          style={ { float: 'right' } }
-                          onClick={ () => deleteConfirm(project.id) }
-                        >
-                          <HighlightOffIcon />
-                        </IconButton>
-                        { !props.completed && (
-                          <IconButton
-                            style={ { float: 'right' } }
-                            id={ `${project.id}` }
-                            aria-label="approve"
-                            onClick={ () => approveProject(project.id) }
-                          >
-                            <CheckCircleOutlineIcon />
-                          </IconButton>
-                        ) }
-                      </StatusButtons>
+                      { open ? (
+                        <ProjectPage
+                          project={ currentProj }
+                          openFn={ handleClickOpen }
+                          closeFn={ handleClose }
+                          screen={ fullScr }
+                        />
+                      ) : null }
                       <div>
-                        <ProjectCardDes>Project Name</ProjectCardDes>
-                        <h5> { project.title } </h5>
-                      </div>
-                      <Grid container>
-                        <Grid item md={ 3 } xs={ 12 }>
-                          <ProjectCardDes>Domain</ProjectCardDes>
-                          <ProjectCardDetail> { project.domain } </ProjectCardDetail>
-                        </Grid>
-                        <Grid item md={ 3 } xs={ 12 }>
-                          <ProjectCardDes>Group Members</ProjectCardDes>
-                          <ProjectCardDetail>
-                            {
-                              [0].map(dummy => {
-                                let cbs = '';
-                                project.contributors.forEach(contri => {
-                                  cbs += `${contri.user.first_name},`
-                                })
-                                cbs = cbs.slice(0, -1);
-                                return cbs;
-                              })
-                            }
-                          </ProjectCardDetail>
-                        </Grid>
-                        <Grid item md={ 3 } xs={ 12 }>
-                          <ProjectCardDes>Year</ProjectCardDes>
-                          <ProjectCardDetail>
-                            { project.year_created }
-                          </ProjectCardDetail>
-                        </Grid>
-                        <Grid item md={ 3 } xs={ 12 }>
-                          <Button
-                            target="_blank"
-                            variant="outlined"
-                            color="primary"
-                            href={ `${SERVER_URL}${project.report}` }
+                        <StatusButtons>
+                          {
+                            localStorage.getItem('Token') &&
+                            <IconButton
+                              id={ `${project.id}` }
+                              aria-label="edit"
+                              style={ { float: 'right' } }
+                              onClick={ () => editProject(project) }
+                            >
+                              <EditOutlinedIcon />
+                            </IconButton>
+                          }
+                          <IconButton
+                            id={ `${project.id}` }
+                            aria-label="reject"
+                            style={ { float: 'right' } }
+                            onClick={ () => deleteConfirm(project.id) }
                           >
-                            Download
-                      </Button>
+                            <HighlightOffIcon />
+                          </IconButton>
+                          { !props.completed && (
+                            <IconButton
+                              style={ { float: 'right' } }
+                              id={ `${project.id}` }
+                              aria-label="approve"
+                              onClick={ () => approveProject(project.id) }
+                            >
+                              <CheckCircleOutlineIcon />
+                            </IconButton>
+                          ) }
+                        </StatusButtons>
+                        <div onClick={ handleClickOpen.bind(this, project) }>
+                          <ProjectCardDes>Project Name</ProjectCardDes>
+                          <h5> { project.title } </h5>
+                        </div>
+                        <Grid container onClick={ handleClickOpen.bind(this, project) }>
+                          <Grid item md={ 3 } xs={ 12 }>
+                            <ProjectCardDes>Domain</ProjectCardDes>
+                            <ProjectCardDetail> { project.domain } </ProjectCardDetail>
+                          </Grid>
+                          <Grid item md={ 3 } xs={ 12 } onClick={ handleClickOpen.bind(this, project) }>
+                            <ProjectCardDes>Group Members</ProjectCardDes>
+                            <ProjectCardDetail>
+                              {
+                                [0].map(dummy => {
+                                  let cbs = '';
+                                  project.contributors.forEach(contri => {
+                                    cbs += `${contri.user.first_name},`
+                                  })
+                                  cbs = cbs.slice(0, -1);
+                                  return cbs;
+                                })
+                              }
+                            </ProjectCardDetail>
+                          </Grid>
+                          <Grid item md={ 3 } xs={ 12 } onClick={ handleClickOpen.bind(this, project) }>
+                            <ProjectCardDes>Year</ProjectCardDes>
+                            <ProjectCardDetail>
+                              { project.year_created }
+                            </ProjectCardDetail>
+                          </Grid>
+                          <Grid item md={ 3 } xs={ 12 } onClick={ handleClickOpen.bind(this, project) }>
+                            <Button
+                              target="_blank"
+                              variant="outlined"
+                              color="primary"
+                              href={ `${SERVER_URL}${project.report}` }
+                            >
+                              Download
+                            </Button>
+                          </Grid>
                         </Grid>
-                      </Grid>
+                      </div>
                     </ProjectCard>
                   )
                 })
