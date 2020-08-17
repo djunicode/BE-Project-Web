@@ -388,8 +388,9 @@ class Search(generics.GenericAPIView):
         if request.auth == None:
 
             q = query.split(" ")
+            p = Project.objects.filter(approved=True)
             for query in q:
-                p = Project.objects.filter(
+                p = p.filter(
                     Q(description__icontains=query)
                     | Q(abstract__icontains=query)
                     | Q(teacher__user__username__icontains=query)
@@ -408,8 +409,9 @@ class Search(generics.GenericAPIView):
             if request.user.is_teacher == True:
                 print(1)
                 q = query.split(" ")
+                p=Project.objects.filter(approved=True)
                 for query in q:
-                    p = Project.objects.filter(
+                    p = p.objects.filter(
                         Q(description__icontains=query)
                         | Q(abstract__icontains=query)
                         | Q(teacher__user__username__icontains=query)
@@ -427,8 +429,9 @@ class Search(generics.GenericAPIView):
             else:
                 print("-1")
                 q = query.split(" ")
+                p = Project.objects.filter(approved=True)
                 for query in q:
-                    p = Project.objects.filter(
+                    p = p.objects.filter(
                         Q(description__icontains=query)
                         | Q(abstract__icontains=query)
                         | Q(teacher__user__username__icontains=query)
