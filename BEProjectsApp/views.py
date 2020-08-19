@@ -311,7 +311,7 @@ class BrowseProjects(generics.GenericAPIView):
         print(request.auth)
         if request.auth == None:
             print("0")
-            filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+            filter1 = ProjectFilter(request.GET, queryset=Project.objects.filter(approved=True))
             AllProjects = ProjectSerializer(filter1.qs, many=True).data
             return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
 
@@ -319,7 +319,7 @@ class BrowseProjects(generics.GenericAPIView):
             if request.user.is_teacher == True:
                 print("1")
 
-                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                filter1 = ProjectFilter(request.GET, queryset=Project.objects.filter(approved=True))
                 # A = ProjectSerializer(filter1.qs, many=True).data
 
                 AllProjects = AllProjectSerializer(filter1.qs, many=True).data
