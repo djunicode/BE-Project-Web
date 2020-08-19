@@ -134,7 +134,7 @@ class Project(models.Model):
     executable = models.FileField(null=True, blank=True)
 
     # GitHub repo link
-    github_repo = models.URLField(null=True, blank=True)
+    github_repo = models.URLField(null=True, blank=True, default="None")
 
     # URL of the video demo
     demo_video = models.URLField(null=True, blank=True)
