@@ -137,7 +137,7 @@ class Project(models.Model):
     github_repo = models.CharField(max_length=200)
 
     # URL of the video demo
-    demo_video = models.URLField(null=True, blank=True)
+    demo_video = models.CharField(max_length=200)
 
     # To check whether project is approved or not
     approved = models.BooleanField(default=False)
