@@ -32,6 +32,8 @@ from django.http import JsonResponse, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -311,7 +313,9 @@ class BrowseProjects(generics.GenericAPIView):
         print(request.auth)
         if request.auth == None:
             print("0")
-            filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+            filter1 = ProjectFilter(
+                request.GET, queryset=Project.objects.filter(approved=True)
+            )
             AllProjects = ProjectSerializer(filter1.qs, many=True).data
             return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
 
@@ -319,7 +323,9 @@ class BrowseProjects(generics.GenericAPIView):
             if request.user.is_teacher == True:
                 print("1")
 
-                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                filter1 = ProjectFilter(
+                    request.GET, queryset=Project.objects.filter(approved=True)
+                )
                 # A = ProjectSerializer(filter1.qs, many=True).data
 
                 AllProjects = AllProjectSerializer(filter1.qs, many=True).data
@@ -327,7 +333,9 @@ class BrowseProjects(generics.GenericAPIView):
                 return JsonResponse(AllProjects, status=status.HTTP_200_OK, safe=False)
             else:
                 print("-1")
-                filter1 = ProjectFilter(request.GET, queryset=Project.objects.all())
+                filter1 = ProjectFilter(
+                    request.GET, queryset=Project.objects.filter(approved=True)
+                )
                 A = ProjectSerializer(filter1.qs, many=True).data
 
                 return JsonResponse(A, status=status.HTTP_200_OK, safe=False)
@@ -409,9 +417,9 @@ class Search(generics.GenericAPIView):
             if request.user.is_teacher == True:
                 print(1)
                 q = query.split(" ")
-                p=Project.objects.filter(approved=True)
+                p = Project.objects.filter(approved=True)
                 for query in q:
-                    p = p.objects.filter(
+                    p = p.filter(
                         Q(description__icontains=query)
                         | Q(abstract__icontains=query)
                         | Q(teacher__user__username__icontains=query)
@@ -431,7 +439,7 @@ class Search(generics.GenericAPIView):
                 q = query.split(" ")
                 p = Project.objects.filter(approved=True)
                 for query in q:
-                    p = p.objects.filter(
+                    p = p.filter(
                         Q(description__icontains=query)
                         | Q(abstract__icontains=query)
                         | Q(teacher__user__username__icontains=query)
@@ -660,3 +668,28 @@ def update_project_report(request, pk):
             data={"Message": "Only PUT request allowed"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class PlagiarismCheck(generics.GenericAPIView):
+    def get(self, request):
+
+        l = []
+        p = Project.objects.filter(approved=True)
+        for x in p:
+            l.append(x.abstract)
+        l.append(request.data["abstract"])
+        print(l)
+        vectorizer = TfidfVectorizer()
+        X = vectorizer.fit_transform(l)
+
+        scores = cosine_similarity(X, X[-1])
+        print(scores)
+        target = scores.flatten().argsort()[-2]
+        print(target)
+        final = []
+
+        d = {
+            "match_score": float(scores[target]),
+            "Match_project": Project.objects.filter(approved=True)[int(target)].title,
+        }
+        return JsonResponse(d, status=status.HTTP_200_OK, safe=False)

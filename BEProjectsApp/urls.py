@@ -42,6 +42,7 @@ urlpatterns = [
         views.MyProjectSearch.as_view(),
         name="MyProjectSearch",
     ),
+    path("check", views.PlagiarismCheck.as_view(), name="Plagiarism_Check"),
 ]
 
 urlpatterns += router.get_urls()

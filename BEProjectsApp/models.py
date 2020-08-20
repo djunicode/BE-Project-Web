@@ -134,16 +134,18 @@ class Project(models.Model):
     executable = models.FileField(null=True, blank=True)
 
     # GitHub repo link
-    github_repo = models.URLField(null=True, blank=True)
+    github_repo = models.CharField(max_length=200)
 
     # URL of the video demo
-    demo_video = models.URLField(null=True, blank=True)
+    demo_video = models.CharField(max_length=200)
 
     # To check whether project is approved or not
     approved = models.BooleanField(default=False)
 
     # Boolean field to check whether the project is inhouse or outhouse
     is_inhouse = models.BooleanField(null=False, blank=False, default=True)
+
+    is_BEProject = models.BooleanField(null=False, blank=False, default=False)
 
     awards = models.TextField(null=True, blank=True, default="None")
 
