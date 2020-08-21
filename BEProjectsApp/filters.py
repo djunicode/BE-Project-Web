@@ -28,5 +28,5 @@ class ProjectFilter(django_filters.FilterSet):
             "teacher__user__id",
             "is_inhouse",
             "contributors__user__username",
-            "is_BEProject",
+            "is_BE_project",
         )
