@@ -215,7 +215,7 @@ function ProjectApproval(props) {
                           <ProjectCardDes>Project Name</ProjectCardDes>
                           <h5> { project.title } </h5>
                         </div>
-                        <Grid container onClick={ handleClickOpen.bind(this, project) }>
+                        <Grid spacing={1} container onClick={ handleClickOpen.bind(this, project) }>
                           <Grid item md={ 3 } xs={ 12 }>
                             <ProjectCardDes>Domain</ProjectCardDes>
                             <ProjectCardDetail> { project.domain } </ProjectCardDetail>
@@ -235,20 +235,30 @@ function ProjectApproval(props) {
                               }
                             </ProjectCardDetail>
                           </Grid>
-                          <Grid item md={ 3 } xs={ 12 } onClick={ handleClickOpen.bind(this, project) }>
+                          <Grid item md={ 2 } xs={ 12 } onClick={ handleClickOpen.bind(this, project) }>
                             <ProjectCardDes>Year</ProjectCardDes>
                             <ProjectCardDetail>
                               { project.year_created }
                             </ProjectCardDetail>
                           </Grid>
-                          <Grid item md={ 3 } xs={ 12 } onClick={ handleClickOpen.bind(this, project) }>
+                          <Grid item md={2} xs={6} onClick={ handleClickOpen.bind(this, project) }>
                             <Button
                               target="_blank"
                               variant="outlined"
                               color="primary"
                               href={ `${SERVER_URL}${project.report}` }
                             >
-                              Download
+                              Report
+                            </Button>
+                          </Grid>
+                          <Grid item md={2} xs={6}>
+                          <Button
+                              target="_blank"
+                              variant="outlined"
+                              color="primary"
+                              href={ `${SERVER_URL}${project.executable}` }
+                            >
+                              Executable
                             </Button>
                           </Grid>
                         </Grid>

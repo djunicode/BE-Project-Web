@@ -1,7 +1,8 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { CSVLink} from "react-csv";
 
 function GenerateCSV(props) {
+  const [projects, setprojects] = useState([])
   const headers = [
     { label: "Project Name", key: "title" },
     { label: "Domain", key: "domain" },
@@ -10,7 +11,10 @@ function GenerateCSV(props) {
     { label: "Contributors", key: "contributors"}
 
   ];
-  const csvData = props.projects.map(project => {
+  React.useEffect(() => {
+    setprojects(props.projects)
+  },[props.projects])
+  const csvData = projects.map(project => {
     let cbs = '';
     project.contributors.forEach((contri) => {
       cbs += `${contri.user.first_name} ${contri.user.last_name},`;

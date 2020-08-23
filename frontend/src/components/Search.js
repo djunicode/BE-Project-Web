@@ -1,6 +1,20 @@
 import React, { useState } from 'react'
-import { Grid ,TextField, InputAdornment, makeStyles, Select, MenuItem, FormControl, FormControlLabel, Checkbox, Button, Radio, RadioGroup} from '@material-ui/core';
+import { Grid ,
+  TextField,
+  InputAdornment, 
+  makeStyles, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  FormControlLabel, 
+  Checkbox, 
+  Button, 
+  Radio, 
+  RadioGroup
+} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import ClearIcon from '@material-ui/icons/Clear';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import queryString from 'query-string';
 import styled from 'styled-components';
 import ProjectList from './ProjectList';
@@ -67,14 +81,16 @@ function Search(props) {
   const [teachers, setTeachers] = useState([]);
   const [currentSearchFilter, setcurrentSearchFilter] = useState(false);
   const [DomainOptions, setDomainOptions] = useState([]);
-  
+  const [finalYearProj, setFinalYearProj] = useState(false);
+  const [projectClass, setProjectClass] = useState("");
+  const [awarded, setawarded] = useState(false);
   const classes = useStyles();
 
   const applyFilters = () => {
     if(currentSearchFilter) {
       let x = false;
       if (house=="In-House") x=true; 
-      const newProjects = projects.filter(project => {
+      let newProjects = projects.filter(project => {
         return (
           project.domain==domain ||
           project.year_created==year ||
@@ -82,6 +98,9 @@ function Search(props) {
           project.teacher.user.id==faculty
         )
       });
+      if(awarded) {
+        newProjects = newProjects.filter(proj => proj.awards!="" || proj.awards!="None")
+      }
       setProjects(newProjects);
       return;
     }
@@ -97,10 +116,14 @@ function Search(props) {
       houseParam="False";
     }
     fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=
-    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}`, requestOptions)
+    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BEProject=${finalYearProj}`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        setProjects(result);
+        let projects = result;
+        if(awarded) {
+          projects = projects.filter(proj => proj.awards!="" || proj.awards!="None")
+        }
+        setProjects(projects);
       })
       .catch(error => console.log('error', error));
   }
@@ -108,10 +131,7 @@ function Search(props) {
     console.log(searchTerm)
     var code = event.keyCode || event.which;
     if(code === 13) { 
-      console.log("Hi")
-
       var myHeaders = new Headers();
-
       if (localStorage.getItem("Token") !== null) {
         var token = localStorage.getItem('Token');
         var finalToken = "Token " + token;
@@ -134,6 +154,31 @@ function Search(props) {
     }
     
   }
+
+  const clearFilters = () => {
+    setdomain("");
+    setyear("");
+    setfaculty("");
+    setHouse("");
+    setProjectClass("");
+    setFinalYearProj(false);
+    setcurrentSearchFilter(false);
+    setawarded(false);
+    var myHeaders = new Headers();
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders
+    };
+    
+    fetch(`${SERVER_URL}/browse_projects?approved=True`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        setProjects(result);
+      })
+      .catch(error => console.log('error', error));
+  }
+
   React.useEffect(() => {
     const url = props.location.search;
     const params = queryString.parse(url);
@@ -180,7 +225,25 @@ function Search(props) {
       <Grid container className={classes.fixHeight} >
         <Grid item md={3} xs={12} className={classes.makeCenter}>
           <Filters>
-            <h6>Filters</h6>
+            
+            <div>
+              <Grid container>
+                <Grid item md={6} xs={6}>
+                  <h6><FilterListIcon/> Filters</h6>
+                </Grid>
+                <Grid item md={4} xs={4}>
+                  <Button
+                    variant="contained"
+                    color="default"
+                    size="small"
+                    onClick={clearFilters}
+                    startIcon={<ClearIcon />}
+                  >
+                    Clear
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
             <div>
               <FormControl variant="outlined" className={classes.formControl} >
                 <Select
@@ -265,6 +328,33 @@ function Search(props) {
               </FormControl>
             </div>
             <div>
+              <FormControl variant="outlined" className={classes.formControl} >
+                <Select
+                  id="project-class-filter"
+                  displayEmpty
+                  value={projectClass}
+                  onChange={(e) => setProjectClass(e.target.value)}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  <MenuItem value="">
+                    Class
+                  </MenuItem>
+                  {
+                    ['FE','SE','TE','BE'].map(pc => {
+                      return (
+                        <MenuItem 
+                          value={pc}
+                          key={`class${pc}`}
+                        >
+                          {pc}
+                        </MenuItem>
+                      )
+                    })
+                  }             
+                </Select>
+              </FormControl>
+            </div>
+            <div>
               <FormControl component="fieldset">
                 <RadioGroup aria-label="house"
                 name="house" 
@@ -276,7 +366,32 @@ function Search(props) {
                 </RadioGroup>
               </FormControl>
             </div>
-            
+            <div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={ awarded }
+                    onChange={ (e) => setawarded(!awarded) }
+                    name="awardedTrue"
+                    color="primary"
+                  />
+                }
+                label="Awarded"
+              />
+            </div>
+            <div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={ finalYearProj }
+                    onChange={ (e) => setFinalYearProj(!finalYearProj) }
+                    name="finalYearTrue"
+                    color="primary"
+                  />
+                }
+                label="Final Year Project"
+              />
+            </div>
             <div>
               <FormControlLabel
                 control={
@@ -297,7 +412,7 @@ function Search(props) {
                 onClick={applyFilters} 
                 fullWidth
               >
-                Apply Filters
+                Apply
               </Button>
             </div>
             <div className={classes.filterButtons}>
@@ -313,7 +428,7 @@ function Search(props) {
             
           </Filters>
         </Grid>
-        <Grid item md={9} xs={12}>
+        <Grid item md={9} xs={12} style={{backgroundColor:'#fdfdfd'}}>
           <ProjectContent>
             <div>
               <TextField

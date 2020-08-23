@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Grid, IconButton } from "@material-ui/core";
+import { Grid, IconButton, Tooltip } from "@material-ui/core";
 import DescriptionIcon from "@material-ui/icons/Description";
-import ReactPaginate from 'react-paginate';
 import Pagination from "./Pagination";
 import ProjectPage from './ProjectPage';
 import { makeStyles } from '@material-ui/core/styles';
 import { SERVER_URL } from "../config";
+import {ReactComponent as AwardLogo} from '../assets/premium.svg';
 import '../../src/card.css';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
@@ -45,6 +45,7 @@ const ProjectCard = styled.div`
   padding: 10px;
   box-shadow: 0 8px 6px -6px #999;
   margin: 20px 0px;
+  background:white;
 `;
 const ProjectCardDes = styled.div`
   font-size: 14px;
@@ -122,29 +123,33 @@ function ProjectList(props) {
                         container
                         className={classes.Container}
                       >
-                        <Grid item md={3} xs={9}>
+                        <Grid item md={8} xs={8}>
                           <ProjectCardDes>Project Name</ProjectCardDes>
                           <h5>{project.title}</h5>
                         </Grid>
                         {(localStorage.getItem('Designation') === "Teacher")? (
                         <Grid item md={3} xs={3}>
-                          <IconButton
-                            target="_blank"
-                            variant="contained"
-                            color="primary"
-                            href={ SERVER_URL+`${project.report}` }
-                          >
-                            <DescriptionIcon />
-                          </IconButton>
+                          <Tooltip title="Report">
+                            <IconButton
+                              target="_blank"
+                              variant="contained"
+                              color="primary"
+                              href={ SERVER_URL+`${project.report}` }
+                            >
+                              <DescriptionIcon />
+                            </IconButton>
+                          </Tooltip>
+                          
                         </Grid>
                         ) : (
                             <Grid item md={ 3 } xs={ 3 }>
                             </Grid>
                         )}
-                        <Grid item md={3} xs={3}>
-                          { (project.awards && matches) ? (
-                            <h6 className="ribbon">Awarded!</h6>
-                          ) : null }
+                        <Grid item xs={1} md={1}>
+                          <Tooltip title="Awarded">
+                            <AwardLogo style={matches?{height:48,width:48}:{height:28,width:28}}/>
+                          </Tooltip>
+                         
                         </Grid>
                       </Grid>
                       <Grid

@@ -7,6 +7,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import Checkbox from '@material-ui/core/Checkbox'
 import { useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
@@ -118,6 +119,7 @@ function Upload(props) {
   const [description, setdescription] = useState("");
   const [date, setdate] = useState("");
   const [teachers, setTeachers] = useState([]);
+  const [projectClass, setProjectClass] = useState("")
   const [contributors, setContributors] = useState(
     teacherPresent?null:
     [
@@ -136,6 +138,9 @@ function Upload(props) {
   const [youtube,setYoutube] = useState("");
   const [abstract, setabstract] = useState("");
   const [awards, setawards] = useState("");
+  // const [finalYear, setFinalYear] = useState("No");
+  const [finalYear,setFinalYear] = useState(false);
+  const [groupNo, setGroupNo] = useState(null);
 
   React.useEffect(() => {
     const collect = async() => {
@@ -237,7 +242,7 @@ function Upload(props) {
          .then((response) => response.json())
          .then((result) => {
            console.log('updated', result);
-           history.push('/search');
+           window.location.reload(false);
            Toast.fire({
              icon: 'success',
              title: 'Details changed successfully',
@@ -436,7 +441,37 @@ function Upload(props) {
                   </Grid>
                 </Grid>
               </div>
+              
               <Grid container spacing={2}>
+                <Grid container item xs={12} md={12}>
+                    <Grid item xs={12} md={6}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={finalYear}
+                            onChange={() => setFinalYear(!finalYear)}
+                            name="finalYear"
+                            color="primary"
+                          />
+                        }
+                        label="Final Year Project"
+                      />
+                    </Grid>
+                    {
+                      finalYear?<Grid item xs={12} md={6}>
+                        <TextField
+                          id="project-id"
+                          label="Project Id"
+                          type="number"
+                          fullWidth
+                          size="small"
+                          value={groupNo}
+                          onChange={(e) => setGroupNo(e.target.value)}
+                          variant="outlined"
+                        />
+                      </Grid>:<></>
+                    }
+                </Grid>
                 <Grid item xs={12} md={12}>
                   {props.editing ? (
                     <TextField
@@ -467,6 +502,25 @@ function Upload(props) {
                       />
                     </React.Fragment>
                   )}
+                </Grid>
+                <Grid item xs={12} md={12} >
+                  <FormControl className={classes.root}>
+                    <InputLabel id="project-class-label">*Project Class</InputLabel>
+                    <MUISelect
+                      labelId="project-class-label"
+                      id="projectclass"
+                      value={projectClass}
+                      onChange={(e) => setProjectClass(e.target.value)}
+                    >
+                      {['FE','SE','TE','BE'].map((pc) => {
+                        return (
+                          <MenuItem value={pc} key={`class${pc}`}>
+                            {pc}
+                          </MenuItem>
+                        );
+                      })}
+                    </MUISelect>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -790,6 +844,7 @@ function Upload(props) {
                     rows={2}
                     variant="outlined"
                     placeholder="Awards"
+                    label={props.editing ? 'Awards' : null}
                     fullWidth
                     value={awards}
                     onChange={(e) => setawards(e.target.value)}
