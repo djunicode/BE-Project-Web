@@ -7,6 +7,8 @@ import ProjectList from './ProjectList';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
 import { getOptionsForYear, getTeachers,getDomains } from '../commonFuncs';
+import GenerateCSV from './GenerateCSV';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const useStyles = makeStyles((theme) => ({
   searchBox:{
@@ -28,7 +30,20 @@ const useStyles = makeStyles((theme) => ({
   },
   filterButtons:{
     marginTop:10,
-    marginBlock:10
+    marginBottom:10,
+    color:'white'
+  },
+  downloadCSV:{
+    background:'#39960a',
+    color:'white',
+    '& a':{
+      textDecoration:'none',
+      color:'white'
+    },
+    '&:hover':{
+      background:'#2f770a',
+      color:'white',
+    }
   }
 }));
 const ProjectContent = styled.div`
@@ -276,8 +291,23 @@ function Search(props) {
               />
             </div>
             <div className={classes.filterButtons}>
-              <Button variant="contained" color="primary" onClick={applyFilters} fullWidth>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={applyFilters} 
+                fullWidth
+              >
                 Apply Filters
+              </Button>
+            </div>
+            <div className={classes.filterButtons}>
+              <Button
+                variant="contained"
+                className={`${classes.downloadCSV}`}
+                startIcon={<GetAppIcon/>}
+                fullWidth
+              >
+                <GenerateCSV projects={projects}/>
               </Button>
             </div>
             
