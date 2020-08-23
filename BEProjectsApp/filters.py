@@ -29,4 +29,5 @@ class ProjectFilter(django_filters.FilterSet):
             "is_inhouse",
             "contributors__user__username",
             "is_BE_project",
+            "contributor_year",
         )
