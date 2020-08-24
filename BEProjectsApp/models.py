@@ -107,20 +107,30 @@ class Project(models.Model):
     # Project title
     title = models.CharField(max_length=100, null=False, blank=False)
 
-    # Id of the teacher mentoring the project
+    # ID of the teacher mentoring the project
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
 
-    # project description
+    # Project description
     description = models.TextField(null=False, blank=False)
 
-    # project abstract
+    # Project abstract
     abstract = models.TextField(null=False, blank=False)
 
-    # year published and created will be stored
-    # year_created = models.DateField(default=date.today)
+    # Year created
     year_created = models.PositiveSmallIntegerField(
         null=False, blank=False, default=int(str(date.today())[:4])
     )
+
+    # Contributor year
+    contributor_year = models.CharField(
+        choices=YEAR_CHOICES, default="None", null=False, blank=False, max_length=3
+    )
+
+    # Is this a BE project?
+    is_BE_project = models.BooleanField(null=False, blank=False, default=False)
+
+    # Project ID (only for BE projects) - Format: <Year_GroupID> eg. 2020_69
+    BE_project_id = models.CharField(max_length=10, default="None")
 
     # Domain list
     domain = models.CharField(
@@ -145,8 +155,6 @@ class Project(models.Model):
     # Boolean field to check whether the project is inhouse or outhouse
     is_inhouse = models.BooleanField(null=False, blank=False, default=True)
 
-    is_BEProject = models.BooleanField(null=False, blank=False, default=False)
-
     awards = models.TextField(null=True, blank=True, default="None")
 
     # Property of an outhouse project
@@ -164,6 +172,3 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
-
-
-# In house Project model

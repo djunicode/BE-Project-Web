@@ -352,7 +352,8 @@ class MyProjectSearch(generics.GenericAPIView):
             q = query.split(" ")
             for query in q:
                 p = p.filter(
-                    Q(description__icontains=query)
+                    Q(BE_project_id=query)
+                    | Q(description__icontains=query)
                     | Q(abstract__icontains=query)
                     | Q(teacher__user__username__icontains=query)
                     | Q(contributors__user__username__icontains=query)
@@ -372,7 +373,8 @@ class MyProjectSearch(generics.GenericAPIView):
             q = query.split(" ")
             for query in q:
                 p = p.filter(
-                    Q(description__icontains=query)
+                    Q(BE_project_id=query)
+                    | Q(description__icontains=query)
                     | Q(abstract__icontains=query)
                     | Q(teacher__user__username__icontains=query)
                     | Q(contributors__user__username__icontains=query)
@@ -399,7 +401,8 @@ class Search(generics.GenericAPIView):
             p = Project.objects.filter(approved=True)
             for query in q:
                 p = p.filter(
-                    Q(description__icontains=query)
+                    Q(BE_project_id=query)
+                    | Q(description__icontains=query)
                     | Q(abstract__icontains=query)
                     | Q(teacher__user__username__icontains=query)
                     | Q(contributors__user__username__icontains=query)
@@ -420,7 +423,8 @@ class Search(generics.GenericAPIView):
                 p = Project.objects.filter(approved=True)
                 for query in q:
                     p = p.filter(
-                        Q(description__icontains=query)
+                        Q(BE_project_id=query)
+                        | Q(description__icontains=query)
                         | Q(abstract__icontains=query)
                         | Q(teacher__user__username__icontains=query)
                         | Q(contributors__user__username__icontains=query)
@@ -440,7 +444,8 @@ class Search(generics.GenericAPIView):
                 p = Project.objects.filter(approved=True)
                 for query in q:
                     p = p.filter(
-                        Q(description__icontains=query)
+                        Q(BE_project_id=query)
+                        | Q(description__icontains=query)
                         | Q(abstract__icontains=query)
                         | Q(teacher__user__username__icontains=query)
                         | Q(contributors__user__username__icontains=query)
@@ -589,6 +594,11 @@ def create_project(request):
             awards = request.POST.get("awards", None)
             journal = request.POST.get("journal", None)
             year_created = request.POST.get("year_created", None)
+            contributor_year = request.POST.get("contributor_year", None)
+            is_BE_project = (
+                True if request.POST.get("is_BE_project", None) == "True" else False
+            )
+            BE_project_id = request.POST.get("BE_project_id", None)
             is_inhouse = (
                 True if request.POST.get("is_inhouse", None) == "True" else False
             )
@@ -616,6 +626,9 @@ def create_project(request):
                 awards=awards,
                 journal=journal,
                 year_created=year_created,
+                contributor_year=contributor_year,
+                is_BE_project=is_BE_project,
+                BE_project_id=BE_project_id,
                 is_inhouse=is_inhouse,
                 company=company,
                 supervisor=supervisor,
@@ -649,10 +662,10 @@ def create_project(request):
 def update_project_report(request, pk):
     if request.method == "PUT":
         project = Project.objects.get(id=pk)
-        serilaizer = UpdateProjectReportSerializer(project, data=request.data)
+        serializer = UpdateProjectReportSerializer(project, data=request.data)
 
-        if serilaizer.is_valid():
-            serilaizer.save()
+        if serializer.is_valid():
+            serializer.save()
             return JsonResponse(
                 data={"Message": "Successfully update Project Report"},
                 status=status.HTTP_200_OK,
