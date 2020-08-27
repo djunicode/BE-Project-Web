@@ -138,7 +138,6 @@ function Upload(props) {
   const [youtube,setYoutube] = useState("");
   const [abstract, setabstract] = useState("");
   const [awards, setawards] = useState("");
-  // const [finalYear, setFinalYear] = useState("No");
   const [finalYear,setFinalYear] = useState(false);
   const [groupNo, setGroupNo] = useState(null);
 
@@ -157,6 +156,8 @@ function Upload(props) {
       setPublication(props.data.journal);
       setawards(props.data.awards);
       setHouse(props.data.is_inhouse?"In-House":"Out-House");
+      setFinalYear(props.data.is_BE_project);
+      setGroupNo(props.data.BE_project_id)
     }
   },[]);
   
@@ -165,7 +166,16 @@ function Upload(props) {
     if((activeStep+1)==2)
     {
       if(props.editing){
-        submitEditData();
+        if(!checkEditError()) {
+          submitEditData();
+        }
+        else {
+          setErrors(
+            'Please enter youtube and github fields in proper format'
+          );
+          return;
+        }
+        
       }
       else{
         if (!checkErrors()) {
@@ -185,9 +195,11 @@ function Upload(props) {
       if(
         domain=="" || title==""||
         date=="" || mentor=="" || description=="" ||
-        abstract == "" || report==null
+        abstract == "" || report==null ||
+        projectClass==""
         || youtubeCheck(youtube) || githubCheck(gitLink) ||
-        (contributors?(contributors.length<2)?true:false:true)
+        (contributors?(contributors.length<2)?true:false:true) ||
+        (finalYear?groupNo?false:true:false)
       )
       {
         return true;
@@ -199,13 +211,21 @@ function Upload(props) {
         date=="" || mentor=="" || description=="" ||
         abstract =="" ||
         supervisor=="" || company==""
-        || report==null 
+        || report==null ||
+        projectClass=="" 
         || youtubeCheck(youtube) || githubCheck(gitLink) ||
-        (contributors?(contributors.length<2)?true:false:true)
+        (contributors?(contributors.length<2)?true:false:true) ||
+        (finalYear?groupNo?false:true:false)
       )
       {
         return true;
       }
+    }
+    return false;
+  }
+  const checkEditError = () => {
+    if(youtubeCheck(youtube) || githubCheck(gitLink) ) {
+      return true;
     }
     return false;
   }
@@ -285,6 +305,9 @@ function Upload(props) {
           awards,
           report,
           executable: executableFile,
+          contributor_year:projectClass,
+          is_BE_project:finalYear,
+          BE_project_id:`${date}_${groupNo}`
         };
         if (house == 'In-House') {
           projectData.is_inhouse = 'True';
@@ -446,6 +469,7 @@ function Upload(props) {
                 <Grid container item xs={12} md={12}>
                     <Grid item xs={12} md={6}>
                       <FormControlLabel
+                        disabled={props.editing?true:false}
                         control={
                           <Checkbox
                             checked={finalYear}
@@ -458,7 +482,18 @@ function Upload(props) {
                       />
                     </Grid>
                     {
-                      finalYear?<Grid item xs={12} md={6}>
+                      finalYear?props.editing?<Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          id="projectUnique"
+                          label="Identification ID"
+                          InputProps={{
+                            readOnly: props.editing,
+                          }}
+                          defaultValue={groupNo}
+                        />
+                      </Grid>:
+                      <Grid item xs={12} md={6}>
                         <TextField
                           id="project-id"
                           label="Project Id"
@@ -504,23 +539,36 @@ function Upload(props) {
                   )}
                 </Grid>
                 <Grid item xs={12} md={12} >
-                  <FormControl className={classes.root}>
-                    <InputLabel id="project-class-label">*Project Class</InputLabel>
-                    <MUISelect
-                      labelId="project-class-label"
-                      id="projectclass"
-                      value={projectClass}
-                      onChange={(e) => setProjectClass(e.target.value)}
-                    >
-                      {['FE','SE','TE','BE'].map((pc) => {
-                        return (
-                          <MenuItem value={pc} key={`class${pc}`}>
-                            {pc}
-                          </MenuItem>
-                        );
-                      })}
-                    </MUISelect>
-                  </FormControl>
+                {props.editing ? (
+                    <TextField
+                      fullWidth
+                      id="projectClass"
+                      label="*Class"
+                      InputProps={{
+                        readOnly: props.editing,
+                      }}
+                      defaultValue={props.data.contribution_year}
+                    />
+                  ):<React.Fragment>
+                      <FormControl className={classes.root}>
+                        <InputLabel id="project-class-label">*Project Class</InputLabel>
+                        <MUISelect
+                          labelId="project-class-label"
+                          id="projectclass"
+                          value={projectClass}
+                          onChange={(e) => setProjectClass(e.target.value)}
+                        >
+                          {['FE','SE','TE','BE'].map((pc) => {
+                            return (
+                              <MenuItem value={pc} key={`class${pc}`}>
+                                {pc}
+                              </MenuItem>
+                            );
+                          })}
+                        </MUISelect>
+                      </FormControl>
+                  </React.Fragment>
+                  }  
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField

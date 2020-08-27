@@ -95,7 +95,9 @@ function Search(props) {
           project.domain==domain ||
           project.year_created==year ||
           project.is_inhouse==x ||
-          project.teacher.user.id==faculty
+          project.teacher.user.id==faculty ||
+          project.contributor_year==projectClass ||
+          project.is_BE_project==finalYearProj
         )
       });
       if(awarded) {
@@ -116,17 +118,20 @@ function Search(props) {
       houseParam="False";
     }
     fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=
-    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BEProject=${finalYearProj}`, requestOptions)
+    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BE_project=${finalYearProj}&
+    contributor_year=${projectClass}`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        let projects = result;
+        let projectsRecv = result;
         if(awarded) {
-          projects = projects.filter(proj => proj.awards!="" || proj.awards!="None")
+          projectsRecv = projectsRecv.filter(proj => proj.awards!="None")
         }
-        setProjects(projects);
+        console.log(projectsRecv);
+        setProjects(projectsRecv);
       })
       .catch(error => console.log('error', error));
   }
+
   const makeSearch = (event) => {
     console.log(searchTerm)
     var code = event.keyCode || event.which;
@@ -138,8 +143,6 @@ function Search(props) {
 
         myHeaders.append("Authorization", finalToken);
       }
-      console.log(finalToken, myHeaders)
-
       var requestOptions = {
         method: 'GET',
         redirect: 'follow',
@@ -164,6 +167,7 @@ function Search(props) {
     setFinalYearProj(false);
     setcurrentSearchFilter(false);
     setawarded(false);
+    setsearchTerm("");
     var myHeaders = new Headers();
     var requestOptions = {
       method: 'GET',

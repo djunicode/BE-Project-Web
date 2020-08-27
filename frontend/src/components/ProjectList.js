@@ -57,14 +57,6 @@ const ProjectCardDetail = styled.div`
   color: #747474;
 `;
 
-const getTeacherName = (teachers, pk) => {
-  let name = "";  
-  if (teachers.length > 0) {  
-    name = teachers[0].user.first_name + " " + teachers[0].user.last_name;
-  }
-  return name;
-};
-
 function ProjectList(props) {
   const classes = useStyles();
   const matches = useMediaQuery('(min-width:768px)');
@@ -146,9 +138,10 @@ function ProjectList(props) {
                             </Grid>
                         )}
                         <Grid item xs={1} md={1}>
+                          {project.awards!="None"? 
                           <Tooltip title="Awarded">
                             <AwardLogo style={matches?{height:48,width:48}:{height:28,width:28}}/>
-                          </Tooltip>
+                          </Tooltip>:null}
                          
                         </Grid>
                       </Grid>
