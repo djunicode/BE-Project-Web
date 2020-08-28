@@ -31,10 +31,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   closeButton: {
-    backgroundColor: '#343a40!important',
-  },
-  closeButtonText: {
-    color: '#fff'
+    position:'absolute',
+    right:0
   },
   paper:{
     textAlign: 'center',
@@ -90,14 +88,20 @@ export default function ProjectPage(props) {
         >
           <AppBar className={ classes.appBar }>
             <Toolbar>
-              <IconButton edge="start" color="inherit" onClick={props.closeFn} aria-label="close">
+              <IconButton 
+                edge="start" 
+                color="inherit" 
+                onClick={props.closeFn} 
+                aria-label="close"
+                className={classes.closeButton}
+              >
                 <CloseIcon />
               </IconButton>
               <Typography variant="h6" className={ classes.title }>
                 <h4
                   style={ {
                     textAlign: 'center',
-                    fontSize: '40px',
+                    textTransform:'uppercase',
                     fontWeight: '400',
                   } }
                 >
@@ -310,11 +314,7 @@ export default function ProjectPage(props) {
             </Grid>
             </Paper>
           </DialogContent>
-          <DialogActions className = {classes.closeButton} >
-            <Button onClick={ props.closeFn } varient="outlined" className={ classes.closeButtonText } autoFocus>
-              CLOSE
-            </Button>
-          </DialogActions>
+          
         </Dialog>
       </React.Fragment>
     );

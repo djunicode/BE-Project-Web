@@ -7,6 +7,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import Checkbox from '@material-ui/core/Checkbox'
 import { useHistory } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
@@ -118,6 +119,7 @@ function Upload(props) {
   const [description, setdescription] = useState("");
   const [date, setdate] = useState("");
   const [teachers, setTeachers] = useState([]);
+  const [projectClass, setProjectClass] = useState("")
   const [contributors, setContributors] = useState(
     teacherPresent?null:
     [
@@ -136,6 +138,8 @@ function Upload(props) {
   const [youtube,setYoutube] = useState("");
   const [abstract, setabstract] = useState("");
   const [awards, setawards] = useState("");
+  const [finalYear,setFinalYear] = useState(false);
+  const [groupNo, setGroupNo] = useState(null);
 
   React.useEffect(() => {
     const collect = async() => {
@@ -152,6 +156,8 @@ function Upload(props) {
       setPublication(props.data.journal);
       setawards(props.data.awards);
       setHouse(props.data.is_inhouse?"In-House":"Out-House");
+      setFinalYear(props.data.is_BE_project);
+      setGroupNo(props.data.BE_project_id)
     }
   },[]);
   
@@ -160,7 +166,16 @@ function Upload(props) {
     if((activeStep+1)==2)
     {
       if(props.editing){
-        submitEditData();
+        if(!checkEditError()) {
+          submitEditData();
+        }
+        else {
+          setErrors(
+            'Please enter youtube and github fields in proper format'
+          );
+          return;
+        }
+        
       }
       else{
         if (!checkErrors()) {
@@ -180,9 +195,11 @@ function Upload(props) {
       if(
         domain=="" || title==""||
         date=="" || mentor=="" || description=="" ||
-        abstract == "" || report==null
+        abstract == "" || report==null ||
+        projectClass==""
         || youtubeCheck(youtube) || githubCheck(gitLink) ||
-        (contributors?(contributors.length<2)?true:false:true)
+        (contributors?(contributors.length<2)?true:false:true) ||
+        (finalYear?groupNo?false:true:false)
       )
       {
         return true;
@@ -194,13 +211,21 @@ function Upload(props) {
         date=="" || mentor=="" || description=="" ||
         abstract =="" ||
         supervisor=="" || company==""
-        || report==null 
+        || report==null ||
+        projectClass=="" 
         || youtubeCheck(youtube) || githubCheck(gitLink) ||
-        (contributors?(contributors.length<2)?true:false:true)
+        (contributors?(contributors.length<2)?true:false:true) ||
+        (finalYear?groupNo?false:true:false)
       )
       {
         return true;
       }
+    }
+    return false;
+  }
+  const checkEditError = () => {
+    if(youtubeCheck(youtube) || githubCheck(gitLink) ) {
+      return true;
     }
     return false;
   }
@@ -237,7 +262,7 @@ function Upload(props) {
          .then((response) => response.json())
          .then((result) => {
            console.log('updated', result);
-           history.push('/search');
+           window.location.reload(false);
            Toast.fire({
              icon: 'success',
              title: 'Details changed successfully',
@@ -280,6 +305,9 @@ function Upload(props) {
           awards,
           report,
           executable: executableFile,
+          contributor_year:projectClass,
+          is_BE_project:finalYear,
+          BE_project_id:`${date}_${groupNo}`
         };
         if (house == 'In-House') {
           projectData.is_inhouse = 'True';
@@ -436,7 +464,49 @@ function Upload(props) {
                   </Grid>
                 </Grid>
               </div>
+              
               <Grid container spacing={2}>
+                <Grid container item xs={12} md={12}>
+                    <Grid item xs={12} md={6}>
+                      <FormControlLabel
+                        disabled={props.editing?true:false}
+                        control={
+                          <Checkbox
+                            checked={finalYear}
+                            onChange={() => setFinalYear(!finalYear)}
+                            name="finalYear"
+                            color="primary"
+                          />
+                        }
+                        label="Final Year Project"
+                      />
+                    </Grid>
+                    {
+                      finalYear?props.editing?<Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          id="projectUnique"
+                          label="Identification ID"
+                          InputProps={{
+                            readOnly: props.editing,
+                          }}
+                          defaultValue={groupNo}
+                        />
+                      </Grid>:
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          id="project-id"
+                          label="Project Id"
+                          type="number"
+                          fullWidth
+                          size="small"
+                          value={groupNo}
+                          onChange={(e) => setGroupNo(e.target.value)}
+                          variant="outlined"
+                        />
+                      </Grid>:<></>
+                    }
+                </Grid>
                 <Grid item xs={12} md={12}>
                   {props.editing ? (
                     <TextField
@@ -467,6 +537,38 @@ function Upload(props) {
                       />
                     </React.Fragment>
                   )}
+                </Grid>
+                <Grid item xs={12} md={12} >
+                {props.editing ? (
+                    <TextField
+                      fullWidth
+                      id="projectClass"
+                      label="*Class"
+                      InputProps={{
+                        readOnly: props.editing,
+                      }}
+                      defaultValue={props.data.contribution_year}
+                    />
+                  ):<React.Fragment>
+                      <FormControl className={classes.root}>
+                        <InputLabel id="project-class-label">*Project Class</InputLabel>
+                        <MUISelect
+                          labelId="project-class-label"
+                          id="projectclass"
+                          value={projectClass}
+                          onChange={(e) => setProjectClass(e.target.value)}
+                        >
+                          {['FE','SE','TE','BE'].map((pc) => {
+                            return (
+                              <MenuItem value={pc} key={`class${pc}`}>
+                                {pc}
+                              </MenuItem>
+                            );
+                          })}
+                        </MUISelect>
+                      </FormControl>
+                  </React.Fragment>
+                  }  
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -790,6 +892,7 @@ function Upload(props) {
                     rows={2}
                     variant="outlined"
                     placeholder="Awards"
+                    label={props.editing ? 'Awards' : null}
                     fullWidth
                     value={awards}
                     onChange={(e) => setawards(e.target.value)}
