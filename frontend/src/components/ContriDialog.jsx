@@ -11,25 +11,30 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import EmailIcon from '@material-ui/icons/Email';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
 
 const useStyles = makeStyles({
-  avatar: {
-    backgroundColor: 'white',
-    color: 'black',
-  },
-  contriButton: {
-    marginRight: '20px',
-  },
-  dialogHeader: {
-    background: 'black',
-    color: 'white',
-  },
-  text: {
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    paddingRight: '30px',
-    paddingLeft: '30px',
-  },
+	avatar: {
+		backgroundColor: 'white',
+		color: 'black',
+	},
+	contriButton: {
+		marginRight: '20px',
+	},
+	contriButtonMobile: {
+		marginTop: '20px',
+	},
+	dialogHeader: {
+		background: 'black',
+		color: 'white',
+	},
+	text: {
+		paddingTop: '5px',
+		paddingBottom: '5px',
+		paddingRight: '30px',
+		paddingLeft: '30px',
+	},
 });
 
 function SimpleDialog(props) {
@@ -94,6 +99,7 @@ SimpleDialog.propTypes = {
 export default function SimpleDialogDemo(props) {
 
   const classes = useStyles();
+  const matches = useMediaQuery('(min-width:768px)');
 
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(props);
@@ -120,7 +126,7 @@ export default function SimpleDialogDemo(props) {
                 variant="outlined"
                 color="primary"
                 onClick={handleClickOpen.bind('this', contributor)}
-                className={classes.contriButton}
+                className={matches? classes.contriButton : classes.contriButtonMobile}
               >
                 <div className={classes.text}>
                   {contributor.user.first_name +

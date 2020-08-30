@@ -33,14 +33,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 8,
     marginBottom:8,
     width: 200,
-    
   },
   fixHeight:{
     minHeight:'90vh'
   },
   makeCenter : {
     display:'flex',
-    justifyContent:'center'
+    justifyContent:'center',
+    backgroundColor: '#F5F5F5'
   },
   filterButtons:{
     marginTop:10,
@@ -81,7 +81,7 @@ function Search(props) {
   const [teachers, setTeachers] = useState([]);
   const [currentSearchFilter, setcurrentSearchFilter] = useState(false);
   const [DomainOptions, setDomainOptions] = useState([]);
-  const [finalYearProj, setFinalYearProj] = useState(false);
+  const [finalYearProj, setFinalYearProj] = useState("False");
   const [projectClass, setProjectClass] = useState("");
   const [awarded, setawarded] = useState(false);
   const classes = useStyles();
@@ -118,8 +118,7 @@ function Search(props) {
       houseParam="False";
     }
     fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=
-    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BE_project=${finalYearProj}&
-    contributor_year=${projectClass}`, requestOptions)
+    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BE_project=${finalYearProj}&contributor_year=${projectClass}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         let projectsRecv = result;
@@ -164,7 +163,7 @@ function Search(props) {
     setfaculty("");
     setHouse("");
     setProjectClass("");
-    setFinalYearProj(false);
+    setFinalYearProj("False");
     setcurrentSearchFilter(false);
     setawarded(false);
     setsearchTerm("");
@@ -228,8 +227,7 @@ function Search(props) {
     <SearchContainer>
       <Grid container className={classes.fixHeight} >
         <Grid item md={3} xs={12} className={classes.makeCenter}>
-          <Filters>
-            
+          <Filters>         
             <div>
               <Grid container>
                 <Grid item md={6} xs={6}>
@@ -387,8 +385,15 @@ function Search(props) {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={ finalYearProj }
-                    onChange={ (e) => setFinalYearProj(!finalYearProj) }
+                    checked={ (finalYearProj=="True")? true: false }
+                    onChange={ (e) => {
+                      if(finalYearProj=="True"){
+                        setFinalYearProj("False")
+                      }
+                      else{
+                        setFinalYearProj("True")
+                      }
+                    } }
                     name="finalYearTrue"
                     color="primary"
                   />
@@ -419,17 +424,18 @@ function Search(props) {
                 Apply
               </Button>
             </div>
-            <div className={classes.filterButtons}>
-              <Button
-                variant="contained"
-                className={`${classes.downloadCSV}`}
-                startIcon={<GetAppIcon/>}
-                fullWidth
-              >
-                <GenerateCSV projects={projects}/>
-              </Button>
-            </div>
-            
+            {(localStorage.getItem("Designation")==="Teacher")? (
+              <div className={ classes.filterButtons }>
+                <Button
+                  variant="contained"
+                  className={ `${classes.downloadCSV}` }
+                  startIcon={ <GetAppIcon /> }
+                  fullWidth
+                >
+                  <GenerateCSV projects={ projects } />
+                </Button>
+              </div>
+            ) : null}
           </Filters>
         </Grid>
         <Grid item md={9} xs={12} style={{backgroundColor:'#fdfdfd'}}>
