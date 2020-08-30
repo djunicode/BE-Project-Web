@@ -144,10 +144,10 @@ class Project(models.Model):
     executable = models.FileField(null=True, blank=True)
 
     # GitHub repo link
-    github_repo = models.CharField(max_length=200,null=True,blank=True,default="")
+    github_repo = models.CharField(max_length=200, null=True, blank=True, default="")
 
     # URL of the video demo
-    demo_video = models.CharField(max_length=200,null=True,blank=True,default="")
+    demo_video = models.CharField(max_length=200, null=True, blank=True, default="")
 
     # To check whether project is approved or not
     approved = models.BooleanField(default=False)
