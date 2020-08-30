@@ -49,7 +49,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         "year_created",
         "title",
         "teacher",
-        "contributor_year"
+        "contributor_year",
     ]
 
 

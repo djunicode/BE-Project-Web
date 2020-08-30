@@ -140,7 +140,7 @@ function ProjectList(props) {
                         <Grid item xs={1} md={1}>
                           {project.awards!="None"? 
                           <Tooltip title="Awarded">
-                            <AwardLogo style={matches?{height:48,width:48}:{height:28,width:28}}/>
+                            <AwardLogo style={matches?{height:58,width:58}:{height:28,width:28}}/>
                           </Tooltip>:null}
                          
                         </Grid>
