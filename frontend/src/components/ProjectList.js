@@ -150,7 +150,7 @@ function ProjectList(props) {
                         className={classes.Container}
                       >
                         <Grid item md={11} xs={12}>
-                          <ProjectCardDes>Description</ProjectCardDes>
+                          <ProjectCardDes>Keywords</ProjectCardDes>
                           <ProjectCardDetail>
                             {project.description}
                           </ProjectCardDetail>

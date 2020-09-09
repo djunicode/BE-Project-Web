@@ -52,6 +52,7 @@ function ProjectApproval(props) {
 
   React.useEffect(() => {
     setprojects(props.projects);
+    console.log('projects',props.projects);
   },[props.projects]);
 
   // Get current projects
@@ -251,15 +252,15 @@ function ProjectApproval(props) {
                               Report
                             </Button>
                           </Grid>
-                          <Grid item md={2} xs={6}>
-                          <Button
+                          <Grid item md={2} xs={6} onClick={ handleClickOpen.bind(this, project) }>
+                            { project.executable && <Button
                               target="_blank"
                               variant="outlined"
                               color="primary"
                               href={ `${SERVER_URL}${project.executable}` }
                             >
                               Executable
-                            </Button>
+                            </Button> }
                           </Grid>
                         </Grid>
                       </div>
