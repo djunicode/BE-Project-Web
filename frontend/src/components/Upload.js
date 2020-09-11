@@ -726,8 +726,8 @@ function Upload(props) {
                     inputProps={{
                       maxLength: 200,
                     }}
-                    placeholder="*Description"
-                    label={props.editing ? 'Description' : null}
+                    placeholder="*Keywords"
+                    label={props.editing ? 'Keywords' : null}
                     fullWidth
                     InputProps={{
                       readOnly: props.editing,
@@ -793,16 +793,18 @@ function Upload(props) {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Description>Executable File</Description>
-                  {props.editing ? (
+                  {props.editing ? (<>
                     <IconButton
                       target="_blank"
                       variant="contained"
                       color="primary"
-                      href={SERVER_URL + `${props.data.executable}`}
+                      href={props.data.executable?SERVER_URL + `${props.data.executable}`:null}
                     >
                       <DescriptionIcon />
+                     
                     </IconButton>
-                  ) : (
+                     {!props.data.executable && 'No file Available'}
+                  </>) : (
                     <div>
                       <label htmlFor="exec">
                         <Button

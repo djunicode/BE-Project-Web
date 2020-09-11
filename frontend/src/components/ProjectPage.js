@@ -211,7 +211,7 @@ export default function ProjectPage(props) {
             <Grid container style={ { paddingLeft: '2vh', marginTop: '10vh' } }>
               <Grid item md={ 12 } xs={ 12 }>
                   <Paper className={ matches? classes.paperMain : classes.paperMainMobile } elevation={ 0 }>
-                    <ProjectCardDes_modal>Description</ProjectCardDes_modal>
+                    <ProjectCardDes_modal>Keywords</ProjectCardDes_modal>
                     <ProjectCardDetail_modal>
                       { project.description }
                     </ProjectCardDetail_modal>
