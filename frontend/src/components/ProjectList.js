@@ -7,7 +7,6 @@ import ProjectPage from './ProjectPage';
 import { makeStyles } from '@material-ui/core/styles';
 import { SERVER_URL } from "../config";
 import {ReactComponent as AwardLogo} from '../assets/premium.svg';
-import '../../src/card.css';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const useStyles = makeStyles((theme) => ({
@@ -138,7 +137,7 @@ function ProjectList(props) {
                             </Grid>
                         )}
                         <Grid item xs={1} md={1}>
-                          {project.awards!="None"? 
+                          {(project.awards!="None" && project.awards!="")? 
                           <Tooltip title="Awarded">
                             <AwardLogo style={matches?{height:58,width:58}:{height:28,width:28}}/>
                           </Tooltip>:null}

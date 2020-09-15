@@ -306,7 +306,7 @@ function Upload(props) {
           report,
           executable: executableFile,
           contributor_year:projectClass,
-          is_BE_project:finalYear,
+          is_BE_project:finalYear?"True":"False",
           BE_project_id:`${date}_${groupNo}`
         };
         if (house == 'In-House') {
@@ -547,7 +547,7 @@ function Upload(props) {
                       InputProps={{
                         readOnly: props.editing,
                       }}
-                      defaultValue={props.data.contribution_year}
+                      defaultValue={props.data.contributor_year}
                     />
                   ):<React.Fragment>
                       <FormControl className={classes.root}>
