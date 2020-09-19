@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
-import Swal from 'sweetalert2'
+import { Toast } from '../commonFuncs';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,14 +34,6 @@ const useStyles = makeStyles((theme) => ({
     minHeight:'90vh'
   },
 }));
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 2000,
-  timerProgressBar: true,
-})
 
 export default function Login(props) {
 

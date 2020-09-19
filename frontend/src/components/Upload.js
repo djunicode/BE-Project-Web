@@ -27,16 +27,7 @@ import Select from 'react-select';
 import styled from 'styled-components';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
-import { getDomains } from '../commonFuncs';
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 4000,
-  timerProgressBar: true,
-});
-
+import { getDomains, Toast } from '../commonFuncs';
 
 const useStyles = makeStyles((theme) => ({
   root: {

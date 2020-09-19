@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { Grid, TextField, FormControl, InputLabel, MenuItem, Select, makeStyles, Button } from '@material-ui/core';
 import { SERVER_URL } from '../config';
-import Swal from 'sweetalert2';
+import ChangePassword from './ChangePassword';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,57 +18,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 4000,
-  timerProgressBar: true,
-})
-
 function TeacherEdit() {
   const [subject, setsubject] = useState(localStorage.getItem("Subject"));
   const classes = useStyles();
-  const [currentPass, setCurrentPass] = useState("");
-  const [newPass, setNewPass] = useState("");
-
-  const changePass = () => {
-    console.log(currentPass, newPass)
-    const word = 'Token ';
-    const token = word.concat(`${localStorage.getItem('Token')}`);
-    var myHeaders = new Headers();
-    myHeaders.append('Authorization', `${token}`);
-    var formdata = new FormData();
-    formdata.append("current_password", currentPass);
-    formdata.append("new_password", newPass);
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    }
-    fetch(`${SERVER_URL}/change_password`, requestOptions)
-      .then(result => {
-        console.log(result)
-        if (result.status === 204) {
-          Toast.fire({
-            icon: 'success',
-            title: 'Password changed successfully'
-          })
-          setNewPass("")
-          setCurrentPass("")
-        }
-        if (result.status === 400) {
-          Toast.fire({
-            icon: 'error',
-            title: 'Invalid Credentials'
-          })
-          setNewPass("")
-          setCurrentPass("")
-        }
-      }) 
-  }
 
   const changeDetails = () => {
     const word = 'Token ';
@@ -121,45 +73,7 @@ function TeacherEdit() {
           Change
         </Button>
       </div>
-      <Grid container spacing={ 4 } className={classes.title}>
-        <Grid md={12} xs={12}>
-          <h6>Change Password</h6>
-        </Grid>
-      </Grid>
-      <Grid container spacing={ 4 }>
-        <Grid item md={ 12 } xs={ 12 }>
-          <TextField
-            id="currentPass"
-            fullWidth
-            type="password"
-            value={currentPass}
-            label="Current Password"
-            onChange={ e => setCurrentPass(e.target.value) }
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={ 4 }>
-        <Grid item md={ 12 } xs={ 12 }>
-          <TextField
-            id="newPass"
-            fullWidth
-            type="password"
-            value={newPass}
-            label="New Password"
-            onChange={ e => setNewPass(e.target.value) }
-          />
-        </Grid>
-      </Grid>
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={ changePass }
-          className={ classes.changeButton }
-        >
-          Change
-        </Button>
-      </div>
+      <ChangePassword classes={classes}/>
     </div>
   )
 }
