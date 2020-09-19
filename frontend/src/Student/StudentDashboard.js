@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Grid, Paper, Tabs, Tab, makeStyles,Box,Typography, Button } from '@material-ui/core'
 import PropTypes from 'prop-types';
-import ProjectApproval from './ProjectsApproval';
-import MainNav from './MainNav';
+import ProjectApproval from '../Projects/ProjectsApproval';
+import MainNav from '../components/MainNav';
 import { SERVER_URL } from '../config';
 import Swal from 'sweetalert2'
-import UserInfo from './UserInfo';
+import UserInfo from '../components/UserInfo';
 import StudentEdit from './StudentEdit';
 
 const useStyles = makeStyles({
@@ -66,7 +66,7 @@ function a11yProps(index) {
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
-function TeacherDashboard(props) {
+function StudentDashboard(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [projects, setprojects] = useState([]);
@@ -170,4 +170,4 @@ function TeacherDashboard(props) {
   )
 }
 
-export default TeacherDashboard
+export default StudentDashboard

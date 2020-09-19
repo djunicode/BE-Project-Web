@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Grid, IconButton, Tooltip } from "@material-ui/core";
 import DescriptionIcon from "@material-ui/icons/Description";
-import Pagination from "./Pagination";
+import Pagination from "../components/Pagination";
 import ProjectPage from './ProjectPage';
 import { makeStyles } from '@material-ui/core/styles';
 import { SERVER_URL } from "../config";

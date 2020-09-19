@@ -1,9 +1,8 @@
 import React,{useState} from 'react'
 import { Grid, TextField, FormControl, InputLabel, MenuItem, Select, makeStyles, Button } from '@material-ui/core';
 import { SERVER_URL } from '../config';
-import { githubValid } from './Upload';
-import Swal from 'sweetalert2';
-import ChangePassword from './ChangePassword';
+import { githubValid } from '../components/Upload';
+import ChangePassword from '../components/ChangePassword';
 
 const useStyles = makeStyles((theme) => ({
   root: {

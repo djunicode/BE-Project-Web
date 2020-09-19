@@ -2,6 +2,7 @@ import React,{useState} from 'react'
 import {Navbar,Nav,Button} from 'react-bootstrap'
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import { IconButton } from '@material-ui/core';
+
 function MainNav(props) {
   const [path, setPath] = useState();
   React.useEffect(() => {
@@ -23,11 +24,6 @@ function MainNav(props) {
               <Nav.Link  href="/upload">
                 <div >Upload</div>
               </Nav.Link>
-             {/* {(localStorage.getItem('Designation') === "Teacher")? null : (
-              <Nav.Link href="/student">
-                <div>Profile</div>
-              </Nav.Link>
-             )} */}
             </Nav>
             <Nav className="ml-auto" style={{display:'contents'}}>
               

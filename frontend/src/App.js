@@ -4,15 +4,15 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import ProtectedRoute from './ProtectedRoute';
-import SignedInRoute from './SignInRoute';
+import ProtectedRoute from './AuthRoutes/ProtectedRoute';
+import SignedInRoute from './AuthRoutes/SignInRoute';
 import Home from './components/Home';
 import Search from './components/Search';
 import Login from './components/Login';
 import Upload from './components/Upload';
-import TeacherDashboard from './components/TeacherDashboard';
+import TeacherDashboard from './Teacher/TeacherDashboard';
 import Footer from './components/Footer';
-import StudentDashboard from './components/StudentDashboard';
+import StudentDashboard from './Student/StudentDashboard';
 
 function App() {
   return (
