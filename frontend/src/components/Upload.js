@@ -27,16 +27,7 @@ import Select from 'react-select';
 import styled from 'styled-components';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
-import { getDomains } from '../commonFuncs';
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top-end',
-  showConfirmButton: false,
-  timer: 4000,
-  timerProgressBar: true,
-});
-
+import { getDomains, Toast } from '../commonFuncs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -306,7 +297,7 @@ function Upload(props) {
           report,
           executable: executableFile,
           contributor_year:projectClass,
-          is_BE_project:finalYear,
+          is_BE_project:finalYear?"True":"False",
           BE_project_id:`${date}_${groupNo}`
         };
         if (house == 'In-House') {
@@ -547,7 +538,7 @@ function Upload(props) {
                       InputProps={{
                         readOnly: props.editing,
                       }}
-                      defaultValue={props.data.contribution_year}
+                      defaultValue={props.data.contributor_year}
                     />
                   ):<React.Fragment>
                       <FormControl className={classes.root}>

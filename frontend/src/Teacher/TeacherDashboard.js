@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Grid, Paper, Tabs, Tab, makeStyles,Box,Typography, Button } from '@material-ui/core'
 import PropTypes from 'prop-types';
-import ProjectApproval from './ProjectsApproval';
-import MainNav from './MainNav';
+import ProjectApproval from '../Projects/ProjectsApproval';
+import MainNav from '../components/MainNav';
 import { SERVER_URL } from '../config';
 import Swal from 'sweetalert2'
-import UserInfo from './UserInfo';
+import UserInfo from '../components/UserInfo';
 import TeacherEdit from './TeacherEdit';
 
 const useStyles = makeStyles({

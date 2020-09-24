@@ -7,7 +7,7 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { SERVER_URL } from '../config';
 import Upload from '../components/Upload';
-import Pagination from './Pagination'
+import Pagination from '../components/Pagination'
 import Swal from 'sweetalert2';
 import ProjectPage from './ProjectPage';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';

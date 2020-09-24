@@ -17,7 +17,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import queryString from 'query-string';
 import styled from 'styled-components';
-import ProjectList from './ProjectList';
+import ProjectList from '../Projects/ProjectList';
 import MainNav from './MainNav';
 import { SERVER_URL } from '../config';
 import { getOptionsForYear, getTeachers,getDomains } from '../commonFuncs';
