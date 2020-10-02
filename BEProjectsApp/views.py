@@ -1,5 +1,5 @@
 import json
-
+import pandas as pd
 from .models import *
 from .serializers import (
     ProjectSerializer,
@@ -707,3 +707,50 @@ class PlagiarismCheck(generics.GenericAPIView):
             "Match_project": Project.objects.filter(approved=True)[int(target)].title,
         }
         return JsonResponse(d, status=status.HTTP_200_OK, safe=False)
+
+
+# Populate Database Script
+
+
+class Contributor_populate(generics.GenericAPIView):
+    def post(self, request):
+        f = request.FILES["file"]
+        df = pd.read_csv(f, encoding="utf-8")
+        print(df)
+        for i in range(len(df)):
+            u = User.objects.create_user(
+                username=df.loc[i, "SAPID"],
+                first_name=df.loc[i, "FIRST NAME"],
+                last_name=df.loc[i, "LAST NAME"],
+                is_contributor=True,
+            )
+            u.set_password("init@123")
+            u.save()
+            c = Contributor(
+                user=u,
+                year=df.loc[i, "year"],
+                division=df.loc[i, "division"],
+                github_id=df.loc[i, "github_id"],
+            )
+            c.save()
+        return JsonResponse("Users Added", safe=False)
+
+
+class teacher_populate(generics.GenericAPIView):
+    def post(self, request):
+        f = request.FILES["file"]
+        df = pd.read_csv(f, encoding="utf-8")
+        print(df)
+        for i in range(len(df)):
+            u = User.objects.create_user(
+                username=df.loc[i, "SAPID"],
+                first_name=df.loc[i, "FIRST NAME"],
+                last_name=df.loc[i, "LAST NAME"],
+                is_teacher=True,
+            )
+            u.set_password("init@123")
+            u.save()
+            t = Teacher(user=u, subject=df.loc[i, "subject"])
+            t.save()
+
+        return JsonResponse("Users Added", safe=False)

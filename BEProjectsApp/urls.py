@@ -43,6 +43,12 @@ urlpatterns = [
         name="MyProjectSearch",
     ),
     path("check", views.PlagiarismCheck.as_view(), name="Plagiarism_Check"),
+    path(
+        "contributor_populate",
+        views.Contributor_populate.as_view(),
+        name="Contributor populate",
+    ),
+    path("teacher_populate", views.teacher_populate.as_view(), name="Teacher Populate"),
 ]
 
 urlpatterns += router.get_urls()
