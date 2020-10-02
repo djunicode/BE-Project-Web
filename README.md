@@ -1,23 +1,92 @@
-# BE-Project-Web
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/djunicode/BE-Project-Web.svg?columns=all)](https://waffle.io/djunicode/BE-Project-Web)
- <br>
-Developing a System for BE Projects.
+<p>
+    <h1 align='center'> DJ Archives </h1>
+</p>
 
-## Backend Setup
+<h4 align='center'>Repository for CS Student Project Details Portal  </h4>
 
-### Basic System Prerequisites:
+<br>
+<br>
+<br>
+
+## File Structure
+
 ```
-Python >= 3.6
-pip >= 18.1
-virtualenv >= 16.0.0
+.
+├── LICENSE
+├── README.md
+├── BEProjectsWeb -> Project configurations
+├── BEProjectsApp -> Django app for endpoints
+├── frontend -> React App
+├── manage.py
+└── requirements.txt
 ```
 
-### Fork this repo and run these commands after cloning the project and go inside the ```backend``` directory:
+## Technology Stack
+
+#### Backend
+
+- Django 2.1.5 (Python 3.6+)
+- Django REST Framework
+
+#### Frontend
+- React 16.13.1
+
+## Build Instructions
+
+#### Backend
+
+```bash
+  python3 -m venv venv
+  venv\Scripts\activate
+  pip3 install -r requirements.txt
+  python3 manage.py makemigrations
+  python3 manage.py migrate
+  python3 manage.py runserver
 ```
-virtualenv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
-python3 manage.py migrate
-python3 manage.py runserver
+
+#### Frontend
+```bash
+  cd frontend
+  npm install
+  npm start
 ```
-### Note: <br> 1) Don't forget to run ``` black BEProjectsApp/ and black BEProjectsWeb/``` before adding or committing or pushing any code otherwise, the code won't be formatted properly and you might end up getting Travis CI Build fails.
+
+## Development Instructions
+
+Don't forget to run black BEProjectsApp/ and black BEProjectsWeb/ before adding or committing or pushing any code otherwise, the code won't be formatted properly and you might end up getting Travis CI Build fails
+
+## Team
+
+#### Developers
+
+1. Jash Shah (Backend)
+2. Aryan Chouhan (Backend)
+3. Jash Mehta (Frontend)
+4. Rohan Mistry (Frontend)
+
+#### Mentors
+
+Rashmil Panchani (Full Stack)
+
+## License
+
+> MIT License
+>
+> Copyright (c) 2020 Unicode
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
+> The above copyright notice and this permission notice shall be included in all
+> copies or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+> SOFTWARE.
