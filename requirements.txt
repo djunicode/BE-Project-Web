@@ -17,7 +17,7 @@ djangorestframework==3.9.1
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==4.1.0
 djoser==1.1.5
-httpie==1.0.2
+httpie==1.0.3
 idna==2.8
 isort==4.3.21
 itypes==1.2.0
