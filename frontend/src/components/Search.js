@@ -117,13 +117,12 @@ function Search(props) {
     else if(house=="Out-House"){
       houseParam="False";
     }
-    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=
-    ${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BE_project=${finalYearProj}&contributor_year=${projectClass}`, requestOptions)
+    fetch(`${SERVER_URL}/browse_projects?domain=${domain}&approved=True&year_created=${year}&teacher__user__id=${faculty}&is_inhouse=${houseParam}&is_BE_project=${finalYearProj=="False"?"":finalYearProj}&contributor_year=${projectClass}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         let projectsRecv = result;
         if(awarded) {
-          projectsRecv = projectsRecv.filter(proj => proj.awards!="None")
+          projectsRecv = projectsRecv.filter(proj => proj.awards!="None" && proj.awards!="")
         }
         console.log(projectsRecv);
         setProjects(projectsRecv);
