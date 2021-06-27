@@ -6,7 +6,7 @@ export const getDomains = async() => {
     method: 'GET',
     redirect: 'follow'
   };
-  var data;
+  var data = [];
   await fetch(`${SERVER_URL}/get_domains`, requestOptions)
     .then(response => response.json())
     .then(result => { 
@@ -22,7 +22,7 @@ export const getTeachers = async() => {
     method: 'GET',
     redirect: 'follow'
   };
-  var data;
+  var data = [];
   await fetch(`${SERVER_URL}/teachers`, requestOptions)
     .then(response => response.json())
     .then(result => {
