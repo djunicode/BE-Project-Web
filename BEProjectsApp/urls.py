@@ -42,7 +42,7 @@ urlpatterns = [
         views.MyProjectSearch.as_view(),
         name="MyProjectSearch",
     ),
-    path("check", views.PlagiarismCheck.as_view(), name="Plagiarism_Check"),
+    # path("check", views.PlagiarismCheck.as_view(), name="Plagiarism_Check"),
     path(
         "contributor_populate",
         views.Contributor_populate.as_view(),
