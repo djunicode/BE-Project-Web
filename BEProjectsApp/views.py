@@ -730,7 +730,7 @@ class Contributor_populate(generics.GenericAPIView):
                 user=u,
                 year=df.loc[i, "year"],
                 division=df.loc[i, "division"],
-                github_id=df.loc[i, "github_id"],
+                #github_id=df.loc[i, "github_id"],
             )
             c.save()
         return JsonResponse("Users Added", safe=False)
