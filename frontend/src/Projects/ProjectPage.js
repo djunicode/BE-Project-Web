@@ -2,16 +2,13 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import styled from 'styled-components';
 import { Grid, IconButton } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import DescriptionIcon from '@material-ui/icons/Description';
 import SimpleDialog from './ContriDialog';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
@@ -94,7 +91,6 @@ export default function ProjectPage(props) {
 
     return (
       <React.Fragment>
-        {console.log(project)}
         <Dialog
           maxWidth={'lg'}
           open={true}

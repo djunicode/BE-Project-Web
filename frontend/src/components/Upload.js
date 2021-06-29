@@ -252,7 +252,6 @@ function Upload(props) {
        fetch(`${SERVER_URL}/update_project/${props.data.id}`, requestOptions)
          .then((response) => response.json())
          .then((result) => {
-           console.log('updated', result);
            window.location.reload(false);
            Toast.fire({
              icon: 'success',
@@ -328,7 +327,6 @@ function Upload(props) {
               title: 'Project submitted successfully',
             });
             history.push('/search');
-            console.log('submit', result);
           })
           .catch((error) => console.log('error', error));
       }

@@ -97,7 +97,6 @@ function TeacherDashboard(props) {
       fetch(`${SERVER_URL}/my_projects`, requestOptions)
         .then(response => response.json())
         .then(result => {  
-          console.log(result);
           const projects = result;
           const approved_proj = projects.filter(project => {
             return project.approved==true
@@ -107,7 +106,6 @@ function TeacherDashboard(props) {
           });
           setApproved(approved_proj);
           setPending(pending_proj);
-          console.log(projects);
         })
         .catch(error => console.log('error', error));
     };

@@ -124,14 +124,12 @@ function Search(props) {
         if(awarded) {
           projectsRecv = projectsRecv.filter(proj => proj.awards!="None" && proj.awards!="")
         }
-        console.log(projectsRecv);
         setProjects(projectsRecv);
       })
       .catch(error => console.log('error', error));
   }
 
   const makeSearch = (event) => {
-    console.log(searchTerm)
     var code = event.keyCode || event.which;
     if(code === 13) { 
       var myHeaders = new Headers();
