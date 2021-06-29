@@ -24,7 +24,6 @@ const ChangePassword = (props) => {
     }
     fetch(`${SERVER_URL}/change_password`, requestOptions)
       .then(result => {
-        console.log(result)
         if (result.status === 204) {
           Toast.fire({
             icon: 'success',

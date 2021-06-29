@@ -52,7 +52,6 @@ function ProjectApproval(props) {
 
   React.useEffect(() => {
     setprojects(props.projects);
-    console.log('projects',props.projects);
   },[props.projects]);
 
   // Get current projects

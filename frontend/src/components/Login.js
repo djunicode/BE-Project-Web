@@ -59,7 +59,6 @@ export default function Login(props) {
       .then(response => response.json())
       .then(result => {
         if(!result.hasOwnProperty("Message")) {
-          console.log('items',result);
           setError(null);
           localStorage.setItem('Token', result.Token);
           localStorage.setItem('Name', result.Name);

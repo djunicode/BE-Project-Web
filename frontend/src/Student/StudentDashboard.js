@@ -108,9 +108,7 @@ function StudentDashboard(props) {
       fetch(`${SERVER_URL}/my_projects`, requestOptions)
         .then(response => response.json())
         .then(result => {  
-          console.log('res',result);
           setprojects(result);
-          console.log(result)
         })
         .catch(error => console.log('error', error));
     };

@@ -17,7 +17,6 @@ function GenerateCSV(props) {
   },[props.projects])
   const csvData = projects.map(project => {
     let cbs = '';
-    console.log(project)
     project.contributors.forEach((contri) => {
       cbs += `${contri.user.first_name} ${contri.user.last_name},`;
     });
