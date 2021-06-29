@@ -16,7 +16,7 @@ from .serializers import (
 from .permissions import IsUserOrReadOnly, Permit
 from .filters import BrowseProjectFilter, ProjectFilter
 
-from rest_framework import generics, status, viewsets, mixins, filters, serializers
+from rest_framework import generics, status, viewsets
 from django.contrib.auth import authenticate, login
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -32,8 +32,8 @@ from django.http import JsonResponse, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.metrics.pairwise import cosine_similarity
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -684,29 +684,29 @@ def update_project_report(request, pk):
         )
 
 
-class PlagiarismCheck(generics.GenericAPIView):
-    def get(self, request):
+# class PlagiarismCheck(generics.GenericAPIView):
+#     def get(self, request):
 
-        l = []
-        p = Project.objects.filter(approved=True)
-        for x in p:
-            l.append(x.abstract)
-        l.append(request.data["abstract"])
-        print(l)
-        vectorizer = TfidfVectorizer()
-        X = vectorizer.fit_transform(l)
+#         l = []
+#         p = Project.objects.filter(approved=True)
+#         for x in p:
+#             l.append(x.abstract)
+#         l.append(request.data["abstract"])
+#         print(l)
+#         vectorizer = TfidfVectorizer()
+#         X = vectorizer.fit_transform(l)
 
-        scores = cosine_similarity(X, X[-1])
-        print(scores)
-        target = scores.flatten().argsort()[-2]
-        print(target)
-        final = []
+#         scores = cosine_similarity(X, X[-1])
+#         print(scores)
+#         target = scores.flatten().argsort()[-2]
+#         print(target)
+#         final = []
 
-        d = {
-            "match_score": float(scores[target]),
-            "Match_project": Project.objects.filter(approved=True)[int(target)].title,
-        }
-        return JsonResponse(d, status=status.HTTP_200_OK, safe=False)
+#         d = {
+#             "match_score": float(scores[target]),
+#             "Match_project": Project.objects.filter(approved=True)[int(target)].title,
+#         }
+#         return JsonResponse(d, status=status.HTTP_200_OK, safe=False)
 
 
 # Populate Database Script
@@ -730,7 +730,7 @@ class Contributor_populate(generics.GenericAPIView):
                 user=u,
                 year=df.loc[i, "year"],
                 division=df.loc[i, "division"],
-                github_id=df.loc[i, "github_id"],
+                #github_id=df.loc[i, "github_id"],
             )
             c.save()
         return JsonResponse("Users Added", safe=False)
