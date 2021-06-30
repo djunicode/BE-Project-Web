@@ -297,7 +297,7 @@ function Upload(props) {
           executable: executableFile,
           contributor_year:projectClass,
           is_BE_project:finalYear?"True":"False",
-          BE_project_id:`${date}_${groupNo}`
+          BE_project_id:finalYear?`${date}_${groupNo}`:"None"
         };
         if (house == 'In-House') {
           projectData.is_inhouse = 'True';
