@@ -64,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
   fieldsMobile: {
     paddingLeft: '5vw',
     paddingTop: '5vw'
+  },
+  abstract: {
+    whiteSpace:'pre-wrap'
   }
 }));
 
@@ -214,7 +217,7 @@ export default function ProjectPage(props) {
                   <Paper className={ matches ? classes.paperMain : classes.paperMainMobile }  elevation={ 0 }>
                     <ProjectCardDes_modal>Abstract</ProjectCardDes_modal>
                     <ProjectCardDetail_modal>
-                      { project.abstract }
+                      <div className={classes.abstract}>{ project.abstract }</div>
                     </ProjectCardDetail_modal>
                   </Paper>
               </Grid>
